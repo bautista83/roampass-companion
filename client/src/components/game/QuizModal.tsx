@@ -1,7 +1,8 @@
-import { CATEGORY_META, QUIZ_POINTS, flagUrl, type QuizCard } from '@roampass/shared';
+import { CATEGORY_META, QUIZ_POINTS, flagUrl, withDifficulty, type QuizCard } from '@roampass/shared';
 import { useGameStore, type ActiveDraw } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { CardImage } from '../ui/CardImage';
+import { DifficultyBadge } from '../ui/DifficultyBadge';
 import { CardResult } from './CardResult';
 
 /** Cartas de seleccion multiple: BANDERA, CAPITALES Y CIUDADES, HISTORIA y PERSONALIDADES. */
@@ -29,7 +30,10 @@ export function QuizModal({ draw }: { draw: ActiveDraw }) {
         <span className="flex items-center gap-2">
           <span className="text-2xl">{meta.icon}</span>
           <span>{meta.label}</span>
-          <span className="rounded-full bg-brass/20 px-2 py-0.5 font-stamp text-xs text-brass">+{QUIZ_POINTS[card.category]}</span>
+          <span className="rounded-full bg-black/5 px-2 py-0.5 font-stamp text-xs dark:bg-white/10">
+            +{withDifficulty(QUIZ_POINTS[card.category], card.difficulty)}
+          </span>
+          <DifficultyBadge difficulty={card.difficulty} />
         </span>
       }
     >

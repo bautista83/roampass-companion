@@ -1,9 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
   "cards": [
     {
       "id": "loc-machu-picchu",
       "category": "LOCATION",
+      "difficulty": "EASY",
       "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Machu_Picchu%2C_Peru.jpg?width=1280",
       "credit": {
@@ -18,8 +19,179 @@
       "answerLabel": "Machu Picchu, Cusco (Perú)"
     },
     {
+      "id": "loc-taj-mahal",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Taj_Mahal%2C_Agra%2C_India_edit3.jpg?width=1280",
+      "credit": {
+        "author": "Yann / King of Hearts / Jbarta",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Taj_Mahal%2C_Agra%2C_India_edit3.jpg"
+      },
+      "location": {
+        "lat": 27.1751,
+        "lng": 78.0421
+      },
+      "answerLabel": "Taj Mahal, Agra (India)"
+    },
+    {
+      "id": "loc-fuji",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Fuji_from_Lake_Kawaguchi.jpg?width=1280",
+      "credit": {
+        "author": "Subramaniam K V",
+        "license": "CC BY 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mount_Fuji_from_Lake_Kawaguchi.jpg"
+      },
+      "location": {
+        "lat": 35.5167,
+        "lng": 138.7514
+      },
+      "answerLabel": "Monte Fuji desde el lago Kawaguchi (Japón)"
+    },
+    {
+      "id": "loc-eiffel",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Tour_Eiffel_Wikimedia_Commons_(cropped).jpg?width=1280",
+      "credit": {
+        "author": "Benh LIEU SONG",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg"
+      },
+      "location": {
+        "lat": 48.8584,
+        "lng": 2.2945
+      },
+      "answerLabel": "Torre Eiffel, París (Francia)"
+    },
+    {
+      "id": "loc-colosseum",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Colosseo_2020.jpg?width=1280",
+      "credit": {
+        "author": "Diliff / FeaturedPics",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Colosseo_2020.jpg"
+      },
+      "location": {
+        "lat": 41.8902,
+        "lng": 12.4922
+      },
+      "answerLabel": "Coliseo, Roma (Italia)"
+    },
+    {
+      "id": "loc-giza",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Pyramids_of_the_Giza_Necropolis.jpg?width=1280",
+      "credit": {
+        "author": "KennyOMG",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Pyramids_of_the_Giza_Necropolis.jpg"
+      },
+      "location": {
+        "lat": 29.9792,
+        "lng": 31.1342
+      },
+      "answerLabel": "Pirámides de Guiza (Egipto)"
+    },
+    {
+      "id": "loc-liberty",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Front_view_of_Statue_of_Liberty_(cropped).jpg?width=1280",
+      "credit": {
+        "author": "AskALotl",
+        "license": "CC0",
+        "source": "https://commons.wikimedia.org/wiki/File:Front_view_of_Statue_of_Liberty_(cropped).jpg"
+      },
+      "location": {
+        "lat": 40.6892,
+        "lng": -74.0445
+      },
+      "answerLabel": "Estatua de la Libertad, Nueva York (EE. UU.)"
+    },
+    {
+      "id": "loc-sydney-opera",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Sydney_Australia._(21339175489).jpg?width=1280",
+      "credit": {
+        "author": "Bernard Spragg",
+        "license": "CC0",
+        "source": "https://commons.wikimedia.org/wiki/File:Sydney_Australia._(21339175489).jpg"
+      },
+      "location": {
+        "lat": -33.8568,
+        "lng": 151.2153
+      },
+      "answerLabel": "Ópera de Sídney (Australia)"
+    },
+    {
+      "id": "loc-golden-gate",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Gate_Bridge_as_seen_from_Battery_East.jpg?width=1280",
+      "credit": {
+        "author": "Frank Schulenburg",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Golden_Gate_Bridge_as_seen_from_Battery_East.jpg"
+      },
+      "location": {
+        "lat": 37.8199,
+        "lng": -122.4783
+      },
+      "answerLabel": "Puente Golden Gate, San Francisco (EE. UU.)"
+    },
+    {
+      "id": "loc-great-wall",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Peking_Grosse_Mauer-20071019-RM-115708.jpg?width=1280",
+      "credit": {
+        "author": "Ermell",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Peking_Grosse_Mauer-20071019-RM-115708.jpg"
+      },
+      "location": {
+        "lat": 40.354,
+        "lng": 116.02
+      },
+      "answerLabel": "Gran Muralla China, cerca de Pekín (China)"
+    },
+    {
+      "id": "loc-sagrada-familia",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/SF_maig_2_cropped.jpg?width=1280",
+      "credit": {
+        "author": "Canaan",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:SF_maig_2_cropped.jpg"
+      },
+      "location": {
+        "lat": 41.4036,
+        "lng": 2.1744
+      },
+      "answerLabel": "Sagrada Familia, Barcelona (España)"
+    },
+    {
       "id": "loc-perito-moreno",
       "category": "LOCATION",
+      "difficulty": "MEDIUM",
       "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Perito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG?width=1280",
       "credit": {
@@ -36,6 +208,7 @@
     {
       "id": "loc-uluru",
       "category": "LOCATION",
+      "difficulty": "MEDIUM",
       "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Uluru%2C_helicopter_view%2C_cropped.jpg?width=1280",
       "credit": {
@@ -52,6 +225,7 @@
     {
       "id": "loc-iguazu",
       "category": "LOCATION",
+      "difficulty": "MEDIUM",
       "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Iguazu_Cataratas2.jpg?width=1280",
       "credit": {
@@ -66,24 +240,9 @@
       "answerLabel": "Cataratas del Iguazú (Argentina / Brasil)"
     },
     {
-      "id": "loc-fuji",
-      "category": "LOCATION",
-      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
-      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Fuji_from_Lake_Kawaguchi.jpg?width=1280",
-      "credit": {
-        "author": "Subramaniam K V",
-        "license": "CC BY 3.0",
-        "source": "https://commons.wikimedia.org/wiki/File:Mount_Fuji_from_Lake_Kawaguchi.jpg"
-      },
-      "location": {
-        "lat": 35.5167,
-        "lng": 138.7514
-      },
-      "answerLabel": "Monte Fuji desde el lago Kawaguchi (Japón)"
-    },
-    {
       "id": "loc-santorini",
       "category": "LOCATION",
+      "difficulty": "MEDIUM",
       "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Santorini_Oia.jpg?width=1280",
       "credit": {
@@ -100,6 +259,7 @@
     {
       "id": "loc-matterhorn",
       "category": "LOCATION",
+      "difficulty": "MEDIUM",
       "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Matterhorn_from_Domh%C3%BCtte_-_2.jpg?width=1280",
       "credit": {
@@ -114,24 +274,451 @@
       "answerLabel": "Monte Cervino / Matterhorn (Suiza / Italia)"
     },
     {
-      "id": "loc-taj-mahal",
+      "id": "loc-petra",
       "category": "LOCATION",
+      "difficulty": "MEDIUM",
       "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
-      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Taj_Mahal%2C_Agra%2C_India_edit3.jpg?width=1280",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Al_Deir_Petra.JPG?width=1280",
       "credit": {
-        "author": "Yann / King of Hearts / Jbarta",
+        "author": "Azurfrog",
         "license": "CC BY-SA 3.0",
-        "source": "https://commons.wikimedia.org/wiki/File:Taj_Mahal%2C_Agra%2C_India_edit3.jpg"
+        "source": "https://commons.wikimedia.org/wiki/File:Al_Deir_Petra.JPG"
       },
       "location": {
-        "lat": 27.1751,
-        "lng": 78.0421
+        "lat": 30.3366,
+        "lng": 35.4325
       },
-      "answerLabel": "Taj Mahal, Agra (India)"
+      "answerLabel": "El Monasterio (Ad Deir), Petra (Jordania)"
+    },
+    {
+      "id": "loc-angkor",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Angkor_Wat.jpg?width=1280",
+      "credit": {
+        "author": "Bjørn Christian Tørrissen",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Angkor_Wat.jpg"
+      },
+      "location": {
+        "lat": 13.4125,
+        "lng": 103.867
+      },
+      "answerLabel": "Angkor Wat, Siem Riep (Camboya)"
+    },
+    {
+      "id": "loc-chichen-itza",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Chichen_Itza_3.jpg?width=1280",
+      "credit": {
+        "author": "Daniel Schwen",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Chichen_Itza_3.jpg"
+      },
+      "location": {
+        "lat": 20.6843,
+        "lng": -88.5678
+      },
+      "answerLabel": "Chichén Itzá, Yucatán (México)"
+    },
+    {
+      "id": "loc-neuschwanstein",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Schloss_Neuschwanstein_2013.jpg?width=1280",
+      "credit": {
+        "author": "Thomas Wolf",
+        "license": "CC BY-SA 3.0 de",
+        "source": "https://commons.wikimedia.org/wiki/File:Schloss_Neuschwanstein_2013.jpg"
+      },
+      "location": {
+        "lat": 47.5576,
+        "lng": 10.7498
+      },
+      "answerLabel": "Castillo de Neuschwanstein, Baviera (Alemania)"
+    },
+    {
+      "id": "loc-moai",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/AhuTongariki.JPG?width=1280",
+      "credit": {
+        "author": "Ian Sewell",
+        "license": "CC BY 2.5",
+        "source": "https://commons.wikimedia.org/wiki/File:AhuTongariki.JPG"
+      },
+      "location": {
+        "lat": -27.1258,
+        "lng": -109.2769
+      },
+      "answerLabel": "Ahu Tongariki, Isla de Pascua (Chile)"
+    },
+    {
+      "id": "loc-halong",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Ha_Long_Bay_in_2019.jpg?width=1280",
+      "credit": {
+        "author": "Taewangkorea",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Ha_Long_Bay_in_2019.jpg"
+      },
+      "location": {
+        "lat": 20.9101,
+        "lng": 107.1839
+      },
+      "answerLabel": "Bahía de Ha Long (Vietnam)"
+    },
+    {
+      "id": "loc-uyuni",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Salar_Uyuni_au01.jpg?width=1280",
+      "credit": {
+        "author": "Anouchka Unel",
+        "license": "FAL",
+        "source": "https://commons.wikimedia.org/wiki/File:Salar_Uyuni_au01.jpg"
+      },
+      "location": {
+        "lat": -20.1338,
+        "lng": -67.4891
+      },
+      "answerLabel": "Salar de Uyuni (Bolivia)"
+    },
+    {
+      "id": "loc-mont-saint-michel",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mont-Saint-Michel_vu_du_ciel.jpg?width=1280",
+      "credit": {
+        "author": "Amaustan",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mont-Saint-Michel_vu_du_ciel.jpg"
+      },
+      "location": {
+        "lat": 48.6361,
+        "lng": -1.5115
+      },
+      "answerLabel": "Mont-Saint-Michel, Normandía (Francia)"
+    },
+    {
+      "id": "loc-table-mountain",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Table_Mountain_DanieVDM.jpg?width=1280",
+      "credit": {
+        "author": "Danie van der Merwe",
+        "license": "CC BY 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Table_Mountain_DanieVDM.jpg"
+      },
+      "location": {
+        "lat": -33.9628,
+        "lng": 18.4098
+      },
+      "answerLabel": "Montaña de la Mesa, Ciudad del Cabo (Sudáfrica)"
+    },
+    {
+      "id": "loc-torres-paine",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Torres_del_Paine_y_cuernos_del_Paine%2C_montaje.jpg?width=1280",
+      "credit": {
+        "author": "Karen Chan / Jorge Morales",
+        "license": "CC BY 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Torres_del_Paine_y_cuernos_del_Paine%2C_montaje.jpg"
+      },
+      "location": {
+        "lat": -50.9423,
+        "lng": -73.4068
+      },
+      "answerLabel": "Torres del Paine, Magallanes (Chile)"
+    },
+    {
+      "id": "loc-moher",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Cliffs-Of-Moher-OBriens-From-South.JPG?width=1280",
+      "credit": {
+        "author": "Bjørn Christian Tørrissen",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cliffs-Of-Moher-OBriens-From-South.JPG"
+      },
+      "location": {
+        "lat": 52.9715,
+        "lng": -9.4309
+      },
+      "answerLabel": "Acantilados de Moher (Irlanda)"
+    },
+    {
+      "id": "loc-meteora",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Meteora's_monastery_2.jpg?width=1280",
+      "credit": {
+        "author": "Stathis floros",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Meteora's_monastery_2.jpg"
+      },
+      "location": {
+        "lat": 39.7217,
+        "lng": 21.6306
+      },
+      "answerLabel": "Monasterios de Meteora, Tesalia (Grecia)"
+    },
+    {
+      "id": "loc-deadvlei",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Dead_Vlei_4.jpg?width=1280",
+      "credit": {
+        "author": "Ikiwaner",
+        "license": "GFDL 1.2",
+        "source": "https://commons.wikimedia.org/wiki/File:Dead_Vlei_4.jpg"
+      },
+      "location": {
+        "lat": -24.7593,
+        "lng": 15.2925
+      },
+      "answerLabel": "Deadvlei, desierto del Namib (Namibia)"
+    },
+    {
+      "id": "loc-plitvice",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/View_in_Plitvice_Lakes_National_Park.jpg?width=1280",
+      "credit": {
+        "author": "Zysko serhii",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:View_in_Plitvice_Lakes_National_Park.jpg"
+      },
+      "location": {
+        "lat": 44.8654,
+        "lng": 15.582
+      },
+      "answerLabel": "Lagos de Plitvice (Croacia)"
+    },
+    {
+      "id": "loc-hallstatt",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Hallstatt_-_Zentrum_.JPG?width=1280",
+      "credit": {
+        "author": "C.Stadler/Bwag",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Hallstatt_-_Zentrum_.JPG"
+      },
+      "location": {
+        "lat": 47.5622,
+        "lng": 13.6493
+      },
+      "answerLabel": "Hallstatt (Austria)"
+    },
+    {
+      "id": "loc-bagan",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Bagan%2C_Burma.jpg?width=1280",
+      "credit": {
+        "author": "Corto Maltese 1999",
+        "license": "CC BY 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Bagan%2C_Burma.jpg"
+      },
+      "location": {
+        "lat": 21.1717,
+        "lng": 94.8585
+      },
+      "answerLabel": "Templos de Bagan (Birmania)"
+    },
+    {
+      "id": "loc-chefchaouen",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Chefchaouen-the-blue-city-of-morocco-with-palm-trees-and-the-mountain-view-in-the-backrgound.jpg?width=1280",
+      "credit": {
+        "author": "Badr Rachadi",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Chefchaouen-the-blue-city-of-morocco-with-palm-trees-and-the-mountain-view-in-the-backrgound.jpg"
+      },
+      "location": {
+        "lat": 35.1688,
+        "lng": -5.2636
+      },
+      "answerLabel": "Chefchaouen, la ciudad azul (Marruecos)"
+    },
+    {
+      "id": "loc-lencois",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Len%C3%A7%C3%B3is_Maranhenses_2018.jpg?width=1280",
+      "credit": {
+        "author": "Julius Dadalti",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Len%C3%A7%C3%B3is_Maranhenses_2018.jpg"
+      },
+      "location": {
+        "lat": -2.4856,
+        "lng": -43.1286
+      },
+      "answerLabel": "Lençóis Maranhenses, Maranhão (Brasil)"
+    },
+    {
+      "id": "loc-zhangjiajie",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/1_tianzishan_wulingyuan_zhangjiajie_2012.jpg?width=1280",
+      "credit": {
+        "author": "chensiyuan",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:1_tianzishan_wulingyuan_zhangjiajie_2012.jpg"
+      },
+      "location": {
+        "lat": 29.35,
+        "lng": 110.5
+      },
+      "answerLabel": "Zhangjiajie / Wulingyuan, Hunan (China)"
+    },
+    {
+      "id": "loc-kotor",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg?width=1280",
+      "credit": {
+        "author": "User:Ggia",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg"
+      },
+      "location": {
+        "lat": 42.4247,
+        "lng": 18.7712
+      },
+      "answerLabel": "Bahía de Kotor (Montenegro)"
+    },
+    {
+      "id": "loc-wadi-rum",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mountain_in_Wadi_Rum%2C_Jordan.jpg?width=1280",
+      "credit": {
+        "author": "Daniel Case",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mountain_in_Wadi_Rum%2C_Jordan.jpg"
+      },
+      "location": {
+        "lat": 29.5759,
+        "lng": 35.4208
+      },
+      "answerLabel": "Wadi Rum (Jordania)"
+    },
+    {
+      "id": "loc-sigiriya",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Sigiriya_(141688197).jpeg?width=1280",
+      "credit": {
+        "author": "Wrobell",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Sigiriya_(141688197).jpeg"
+      },
+      "location": {
+        "lat": 7.957,
+        "lng": 80.7603
+      },
+      "answerLabel": "Roca de Sigiriya (Sri Lanka)"
+    },
+    {
+      "id": "loc-bryce",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Inspiration_Point_Bryce_Canyon_November_2018_panorama.jpg?width=1280",
+      "credit": {
+        "author": "King of Hearts",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Inspiration_Point_Bryce_Canyon_November_2018_panorama.jpg"
+      },
+      "location": {
+        "lat": 37.6177,
+        "lng": -112.1696
+      },
+      "answerLabel": "Cañón Bryce, Utah (EE. UU.)"
+    },
+    {
+      "id": "loc-moraine",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Moraine_Lake_17092005.jpg?width=1280",
+      "credit": {
+        "author": "Gorgo",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Moraine_Lake_17092005.jpg"
+      },
+      "location": {
+        "lat": 51.3217,
+        "lng": -116.186
+      },
+      "answerLabel": "Lago Moraine, Parque Nacional Banff (Canadá)"
+    },
+    {
+      "id": "loc-pamukkale",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Pamukkale%2C_Denizli_2026_68.jpg?width=1280",
+      "credit": {
+        "author": "Biologg",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Pamukkale%2C_Denizli_2026_68.jpg"
+      },
+      "location": {
+        "lat": 37.9137,
+        "lng": 29.1187
+      },
+      "answerLabel": "Terrazas de Pamukkale (Turquía)"
+    },
+    {
+      "id": "loc-goreme",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Autumn_in_G%C3%B6reme_Valley.jpg?width=1280",
+      "credit": {
+        "author": "Emrahuygun",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Autumn_in_G%C3%B6reme_Valley.jpg"
+      },
+      "location": {
+        "lat": 38.6431,
+        "lng": 34.8289
+      },
+      "answerLabel": "Valle de Göreme, Capadocia (Turquía)"
     },
     {
       "id": "flag-ar",
       "category": "FLAG",
+      "difficulty": "HARD",
       "prompt": "¿A qué país pertenece esta bandera?",
       "countryCode": "ar",
       "options": [
@@ -146,6 +733,7 @@
     {
       "id": "flag-np",
       "category": "FLAG",
+      "difficulty": "MEDIUM",
       "prompt": "¿A qué país pertenece esta bandera?",
       "countryCode": "np",
       "options": [
@@ -160,6 +748,7 @@
     {
       "id": "flag-ca",
       "category": "FLAG",
+      "difficulty": "EASY",
       "prompt": "¿A qué país pertenece esta bandera?",
       "countryCode": "ca",
       "options": [
@@ -174,6 +763,7 @@
     {
       "id": "flag-ke",
       "category": "FLAG",
+      "difficulty": "MEDIUM",
       "prompt": "¿A qué país pertenece esta bandera?",
       "countryCode": "ke",
       "options": [
@@ -188,12 +778,13 @@
     {
       "id": "flag-kr",
       "category": "FLAG",
+      "difficulty": "MEDIUM",
       "prompt": "¿A qué país pertenece esta bandera?",
       "countryCode": "kr",
       "options": [
         "Corea del Sur",
         "Japón",
-        "Taiwán",
+        "China",
         "Mongolia"
       ],
       "correctAnswer": "Corea del Sur",
@@ -202,6 +793,7 @@
     {
       "id": "flag-pt",
       "category": "FLAG",
+      "difficulty": "MEDIUM",
       "prompt": "¿A qué país pertenece esta bandera?",
       "countryCode": "pt",
       "options": [
@@ -214,9 +806,41 @@
       "funFact": "La esfera armilar recuerda la era de los descubrimientos."
     },
     {
+      "id": "flag-td",
+      "category": "FLAG",
+      "difficulty": "HARD",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "td",
+      "options": [
+        "Chad",
+        "Rumania",
+        "Andorra",
+        "Moldavia"
+      ],
+      "correctAnswer": "Chad",
+      "funFact": "Es casi idéntica a la de Rumania: solo cambia levemente el tono del azul."
+    },
+    {
+      "id": "flag-mc",
+      "category": "FLAG",
+      "difficulty": "HARD",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "mc",
+      "options": [
+        "Mónaco",
+        "Indonesia",
+        "Polonia",
+        "Singapur"
+      ],
+      "correctAnswer": "Mónaco",
+      "funFact": "Mónaco e Indonesia tienen la misma bandera: solo cambian sus proporciones (4:5 frente a 2:3)."
+    },
+    {
       "id": "city-australia",
       "category": "CITY",
+      "difficulty": "MEDIUM",
       "prompt": "¿Cuál es la capital de Australia?",
+      "countryCode": "au",
       "options": [
         "Sídney",
         "Canberra",
@@ -229,7 +853,9 @@
     {
       "id": "city-canada",
       "category": "CITY",
+      "difficulty": "MEDIUM",
       "prompt": "¿Cuál es la capital de Canadá?",
+      "countryCode": "ca",
       "options": [
         "Toronto",
         "Montreal",
@@ -240,22 +866,11 @@
       "funFact": "La reina Victoria eligió Ottawa como capital en 1857."
     },
     {
-      "id": "city-bosforo",
-      "category": "CITY",
-      "prompt": "¿Qué ciudad está dividida por el estrecho del Bósforo entre Europa y Asia?",
-      "options": [
-        "Atenas",
-        "Estambul",
-        "Ankara",
-        "El Cairo"
-      ],
-      "correctAnswer": "Estambul",
-      "funFact": "Estambul fue antes Bizancio y Constantinopla."
-    },
-    {
       "id": "city-turquia",
       "category": "CITY",
+      "difficulty": "MEDIUM",
       "prompt": "¿Cuál es la capital de Turquía?",
+      "countryCode": "tr",
       "options": [
         "Estambul",
         "Esmirna",
@@ -268,7 +883,9 @@
     {
       "id": "city-marruecos",
       "category": "CITY",
+      "difficulty": "MEDIUM",
       "prompt": "¿Cuál es la capital de Marruecos?",
+      "countryCode": "ma",
       "options": [
         "Casablanca",
         "Marrakech",
@@ -279,8 +896,23 @@
       "funFact": "Casablanca es la ciudad más grande, pero la capital es Rabat."
     },
     {
+      "id": "city-bosforo",
+      "category": "CITY",
+      "difficulty": "EASY",
+      "prompt": "¿Qué ciudad está dividida por el estrecho del Bósforo entre Europa y Asia?",
+      "options": [
+        "Atenas",
+        "Estambul",
+        "Ankara",
+        "El Cairo"
+      ],
+      "correctAnswer": "Estambul",
+      "funFact": "Estambul fue antes Bizancio y Constantinopla."
+    },
+    {
       "id": "city-cristo",
       "category": "CITY",
+      "difficulty": "EASY",
       "prompt": "¿En qué ciudad se encuentra el Cristo Redentor del cerro del Corcovado?",
       "options": [
         "São Paulo",
@@ -292,27 +924,121 @@
       "funFact": "Fue inaugurado en 1931 y mide unos 30 m sin el pedestal."
     },
     {
-      "id": "hist-iwo-jima",
-      "category": "HISTORY",
-      "prompt": "Marines izando la bandera en Iwo Jima. ¿En qué año fue tomada esta fotografía?",
-      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Raising_the_Flag_on_Iwo_Jima%2C_larger_-_edit1.jpg?width=1280",
-      "credit": {
-        "author": "Joe Rosenthal",
-        "license": "Dominio público",
-        "source": "https://commons.wikimedia.org/wiki/File:Raising_the_Flag_on_Iwo_Jima%2C_larger_-_edit1.jpg"
-      },
+      "id": "city-venecia",
+      "category": "CITY",
+      "difficulty": "EASY",
+      "prompt": "¿Qué ciudad europea está construida sobre más de un centenar de islas unidas por canales y puentes?",
       "options": [
-        "1942",
-        "1944",
-        "1945",
-        "1950"
+        "Ámsterdam",
+        "Venecia",
+        "Brujas",
+        "Estocolmo"
       ],
-      "correctAnswer": "1945",
-      "funFact": "La foto de Joe Rosenthal ganó el Premio Pulitzer."
+      "correctAnswer": "Venecia",
+      "funFact": "Tiene más de 400 puentes y su transporte público incluye los vaporetti."
+    },
+    {
+      "id": "city-budapest",
+      "category": "CITY",
+      "difficulty": "EASY",
+      "prompt": "¿Qué capital nació de la unión de Buda, Óbuda y Pest a orillas del Danubio?",
+      "options": [
+        "Praga",
+        "Viena",
+        "Budapest",
+        "Belgrado"
+      ],
+      "correctAnswer": "Budapest",
+      "funFact": "La unificación se produjo en 1873."
+    },
+    {
+      "id": "city-big-ben",
+      "category": "CITY",
+      "difficulty": "EASY",
+      "prompt": "¿En qué ciudad se encuentra la torre del Big Ben?",
+      "options": [
+        "Edimburgo",
+        "Londres",
+        "Dublín",
+        "Mánchester"
+      ],
+      "correctAnswer": "Londres",
+      "funFact": "Big Ben es en realidad el nombre de la campana; la torre se llama Elizabeth Tower."
+    },
+    {
+      "id": "city-edo",
+      "category": "CITY",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Qué ciudad se llamaba Edo antes de 1868?",
+      "options": [
+        "Kioto",
+        "Osaka",
+        "Tokio",
+        "Nara"
+      ],
+      "correctAnswer": "Tokio",
+      "funFact": "Al convertirse en capital imperial pasó a llamarse Tokio, \"capital del este\"."
+    },
+    {
+      "id": "city-saigon",
+      "category": "CITY",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Qué ciudad se llamaba Saigón hasta 1976?",
+      "options": [
+        "Hanói",
+        "Ciudad Ho Chi Minh",
+        "Da Nang",
+        "Huế"
+      ],
+      "correctAnswer": "Ciudad Ho Chi Minh",
+      "funFact": "Muchos de sus habitantes la siguen llamando Saigón."
+    },
+    {
+      "id": "city-petronas",
+      "category": "CITY",
+      "difficulty": "MEDIUM",
+      "prompt": "¿En qué ciudad se alzan las Torres Petronas?",
+      "options": [
+        "Singapur",
+        "Yakarta",
+        "Kuala Lumpur",
+        "Bangkok"
+      ],
+      "correctAnswer": "Kuala Lumpur",
+      "funFact": "Fueron los edificios más altos del mundo entre 1998 y 2004."
+    },
+    {
+      "id": "city-la-paz",
+      "category": "CITY",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Qué ciudad es la sede de gobierno más alta del mundo, a unos 3.600 m de altitud?",
+      "options": [
+        "Quito",
+        "Bogotá",
+        "La Paz",
+        "Katmandú"
+      ],
+      "correctAnswer": "La Paz",
+      "funFact": "La capital constitucional de Bolivia es Sucre; el gobierno funciona en La Paz."
+    },
+    {
+      "id": "city-rio-capital",
+      "category": "CITY",
+      "difficulty": "HARD",
+      "prompt": "¿Qué ciudad fue la capital de Brasil hasta la inauguración de Brasilia en 1960?",
+      "options": [
+        "Salvador de Bahía",
+        "São Paulo",
+        "Río de Janeiro",
+        "Recife"
+      ],
+      "correctAnswer": "Río de Janeiro",
+      "funFact": "Antes, entre 1549 y 1763, la capital había sido Salvador de Bahía."
     },
     {
       "id": "hist-apollo-11",
       "category": "HISTORY",
+      "difficulty": "EASY",
       "prompt": "Buzz Aldrin caminando sobre la Luna durante la misión Apolo 11. ¿En qué año ocurrió?",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Aldrin_Apollo_11_original.jpg?width=1280",
       "credit": {
@@ -330,27 +1056,9 @@
       "funFact": "La foto la tomó Neil Armstrong, por eso casi no hay fotos de él en la Luna."
     },
     {
-      "id": "hist-wright",
-      "category": "HISTORY",
-      "prompt": "Primer vuelo motorizado y controlado de los hermanos Wright en Kitty Hawk. ¿En qué año fue?",
-      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/First_flight2.jpg?width=1280",
-      "credit": {
-        "author": "John T. Daniels",
-        "license": "Dominio público",
-        "source": "https://commons.wikimedia.org/wiki/File:First_flight2.jpg"
-      },
-      "options": [
-        "1899",
-        "1903",
-        "1910",
-        "1914"
-      ],
-      "correctAnswer": "1903",
-      "funFact": "El primer vuelo duró 12 segundos y recorrió 36,6 metros."
-    },
-    {
       "id": "hist-titanic",
       "category": "HISTORY",
+      "difficulty": "EASY",
       "prompt": "El RMS Titanic zarpando de Southampton en su viaje inaugural. ¿En qué año se hundió?",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/RMS_Titanic_3.jpg?width=1280",
       "credit": {
@@ -370,6 +1078,7 @@
     {
       "id": "hist-berlin-wall",
       "category": "HISTORY",
+      "difficulty": "EASY",
       "prompt": "Este muro pintado (foto de 1986) dividió Berlín durante la Guerra Fría. ¿En qué año cayó?",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlinermauer.jpg?width=1280",
       "credit": {
@@ -387,9 +1096,410 @@
       "funFact": "Cayó la noche del 9 de noviembre; la reunificación alemana llegó en 1990."
     },
     {
+      "id": "hist-normandy",
+      "category": "HISTORY",
+      "difficulty": "EASY",
+      "prompt": "Soldados desembarcando en la playa de Omaha durante el Día D. ¿En qué año fue el Desembarco de Normandía?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Into_the_Jaws_of_Death_23-0455M_edit.jpg?width=1280",
+      "credit": {
+        "author": "Robert F. Sargent",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Into_the_Jaws_of_Death_23-0455M_edit.jpg"
+      },
+      "options": [
+        "1941",
+        "1942",
+        "1944",
+        "1945"
+      ],
+      "correctAnswer": "1944",
+      "funFact": "Fue la mayor invasión anfibia de la historia, el 6 de junio."
+    },
+    {
+      "id": "hist-bastille",
+      "category": "HISTORY",
+      "difficulty": "EASY",
+      "prompt": "La toma de la Bastilla, símbolo del inicio de la Revolución Francesa. ¿En qué año ocurrió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Anonymous_-_Prise_de_la_Bastille.jpg?width=1280",
+      "credit": {
+        "author": "Unidentified painter",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Anonymous_-_Prise_de_la_Bastille.jpg"
+      },
+      "options": [
+        "1776",
+        "1789",
+        "1799",
+        "1815"
+      ],
+      "correctAnswer": "1789",
+      "funFact": "El 14 de julio es hoy la fiesta nacional de Francia."
+    },
+    {
+      "id": "hist-declaration",
+      "category": "HISTORY",
+      "difficulty": "EASY",
+      "prompt": "La firma de la Declaración de Independencia de los Estados Unidos (cuadro de John Trumbull). ¿En qué año fue?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Declaration_of_Independence_(1819)%2C_by_John_Trumbull.jpg?width=1280",
+      "credit": {
+        "author": "John Trumbull",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Declaration_of_Independence_(1819)%2C_by_John_Trumbull.jpg"
+      },
+      "options": [
+        "1765",
+        "1776",
+        "1783",
+        "1789"
+      ],
+      "correctAnswer": "1776",
+      "funFact": "Se aprobó el 4 de julio en Filadelfia."
+    },
+    {
+      "id": "hist-iwo-jima",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "Marines izando la bandera en Iwo Jima. ¿En qué año fue tomada esta fotografía?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Raising_the_Flag_on_Iwo_Jima%2C_larger_-_edit1.jpg?width=1280",
+      "credit": {
+        "author": "Joe Rosenthal",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Raising_the_Flag_on_Iwo_Jima%2C_larger_-_edit1.jpg"
+      },
+      "options": [
+        "1942",
+        "1944",
+        "1945",
+        "1950"
+      ],
+      "correctAnswer": "1945",
+      "funFact": "La foto de Joe Rosenthal ganó el Premio Pulitzer."
+    },
+    {
+      "id": "hist-wright",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "Primer vuelo motorizado y controlado de los hermanos Wright en Kitty Hawk. ¿En qué año fue?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/First_flight2.jpg?width=1280",
+      "credit": {
+        "author": "John T. Daniels",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:First_flight2.jpg"
+      },
+      "options": [
+        "1899",
+        "1903",
+        "1910",
+        "1914"
+      ],
+      "correctAnswer": "1903",
+      "funFact": "El primer vuelo duró 12 segundos y recorrió 36,6 metros."
+    },
+    {
+      "id": "hist-pearl-harbor",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "Vista desde un avión japonés durante el ataque a Pearl Harbor. ¿En qué año ocurrió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Attack_on_Pearl_Harbor_Japanese_planes_view.jpg?width=1280",
+      "credit": {
+        "author": "Armada Imperial Japonesa",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Attack_on_Pearl_Harbor_Japanese_planes_view.jpg"
+      },
+      "options": [
+        "1939",
+        "1940",
+        "1941",
+        "1943"
+      ],
+      "correctAnswer": "1941",
+      "funFact": "El ataque del 7 de diciembre llevó a EE. UU. a entrar en la Segunda Guerra Mundial."
+    },
+    {
+      "id": "hist-hindenburg",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "El desastre del dirigible Hindenburg en Nueva Jersey. ¿En qué año ocurrió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Hindenburg_disaster.jpg?width=1280",
+      "credit": {
+        "author": "Sam Shere",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Hindenburg_disaster.jpg"
+      },
+      "options": [
+        "1925",
+        "1931",
+        "1937",
+        "1945"
+      ],
+      "correctAnswer": "1937",
+      "funFact": "Marcó el fin de la era de los grandes dirigibles de pasajeros."
+    },
+    {
+      "id": "hist-sputnik",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "Réplica del Sputnik 1, el primer satélite artificial (1957). ¿Qué país lo lanzó?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/%D0%9F%D0%B5%D1%80%D0%B2%D1%8B%D0%B9_%D0%B2_%D0%BC%D0%B8%D1%80%D0%B5_%D0%B8%D1%81%D0%BA%D1%83%D1%81%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D1%81%D0%BF%D1%83%D1%82%D0%BD%D0%B8%D0%BA_%D0%97%D0%B5%D0%BC%D0%BB%D0%B8.jpg?width=1280",
+      "credit": {
+        "author": "Andrey Butko",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:%D0%9F%D0%B5%D1%80%D0%B2%D1%8B%D0%B9_%D0%B2_%D0%BC%D0%B8%D1%80%D0%B5_%D0%B8%D1%81%D0%BA%D1%83%D1%81%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D1%81%D0%BF%D1%83%D1%82%D0%BD%D0%B8%D0%BA_%D0%97%D0%B5%D0%BC%D0%BB%D0%B8.jpg"
+      },
+      "options": [
+        "Estados Unidos",
+        "Unión Soviética",
+        "China",
+        "Reino Unido"
+      ],
+      "correctAnswer": "Unión Soviética",
+      "funFact": "Su lanzamiento dio inicio a la carrera espacial."
+    },
+    {
+      "id": "hist-st-louis",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "El Spirit of St. Louis, avión del primer vuelo transatlántico en solitario y sin escalas (1927). ¿Quién lo pilotó?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Spirit_Of_St_Louis2.jpg?width=1280",
+      "credit": {
+        "author": "Ad Meskens",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Spirit_Of_St_Louis2.jpg"
+      },
+      "options": [
+        "Amelia Earhart",
+        "Charles Lindbergh",
+        "Howard Hughes",
+        "Louis Blériot"
+      ],
+      "correctAnswer": "Charles Lindbergh",
+      "funFact": "Voló de Nueva York a París en unas 33 horas y media."
+    },
+    {
+      "id": "hist-chernobyl",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "La central nuclear de Chernóbil, escenario del peor accidente nuclear de la historia. ¿En qué año ocurrió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/IAEA_02790015_(5613115146).jpg?width=1280",
+      "credit": {
+        "author": "IAEA Imagebank",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:IAEA_02790015_(5613115146).jpg"
+      },
+      "options": [
+        "1979",
+        "1986",
+        "1991",
+        "1997"
+      ],
+      "correctAnswer": "1986",
+      "funFact": "La explosión del reactor 4 ocurrió el 26 de abril."
+    },
+    {
+      "id": "hist-waterloo",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "La batalla de Waterloo, la derrota final de Napoleón (1815). ¿En qué país actual se libró?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Battle_of_Waterloo_1815.PNG?width=1280",
+      "credit": {
+        "author": "William Sadler",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Battle_of_Waterloo_1815.PNG"
+      },
+      "options": [
+        "Francia",
+        "Bélgica",
+        "Países Bajos",
+        "Alemania"
+      ],
+      "correctAnswer": "Bélgica",
+      "funFact": "Waterloo está a unos 15 km al sur de Bruselas."
+    },
+    {
+      "id": "hist-wall-street",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "Multitud frente a la Bolsa de Nueva York tras el crac que inició la Gran Depresión. ¿En qué año fue?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Crowd_outside_nyse.jpg?width=1280",
+      "credit": {
+        "author": "Gobierno de EE. UU.",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Crowd_outside_nyse.jpg"
+      },
+      "options": [
+        "1918",
+        "1929",
+        "1933",
+        "1941"
+      ],
+      "correctAnswer": "1929",
+      "funFact": "El \"Martes Negro\" fue el 29 de octubre."
+    },
+    {
+      "id": "hist-challenger",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "La tragedia del transbordador espacial Challenger, 73 segundos después del despegue. ¿En qué año ocurrió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Challenger_explosion.jpg?width=1280",
+      "credit": {
+        "author": "NASA",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Challenger_explosion.jpg"
+      },
+      "options": [
+        "1981",
+        "1986",
+        "1990",
+        "2003"
+      ],
+      "correctAnswer": "1986",
+      "funFact": "Entre la tripulación viajaba la maestra Christa McAuliffe."
+    },
+    {
+      "id": "hist-mexican-revolution",
+      "category": "HISTORY",
+      "difficulty": "MEDIUM",
+      "prompt": "Combates en la Ciudad de México durante la Decena Trágica (1913). ¿En qué conflicto ocurrieron?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Decena_tr%C3%A1gica.JPG?width=1280",
+      "credit": {
+        "author": "Osuna",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Decena_tr%C3%A1gica.JPG"
+      },
+      "options": [
+        "Revolución Cubana",
+        "Revolución Mexicana",
+        "Guerra Cristera",
+        "Independencia de México"
+      ],
+      "correctAnswer": "Revolución Mexicana",
+      "funFact": "La revolución comenzó en 1910 contra el gobierno de Porfirio Díaz."
+    },
+    {
+      "id": "hist-salt-march",
+      "category": "HISTORY",
+      "difficulty": "HARD",
+      "prompt": "Gandhi durante la Marcha de la Sal contra el monopolio británico de la sal. ¿En qué año fue?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Marche_sel.jpg?width=1280",
+      "credit": {
+        "author": "Yann (talk)",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Marche_sel.jpg"
+      },
+      "options": [
+        "1919",
+        "1930",
+        "1942",
+        "1947"
+      ],
+      "correctAnswer": "1930",
+      "funFact": "Recorrió unos 390 km hasta Dandi, en la costa del mar Arábigo."
+    },
+    {
+      "id": "hist-berlin-airlift",
+      "category": "HISTORY",
+      "difficulty": "HARD",
+      "prompt": "Un avión aterriza en Tempelhof durante el puente aéreo de 1948-1949. ¿Qué ciudad bloqueada abastecía?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/C-54_landing_at_Tempelhof.jpg?width=1280",
+      "credit": {
+        "author": "Henry Ries / USAF",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:C-54_landing_at_Tempelhof.jpg"
+      },
+      "options": [
+        "Viena",
+        "Berlín Occidental",
+        "Varsovia",
+        "Praga"
+      ],
+      "correctAnswer": "Berlín Occidental",
+      "funFact": "Los aviones aterrizaban cada pocos minutos, día y noche."
+    },
+    {
+      "id": "hist-napoleon-coronation",
+      "category": "HISTORY",
+      "difficulty": "HARD",
+      "prompt": "La coronación de Napoleón como emperador en Notre-Dame (cuadro de David). ¿En qué año fue?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques-Louis_David_-_The_Coronation_of_Napoleon_(1805-1807).jpg?width=1280",
+      "credit": {
+        "author": "Jacques-Louis David",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Coronation_of_Napoleon_(1805-1807).jpg"
+      },
+      "options": [
+        "1799",
+        "1804",
+        "1810",
+        "1815"
+      ],
+      "correctAnswer": "1804",
+      "funFact": "Napoleón se colocó la corona a sí mismo, ante el papa Pío VII."
+    },
+    {
+      "id": "hist-gettysburg",
+      "category": "HISTORY",
+      "difficulty": "HARD",
+      "prompt": "La batalla de Gettysburg (1863) fue decisiva en una guerra. ¿Cuál?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Thure_de_Thulstrup_-_L._Prang_and_Co._-_Battle_of_Gettysburg_-_Restoration_by_Adam_Cuerden_(cropped).jpg?width=1280",
+      "credit": {
+        "author": "Thure de Thulstrup",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Thure_de_Thulstrup_-_L._Prang_and_Co._-_Battle_of_Gettysburg_-_Restoration_by_Adam_Cuerden_(cropped).jpg"
+      },
+      "options": [
+        "Guerra de Independencia de EE. UU.",
+        "Guerra de Secesión de EE. UU.",
+        "Guerra hispano-estadounidense",
+        "Guerra de 1812"
+      ],
+      "correctAnswer": "Guerra de Secesión de EE. UU.",
+      "funFact": "Allí pronunció Lincoln su famoso discurso de Gettysburg."
+    },
+    {
+      "id": "hist-constantinople",
+      "category": "HISTORY",
+      "difficulty": "HARD",
+      "prompt": "La caída de Constantinopla (fresco del monasterio de Moldovița). ¿En qué año ocurrió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Siege_of_Constantinople_fresco%2C_Moldovi%C8%9Ba_monastery%2C_Vatra_Moldovi%C8%9Bei%2C_2017.jpg?width=1280",
+      "credit": {
+        "author": "DimiTalen",
+        "license": "CC0",
+        "source": "https://commons.wikimedia.org/wiki/File:Siege_of_Constantinople_fresco%2C_Moldovi%C8%9Ba_monastery%2C_Vatra_Moldovi%C8%9Bei%2C_2017.jpg"
+      },
+      "options": [
+        "1204",
+        "1453",
+        "1492",
+        "1517"
+      ],
+      "correctAnswer": "1453",
+      "funFact": "Marcó el fin del Imperio bizantino."
+    },
+    {
+      "id": "hist-hubble",
+      "category": "HISTORY",
+      "difficulty": "HARD",
+      "prompt": "El telescopio espacial Hubble en órbita. ¿En qué año fue lanzado?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble_2009_close-up_2.jpg?width=1280",
+      "credit": {
+        "author": "NASA",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Hubble_2009_close-up_2.jpg"
+      },
+      "options": [
+        "1983",
+        "1990",
+        "1998",
+        "2001"
+      ],
+      "correctAnswer": "1990",
+      "funFact": "Al principio tenía un defecto en el espejo que se corrigió en 1993."
+    },
+    {
       "id": "pers-einstein",
       "category": "PERSONALITY",
-      "prompt": "Albert Einstein, físico de la teoría de la relatividad: ¿cuál es su país de origen?",
+      "difficulty": "EASY",
+      "prompt": "Albert Einstein, físico de la teoría de la relatividad: ¿en qué país actual nació?",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Albert_Einstein_Head.jpg?width=1280",
       "credit": {
         "author": "Orren Jack Turner",
@@ -406,28 +1516,10 @@
       "funFact": "Nació en Ulm en 1879; luego fue ciudadano suizo y estadounidense."
     },
     {
-      "id": "pers-frida",
-      "category": "PERSONALITY",
-      "prompt": "Frida Kahlo, pintora: ¿cuál es su país de origen?",
-      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg?width=1280",
-      "credit": {
-        "author": "Guillermo Kahlo",
-        "license": "Dominio público",
-        "source": "https://commons.wikimedia.org/wiki/File:Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg"
-      },
-      "options": [
-        "España",
-        "México",
-        "Colombia",
-        "Cuba"
-      ],
-      "correctAnswer": "México",
-      "funFact": "Su Casa Azul en Coyoacán es hoy un museo."
-    },
-    {
       "id": "pers-mandela",
       "category": "PERSONALITY",
-      "prompt": "Nelson Mandela, Nobel de la Paz 1993: ¿cuál es su país de origen?",
+      "difficulty": "EASY",
+      "prompt": "Nelson Mandela, Nobel de la Paz 1993: ¿en qué país actual nació?",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Nelson_Mandela_1994.jpg?width=1280",
       "credit": {
         "author": "Kingkongphoto / celebrity-photos.com",
@@ -444,9 +1536,190 @@
       "funFact": "Pasó 27 años en prisión antes de ser presidente en 1994."
     },
     {
+      "id": "pers-gandhi",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Mahatma Gandhi, líder de la no violencia: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mahatma-Gandhi%2C_studio%2C_1931.jpg?width=1280",
+      "credit": {
+        "author": "Elliott and Fry",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Mahatma-Gandhi%2C_studio%2C_1931.jpg"
+      },
+      "options": [
+        "Pakistán",
+        "India",
+        "Sudáfrica",
+        "Nepal"
+      ],
+      "correctAnswer": "India",
+      "funFact": "Nació en Porbandar en 1869; vivió 21 años en Sudáfrica."
+    },
+    {
+      "id": "pers-leonardo",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Leonardo da Vinci, autor de La Gioconda: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Francesco_Melzi_-_Portrait_of_Leonardo_(colour_correction).png?width=1280",
+      "credit": {
+        "author": "Francesco Melzi",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Francesco_Melzi_-_Portrait_of_Leonardo_(colour_correction).png"
+      },
+      "options": [
+        "Francia",
+        "Italia",
+        "España",
+        "Grecia"
+      ],
+      "correctAnswer": "Italia",
+      "funFact": "Nació en Vinci, cerca de Florencia, y murió en Francia."
+    },
+    {
+      "id": "pers-napoleon",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Napoleón Bonaparte, emperador: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques-Louis_David_-_The_Emperor_Napoleon_in_His_Study_at_the_Tuileries_-_Google_Art_Project.jpg?width=1280",
+      "credit": {
+        "author": "Jacques-Louis David",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Emperor_Napoleon_in_His_Study_at_the_Tuileries_-_Google_Art_Project.jpg"
+      },
+      "options": [
+        "Italia",
+        "Francia",
+        "España",
+        "Bélgica"
+      ],
+      "correctAnswer": "Francia",
+      "funFact": "Nació en Ajaccio, Córcega, un año después de que la isla pasara a Francia."
+    },
+    {
+      "id": "pers-lincoln",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Abraham Lincoln, presidente que abolió la esclavitud: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Abraham_Lincoln_O-77_matte_collodion_print.jpg?width=1280",
+      "credit": {
+        "author": "Alexander Gardner",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Abraham_Lincoln_O-77_matte_collodion_print.jpg"
+      },
+      "options": [
+        "Reino Unido",
+        "Estados Unidos",
+        "Canadá",
+        "Irlanda"
+      ],
+      "correctAnswer": "Estados Unidos",
+      "funFact": "Nació en una cabaña de troncos en Kentucky."
+    },
+    {
+      "id": "pers-darwin",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Charles Darwin, padre de la teoría de la evolución: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Charles_Darwin_seated_crop.jpg?width=1280",
+      "credit": {
+        "author": "Henry Maull & John Fox",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Charles_Darwin_seated_crop.jpg"
+      },
+      "options": [
+        "Estados Unidos",
+        "Reino Unido",
+        "Australia",
+        "Alemania"
+      ],
+      "correctAnswer": "Reino Unido",
+      "funFact": "Su viaje en el Beagle pasó por las islas Galápagos."
+    },
+    {
+      "id": "pers-newton",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Isaac Newton, ley de la gravitación universal: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Portrait_of_Sir_Isaac_Newton%2C_1689_(brightened).jpg?width=1280",
+      "credit": {
+        "author": "Godfrey Kneller",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Portrait_of_Sir_Isaac_Newton%2C_1689_(brightened).jpg"
+      },
+      "options": [
+        "Francia",
+        "Reino Unido",
+        "Alemania",
+        "Países Bajos"
+      ],
+      "correctAnswer": "Reino Unido",
+      "funFact": "Nació en Woolsthorpe, Inglaterra, en 1643."
+    },
+    {
+      "id": "pers-galileo",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Galileo Galilei, astrónomo: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Galileo_Galilei_(1564-1642)_RMG_BHC2700.tiff?width=1280",
+      "credit": {
+        "author": "Justus Sustermans",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Galileo_Galilei_(1564-1642)_RMG_BHC2700.tiff"
+      },
+      "options": [
+        "Italia",
+        "España",
+        "Portugal",
+        "Grecia"
+      ],
+      "correctAnswer": "Italia",
+      "funFact": "Nació en Pisa en 1564."
+    },
+    {
+      "id": "pers-victor-hugo",
+      "category": "PERSONALITY",
+      "difficulty": "EASY",
+      "prompt": "Victor Hugo, autor de Los miserables: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Victor_Hugo_by_%C3%89tienne_Carjat_1876_-_full.jpg?width=1280",
+      "credit": {
+        "author": "Étienne Carjat",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Victor_Hugo_by_%C3%89tienne_Carjat_1876_-_full.jpg"
+      },
+      "options": [
+        "Francia",
+        "Bélgica",
+        "Suiza",
+        "Canadá"
+      ],
+      "correctAnswer": "Francia",
+      "funFact": "Nació en Besanzón en 1802 y vivió años exiliado en Guernsey."
+    },
+    {
+      "id": "pers-frida",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Frida Kahlo, pintora: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg?width=1280",
+      "credit": {
+        "author": "Guillermo Kahlo",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg"
+      },
+      "options": [
+        "España",
+        "México",
+        "Colombia",
+        "Cuba"
+      ],
+      "correctAnswer": "México",
+      "funFact": "Su Casa Azul en Coyoacán es hoy un museo."
+    },
+    {
       "id": "pers-curie",
       "category": "PERSONALITY",
-      "prompt": "Marie Curie, doble Premio Nobel: ¿cuál es su país de origen?",
+      "difficulty": "MEDIUM",
+      "prompt": "Marie Curie, doble Premio Nobel: ¿en qué país actual nació?",
       "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Marie_Curie_c1920.jpg?width=1280",
       "credit": {
         "author": "Henri Manuel",
@@ -463,23 +1736,522 @@
       "funFact": "Nació en Varsovia como Maria Skłodowska y desarrolló su carrera en Francia."
     },
     {
-      "id": "pers-gandhi",
+      "id": "pers-mozart",
       "category": "PERSONALITY",
-      "prompt": "Mahatma Gandhi, líder de la no violencia: ¿cuál es su país de origen?",
-      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mahatma-Gandhi%2C_studio%2C_1931.jpg?width=1280",
+      "difficulty": "MEDIUM",
+      "prompt": "Wolfgang Amadeus Mozart, compositor: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Mozart_Family_-_Wolfgang_Amadeus_Mozart_headshot.jpg?width=1280",
       "credit": {
-        "author": "Elliott and Fry",
+        "author": "Johann Nepomuk della Croce",
         "license": "Dominio público",
-        "source": "https://commons.wikimedia.org/wiki/File:Mahatma-Gandhi%2C_studio%2C_1931.jpg"
+        "source": "https://commons.wikimedia.org/wiki/File:The_Mozart_Family_-_Wolfgang_Amadeus_Mozart_headshot.jpg"
       },
       "options": [
-        "Pakistán",
+        "Alemania",
+        "Austria",
+        "Suiza",
+        "Hungría"
+      ],
+      "correctAnswer": "Austria",
+      "funFact": "Nació en Salzburgo en 1756."
+    },
+    {
+      "id": "pers-bolivar",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Simón Bolívar, el Libertador: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Sim%C3%B3n_Bol%C3%ADvar._Toro_Moreno%2C_Luis._1922%2C_Legislative_Palace%2C_La_Paz.png?width=1280",
+      "credit": {
+        "author": "Luis Toro Moreno",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Sim%C3%B3n_Bol%C3%ADvar._Toro_Moreno%2C_Luis._1922%2C_Legislative_Palace%2C_La_Paz.png"
+      },
+      "options": [
+        "Colombia",
+        "Venezuela",
+        "Bolivia",
+        "Ecuador"
+      ],
+      "correctAnswer": "Venezuela",
+      "funFact": "Nació en Caracas en 1783; Bolivia lleva su nombre."
+    },
+    {
+      "id": "pers-van-gogh",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Vincent van Gogh, pintor de Los girasoles: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_(454045).jpg?width=1280",
+      "credit": {
+        "author": "Vincent van Gogh",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_(454045).jpg"
+      },
+      "options": [
+        "Bélgica",
+        "Francia",
+        "Países Bajos",
+        "Alemania"
+      ],
+      "correctAnswer": "Países Bajos",
+      "funFact": "Nació en Zundert en 1853 y pintó gran parte de su obra en Francia."
+    },
+    {
+      "id": "pers-mistral",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Gabriela Mistral, primera latinoamericana Nobel de Literatura: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Gabriela_Mistral_1945.jpg?width=1280",
+      "credit": {
+        "author": "Anna Riwkin-Brick",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Gabriela_Mistral_1945.jpg"
+      },
+      "options": [
+        "Argentina",
+        "Chile",
+        "Perú",
+        "Uruguay"
+      ],
+      "correctAnswer": "Chile",
+      "funFact": "Recibió el Nobel en 1945."
+    },
+    {
+      "id": "pers-beethoven",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Ludwig van Beethoven, compositor de la Novena Sinfonía: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph_Karl_Stieler's_Beethoven_mit_dem_Manuskript_der_Missa_solemnis.jpg?width=1280",
+      "credit": {
+        "author": "Joseph Karl Stieler",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Joseph_Karl_Stieler's_Beethoven_mit_dem_Manuskript_der_Missa_solemnis.jpg"
+      },
+      "options": [
+        "Austria",
+        "Alemania",
+        "Polonia",
+        "República Checa"
+      ],
+      "correctAnswer": "Alemania",
+      "funFact": "Nació en Bonn en 1770, aunque vivió y murió en Viena."
+    },
+    {
+      "id": "pers-andersen",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Hans Christian Andersen, autor de La sirenita: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/HCA_by_Thora_Hallager_1869_crop.jpg?width=1280",
+      "credit": {
+        "author": "Thora Hallager",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:HCA_by_Thora_Hallager_1869_crop.jpg"
+      },
+      "options": [
+        "Suecia",
+        "Noruega",
+        "Dinamarca",
+        "Alemania"
+      ],
+      "correctAnswer": "Dinamarca",
+      "funFact": "Nació en Odense en 1805."
+    },
+    {
+      "id": "pers-borges",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Jorge Luis Borges, autor de El Aleph: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Jorge_Luis_Borges_1951%2C_by_Grete_Stern_(full).jpg?width=1280",
+      "credit": {
+        "author": "Grete Stern",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Jorge_Luis_Borges_1951%2C_by_Grete_Stern_(full).jpg"
+      },
+      "options": [
+        "Uruguay",
+        "Argentina",
+        "España",
+        "Chile"
+      ],
+      "correctAnswer": "Argentina",
+      "funFact": "Nació en Buenos Aires en 1899."
+    },
+    {
+      "id": "pers-gagarin",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Yuri Gagarin, primer ser humano en el espacio: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Yuri_Gagarin_with_awards_(cropped)_2.jpg?width=1280",
+      "credit": {
+        "author": "Александр Моклецов / СовИнформБюро",
+        "license": "CC BY 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Yuri_Gagarin_with_awards_(cropped)_2.jpg"
+      },
+      "options": [
+        "Ucrania",
+        "Rusia",
+        "Bielorrusia",
+        "Kazajistán"
+      ],
+      "correctAnswer": "Rusia",
+      "funFact": "Su vuelo de 1961 despegó desde Baikonur, en el actual Kazajistán."
+    },
+    {
+      "id": "pers-amundsen",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Roald Amundsen, primero en llegar al Polo Sur: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Amundsen_in_fur_skins.jpg?width=1280",
+      "credit": {
+        "author": "Anonymous",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Amundsen_in_fur_skins.jpg"
+      },
+      "options": [
+        "Suecia",
+        "Noruega",
+        "Dinamarca",
+        "Finlandia"
+      ],
+      "correctAnswer": "Noruega",
+      "funFact": "Alcanzó el Polo Sur en diciembre de 1911."
+    },
+    {
+      "id": "pers-lovelace",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Ada Lovelace, pionera de la programación: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Ada_Lovelace_daguerreotype_by_Antoine_Claudet_1843_-_cropped.png?width=1280",
+      "credit": {
+        "author": "Antoine Claudet",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Ada_Lovelace_daguerreotype_by_Antoine_Claudet_1843_-_cropped.png"
+      },
+      "options": [
+        "Francia",
+        "Reino Unido",
+        "Estados Unidos",
+        "Irlanda"
+      ],
+      "correctAnswer": "Reino Unido",
+      "funFact": "Era hija del poeta Lord Byron."
+    },
+    {
+      "id": "pers-neruda",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Pablo Neruda, autor de Veinte poemas de amor: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Pablo_Neruda_1963.jpg?width=1280",
+      "credit": {
+        "author": "Unknown (Mondadori Publishers)",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Pablo_Neruda_1963.jpg"
+      },
+      "options": [
+        "Argentina",
+        "Chile",
+        "Perú",
+        "Colombia"
+      ],
+      "correctAnswer": "Chile",
+      "funFact": "Recibió el Nobel de Literatura en 1971."
+    },
+    {
+      "id": "pers-hemingway",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Ernest Hemingway, autor de El viejo y el mar: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/ErnestHemingway.jpg?width=1280",
+      "credit": {
+        "author": "Lloyd Arnold",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:ErnestHemingway.jpg"
+      },
+      "options": [
+        "Estados Unidos",
+        "Cuba",
+        "España",
+        "Canadá"
+      ],
+      "correctAnswer": "Estados Unidos",
+      "funFact": "Nació en Illinois, aunque vivió muchos años en Cuba."
+    },
+    {
+      "id": "pers-earhart",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Amelia Earhart, aviadora: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Amelia_Earhart_standing_under_nose_of_her_Lockheed_Model_10-E_Electra%2C_small_(cropped).jpg?width=1280",
+      "credit": {
+        "author": "Underwood & Underwood",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Amelia_Earhart_standing_under_nose_of_her_Lockheed_Model_10-E_Electra%2C_small_(cropped).jpg"
+      },
+      "options": [
+        "Canadá",
+        "Estados Unidos",
+        "Reino Unido",
+        "Australia"
+      ],
+      "correctAnswer": "Estados Unidos",
+      "funFact": "Fue la primera mujer en cruzar sola el Atlántico en avión, en 1932."
+    },
+    {
+      "id": "pers-marti",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "José Martí, poeta y prócer: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Jos%C3%A9_Mart%C3%AD_retrato_hecho_en_M%C3%A9xico_1875.jpg?width=1280",
+      "credit": {
+        "author": "Cuba. Secretaría de Instrucción Pública y Bellas Artes.",
+        "license": "CC0",
+        "source": "https://commons.wikimedia.org/wiki/File:Jos%C3%A9_Mart%C3%AD_retrato_hecho_en_M%C3%A9xico_1875.jpg"
+      },
+      "options": [
+        "Cuba",
+        "México",
+        "Venezuela",
+        "República Dominicana"
+      ],
+      "correctAnswer": "Cuba",
+      "funFact": "Nació en La Habana en 1853."
+    },
+    {
+      "id": "pers-juarez",
+      "category": "PERSONALITY",
+      "difficulty": "MEDIUM",
+      "prompt": "Benito Juárez, \"Benemérito de las Américas\": ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Photograph_of_Benito_Juarez.jpg?width=1280",
+      "credit": {
+        "author": "Unknown photographer",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Photograph_of_Benito_Juarez.jpg"
+      },
+      "options": [
+        "Guatemala",
+        "México",
+        "Colombia",
+        "Perú"
+      ],
+      "correctAnswer": "México",
+      "funFact": "Nació en Oaxaca y fue el primer presidente indígena de su país."
+    },
+    {
+      "id": "pers-tagore",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Rabindranath Tagore, Nobel de Literatura 1913: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/1926_Rabindrath_Tagore.jpg?width=1280",
+      "credit": {
+        "author": "Georges Chevalier",
+        "license": "CC BY 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:1926_Rabindrath_Tagore.jpg"
+      },
+      "options": [
         "India",
-        "Sudáfrica",
-        "Nepal"
+        "Bangladés",
+        "Pakistán",
+        "Sri Lanka"
       ],
       "correctAnswer": "India",
-      "funFact": "Nació en Porbandar en 1869; vivió 21 años en Sudáfrica."
+      "funFact": "Nació en Calcuta; escribió los himnos de India y de Bangladés."
+    },
+    {
+      "id": "pers-chopin",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Frédéric Chopin, compositor y pianista: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Frederic_Chopin_photo.jpeg?width=1280",
+      "credit": {
+        "author": "Louis-Auguste Bisson",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Frederic_Chopin_photo.jpeg"
+      },
+      "options": [
+        "Francia",
+        "Polonia",
+        "Austria",
+        "Hungría"
+      ],
+      "correctAnswer": "Polonia",
+      "funFact": "Nació cerca de Varsovia y vivió en París desde 1831."
+    },
+    {
+      "id": "pers-sun-yat-sen",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Sun Yat-sen, \"padre de la nación\" republicana: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/%E5%AD%99%E4%B8%AD%E5%B1%B1%E8%82%96%E5%83%8F.jpg?width=1280",
+      "credit": {
+        "author": "上海波尔照相馆",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:%E5%AD%99%E4%B8%AD%E5%B1%B1%E8%82%96%E5%83%8F.jpg"
+      },
+      "options": [
+        "Japón",
+        "China",
+        "Vietnam",
+        "Corea del Sur"
+      ],
+      "correctAnswer": "China",
+      "funFact": "Lideró la revolución que terminó con la dinastía Qing en 1911."
+    },
+    {
+      "id": "pers-shackleton",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Ernest Shackleton, explorador antártico: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Ernest_Shackleton_before_1909.jpg?width=1280",
+      "credit": {
+        "author": "George Charles Beresford",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Ernest_Shackleton_before_1909.jpg"
+      },
+      "options": [
+        "Reino Unido",
+        "Irlanda",
+        "Nueva Zelanda",
+        "Noruega"
+      ],
+      "correctAnswer": "Irlanda",
+      "funFact": "Nació en el condado de Kildare, cuando toda Irlanda formaba parte del Reino Unido."
+    },
+    {
+      "id": "pers-haile-selassie",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Haile Selassie, último emperador: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Haile_Selassie_in_full_dress_(3x4_cropped).jpg?width=1280",
+      "credit": {
+        "author": "unknown; according to  and  an official portrait of which b/",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Haile_Selassie_in_full_dress_(3x4_cropped).jpg"
+      },
+      "options": [
+        "Eritrea",
+        "Etiopía",
+        "Kenia",
+        "Somalia"
+      ],
+      "correctAnswer": "Etiopía",
+      "funFact": "Es una figura central del movimiento rastafari."
+    },
+    {
+      "id": "pers-rizal",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "José Rizal, escritor y héroe nacional: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Jose_Rizal_full.jpg?width=1280",
+      "credit": {
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Jose_Rizal_full.jpg"
+      },
+      "options": [
+        "Filipinas",
+        "Indonesia",
+        "España",
+        "Malasia"
+      ],
+      "correctAnswer": "Filipinas",
+      "funFact": "Escribió en español la novela Noli me tángere."
+    },
+    {
+      "id": "pers-nightingale",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Florence Nightingale, fundadora de la enfermería moderna: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Florence_Nightingale_(H_Hering_NPG_x82368).jpg?width=1280",
+      "credit": {
+        "author": "Henry Hering",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Florence_Nightingale_(H_Hering_NPG_x82368).jpg"
+      },
+      "options": [
+        "Reino Unido",
+        "Italia",
+        "Francia",
+        "Irlanda"
+      ],
+      "correctAnswer": "Italia",
+      "funFact": "Era británica, pero nació en Florencia, de ahí su nombre."
+    },
+    {
+      "id": "pers-chaplin",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Charles Chaplin, creador de Charlot: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Charlie_Chaplin_portrait_Getty_1739411952.jpg?width=1280",
+      "credit": {
+        "author": "Strauss-Peyton Studio",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Charlie_Chaplin_portrait_Getty_1739411952.jpg"
+      },
+      "options": [
+        "Estados Unidos",
+        "Reino Unido",
+        "Canadá",
+        "Irlanda"
+      ],
+      "correctAnswer": "Reino Unido",
+      "funFact": "Nació en Londres en 1889 y triunfó en Hollywood."
+    },
+    {
+      "id": "pers-munch",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Edvard Munch, pintor de El grito: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Portrait_of_Edvard_Munch_(cropped).png?width=1280",
+      "credit": {
+        "license": "CC BY 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Portrait_of_Edvard_Munch_(cropped).png"
+      },
+      "options": [
+        "Suecia",
+        "Dinamarca",
+        "Noruega",
+        "Finlandia"
+      ],
+      "correctAnswer": "Noruega",
+      "funFact": "Nació en Løten en 1863."
+    },
+    {
+      "id": "pers-sibelius",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Jean Sibelius, compositor de Finlandia: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean_Sibelius_circa_1898-1900_(3x4_cropped).jpg?width=1280",
+      "credit": {
+        "author": "Daniel Nyblin",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Jean_Sibelius_circa_1898-1900_(3x4_cropped).jpg"
+      },
+      "options": [
+        "Suecia",
+        "Finlandia",
+        "Estonia",
+        "Noruega"
+      ],
+      "correctAnswer": "Finlandia",
+      "funFact": "Su rostro aparecía en el billete de 100 marcos finlandeses."
+    },
+    {
+      "id": "pers-freud",
+      "category": "PERSONALITY",
+      "difficulty": "HARD",
+      "prompt": "Sigmund Freud, padre del psicoanálisis: ¿en qué país actual nació?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Sigmund_Freud%2C_by_Max_Halberstadt_(cropped).jpg?width=1280",
+      "credit": {
+        "author": "Max Halberstadt",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Sigmund_Freud%2C_by_Max_Halberstadt_(cropped).jpg"
+      },
+      "options": [
+        "Austria",
+        "Alemania",
+        "República Checa",
+        "Hungría"
+      ],
+      "correctAnswer": "República Checa",
+      "funFact": "Nació en Příbor (Moravia) y vivió casi toda su vida en Viena."
     },
     {
       "id": "evt-visa-denied",
@@ -528,6 +2300,102 @@
       "title": "Guía Local",
       "description": "Un local te muestra los secretos de la ciudad. Ganas 200 pts.",
       "points": 200
+    },
+    {
+      "id": "evt-exchange",
+      "category": "TRAVEL_EVENT",
+      "icon": "💱",
+      "title": "Cambio Favorable",
+      "description": "La moneda local se desplomó justo cuando cambiaste dinero. Ganas 150 pts.",
+      "points": 150
+    },
+    {
+      "id": "evt-expired-passport",
+      "category": "TRAVEL_EVENT",
+      "icon": "📕",
+      "title": "Pasaporte Vencido",
+      "description": "Descubres en el control que tu pasaporte venció ayer. Pierdes 250 pts.",
+      "points": -250
+    },
+    {
+      "id": "evt-street-food",
+      "category": "TRAVEL_EVENT",
+      "icon": "🍜",
+      "title": "Banquete Callejero",
+      "description": "Una familia te invita a comer el plato típico. Ganas 100 pts.",
+      "points": 100
+    },
+    {
+      "id": "evt-food-poisoning",
+      "category": "TRAVEL_EVENT",
+      "icon": "🤢",
+      "title": "Intoxicación",
+      "description": "Ese puesto callejero no era tan buena idea. Pierdes 150 pts.",
+      "points": -150
+    },
+    {
+      "id": "evt-night-train",
+      "category": "TRAVEL_EVENT",
+      "icon": "🚆",
+      "title": "Tren Nocturno",
+      "description": "Viajas dormido y te ahorras una noche de hotel. Ganas 150 pts.",
+      "points": 150
+    },
+    {
+      "id": "evt-strike",
+      "category": "TRAVEL_EVENT",
+      "icon": "🪧",
+      "title": "Huelga de Controladores",
+      "description": "Todos los vuelos en tierra hasta nuevo aviso. Pierdes 200 pts.",
+      "points": -200
+    },
+    {
+      "id": "evt-couchsurfing",
+      "category": "TRAVEL_EVENT",
+      "icon": "🛋️",
+      "title": "Couchsurfing Perfecto",
+      "description": "Tu anfitrión resulta ser chef y guía turístico. Ganas 250 pts.",
+      "points": 250
+    },
+    {
+      "id": "evt-overweight",
+      "category": "TRAVEL_EVENT",
+      "icon": "⚖️",
+      "title": "Exceso de Equipaje",
+      "description": "Tu maleta pesa 3 kg de más. Pierdes 100 pts.",
+      "points": -100
+    },
+    {
+      "id": "evt-viral",
+      "category": "TRAVEL_EVENT",
+      "icon": "📸",
+      "title": "Foto Viral",
+      "description": "Tu foto del atardecer se hace viral. Ganas 300 pts.",
+      "points": 300
+    },
+    {
+      "id": "evt-pickpocket",
+      "category": "TRAVEL_EVENT",
+      "icon": "👛",
+      "title": "Carterista",
+      "description": "Alguien se llevó tu billetera en el metro. Pierdes 250 pts.",
+      "points": -250
+    },
+    {
+      "id": "evt-perfect-weather",
+      "category": "TRAVEL_EVENT",
+      "icon": "☀️",
+      "title": "Clima Perfecto",
+      "description": "Una semana entera de sol y cielo despejado. Ganas 100 pts.",
+      "points": 100
+    },
+    {
+      "id": "evt-miles",
+      "category": "TRAVEL_EVENT",
+      "icon": "🎟️",
+      "title": "Millas Acumuladas",
+      "description": "Canjeas tus millas por un vuelo gratis. Ganas 400 pts.",
+      "points": 400
     }
   ]
 }

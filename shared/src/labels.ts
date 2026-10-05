@@ -1,4 +1,4 @@
-import type { CardCategory, PawnColor } from './types';
+import type { CardCategory, Difficulty, PawnColor } from './types';
 
 export const CATEGORY_META: Record<CardCategory, { label: string; icon: string; hint: string }> = {
   LOCATION: { label: 'Lugar', icon: '📍', hint: 'Ubica la foto en el mapa' },
@@ -7,6 +7,12 @@ export const CATEGORY_META: Record<CardCategory, { label: string; icon: string; 
   HISTORY: { label: 'Historia Mundial', icon: '📜', hint: 'Años y eventos' },
   PERSONALITY: { label: 'Personalidades', icon: '👤', hint: '¿De dónde es?' },
   TRAVEL_EVENT: { label: 'Evento de Viajero', icon: '🛂', hint: '¡Suerte en la aduana!' },
+};
+
+export const DIFFICULTY_META: Record<Difficulty, { label: string; short: string }> = {
+  EASY: { label: 'Fácil', short: '×1' },
+  MEDIUM: { label: 'Normal', short: '×1,25' },
+  HARD: { label: 'Difícil', short: '×1,5' },
 };
 
 export const PAWN_COLOR_META: Record<PawnColor, { label: string; hex: string }> = {

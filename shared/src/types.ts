@@ -15,6 +15,11 @@ export const CARD_CATEGORIES: readonly CardCategory[] = [
   'TRAVEL_EVENT',
 ];
 
+/** Nivel de una carta. En modo mixto salen todas y las dificiles valen mas (ver DIFFICULTY_MULTIPLIER). */
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+
+export const DIFFICULTIES: readonly Difficulty[] = ['EASY', 'MEDIUM', 'HARD'];
+
 export type VictoryMode = 'POINTS' | 'ROUNDS';
 
 export const POINT_TARGETS = [3000, 5000, 10000] as const;
@@ -45,6 +50,7 @@ interface BaseCard {
 
 export interface LocationCard extends BaseCard {
   category: 'LOCATION';
+  difficulty: Difficulty;
   prompt: string;
   imageUrl: string;
   location: LatLng;
@@ -55,9 +61,10 @@ export interface LocationCard extends BaseCard {
 
 export interface QuizCard extends BaseCard {
   category: QuizCategory;
+  difficulty: Difficulty;
   prompt: string;
   imageUrl?: string;
-  /** Codigo ISO 3166-1 alpha-2 (solo FLAG); la imagen se resuelve via FlagCDN. */
+  /** Codigo ISO 3166-1 alpha-2: en FLAG resuelve la imagen via FlagCDN; en CITY evita duplicar capitales generadas. */
   countryCode?: string;
   options: string[];
   correctAnswer: string;
@@ -74,6 +81,24 @@ export interface TravelEventCard extends BaseCard {
 }
 
 export type Card = LocationCard | QuizCard | TravelEventCard;
+
+/** Pais del listado local (shared/data/countries.json) usado para generar banderas y capitales. */
+export interface Country {
+  code: string;
+  name: string;
+  /** null si tiene varias capitales oficiales o la pregunta seria trivial. */
+  capital: string | null;
+  region: string;
+  /** Posicion en el ranking de popularidad (0 = mas conocido). Define el nivel. */
+  fame: number;
+}
+
+export interface CountryData {
+  regions: Record<string, string>;
+  countries: Country[];
+  similarFlags: string[][];
+  decoyCities: Record<string, string[]>;
+}
 
 export interface SeedData {
   version: number;
@@ -111,6 +136,7 @@ export interface TurnRecord {
   playerId: string;
   category: CardCategory;
   cardId: string;
+  difficulty?: Difficulty;
   /** Puntos efectivamente aplicados (tras el piso de 0). */
   delta: number;
   /** null en eventos de viajero (no hay pregunta). */

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { CATEGORY_META, LOCATION_BRACKETS, normalizeLng, type LatLng, type LocationCard, formatNumber } from '@roampass/shared';
+import { CATEGORY_META, LOCATION_BRACKETS, formatNumber, normalizeLng, withDifficulty, type LatLng, type LocationCard } from '@roampass/shared';
 import { useGameStore, type ActiveDraw } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { CardImage } from '../ui/CardImage';
+import { DifficultyBadge } from '../ui/DifficultyBadge';
 import { CardResult } from './CardResult';
 
 // divIcon evita el problema clasico de rutas de imagenes de Leaflet con bundlers.
@@ -63,6 +64,7 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
         <span className="flex items-center gap-2">
           <span className="text-2xl">{meta.icon}</span>
           <span>{meta.label}</span>
+          <DifficultyBadge difficulty={card.difficulty} />
           <span className="truncate text-sm font-normal text-passport-500 dark:text-passport-300">
             · {player?.avatar} {player?.name}
           </span>
@@ -115,8 +117,7 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
                 <p className="text-sm text-passport-500 dark:text-passport-300">
                   {guess ? '¿Seguro? Puedes tocar otro punto para moverlo.' : '👆 Toca el mapa donde crees que se tomó la foto.'}
                   <span className="block text-xs">
-                    ≤{LOCATION_BRACKETS[0].maxKm} km: {LOCATION_BRACKETS[0].points} · ≤{LOCATION_BRACKETS[1].maxKm} km: {LOCATION_BRACKETS[1].points} · ≤
-                    {formatNumber(LOCATION_BRACKETS[2].maxKm)} km: {LOCATION_BRACKETS[2].points}
+                    {LOCATION_BRACKETS.map((b) => `≤${formatNumber(b.maxKm)} km: ${formatNumber(withDifficulty(b.points, card.difficulty))}`).join(' · ')}
                   </span>
                 </p>
                 <button className="btn-primary shrink-0 text-lg" disabled={!guess} onClick={() => guess && resolve({ kind: 'LOCATION', card, guess })}>

@@ -1,6 +1,6 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { currentPlayer } from '@roampass/shared';
+import { currentPlayer, remainingByCategory } from '@roampass/shared';
 import { useGameStore } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { TurnBanner } from './TurnBanner';
@@ -21,10 +21,18 @@ export function GameTable() {
   const game = useGameStore((s) => s.game);
   const active = useGameStore((s) => s.active);
   const syncError = useGameStore((s) => s.syncError);
+  const deck = useGameStore((s) => s.deck);
+  const ensureDeck = useGameStore((s) => s.ensureDeck);
   const draw = useGameStore((s) => s.draw);
   const endEarly = useGameStore((s) => s.endEarly);
   const navigate = useNavigate();
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const usedCardIds = game?.usedCardIds;
+  const remaining = useMemo(() => remainingByCategory(deck, usedCardIds ?? []), [deck, usedCardIds]);
+
+  useEffect(() => {
+    void ensureDeck();
+  }, [ensureDeck]);
 
   if (!game) return <Navigate to="/" replace />;
 
@@ -37,7 +45,7 @@ export function GameTable() {
       <TurnBanner game={game} player={currentPlayer(game)} className="sticky top-0 z-20 md:static md:col-start-1 md:row-start-1" />
 
       <section className="md:col-start-2 md:row-span-3 md:row-start-1" aria-label="Mazo de tarjetas">
-        <CardGrid disabled={finished || !!active} onDraw={draw} />
+        <CardGrid disabled={finished || !!active || deck.length === 0} remaining={remaining} onDraw={draw} />
         {syncError && (
           <p className="mt-3 rounded-lg bg-brass/15 px-3 py-2 text-xs text-passport-700 dark:text-passport-100">
             ⚠ Sin conexión con el servidor ({syncError}). La partida sigue guardada en este dispositivo.

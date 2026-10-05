@@ -9,6 +9,7 @@ export function cardToRow(card: Card): Prisma.CardQuestionCreateInput {
     case 'LOCATION':
       return {
         ...base,
+        difficulty: card.difficulty,
         prompt: card.prompt,
         imageUrl: card.imageUrl,
         latitude: card.location.lat,
@@ -21,6 +22,7 @@ export function cardToRow(card: Card): Prisma.CardQuestionCreateInput {
     default:
       return {
         ...base,
+        difficulty: card.difficulty,
         prompt: card.prompt,
         imageUrl: card.imageUrl ?? null,
         countryCode: card.countryCode ?? null,
@@ -39,6 +41,7 @@ export function rowToCard(row: CardQuestion): Card {
       return {
         id: row.id,
         category: 'LOCATION',
+        difficulty: row.difficulty ?? 'MEDIUM',
         prompt: row.prompt,
         imageUrl: row.imageUrl ?? '',
         location: { lat: row.latitude ?? 0, lng: row.longitude ?? 0 },
@@ -58,6 +61,7 @@ export function rowToCard(row: CardQuestion): Card {
       return {
         id: row.id,
         category: row.category as QuizCategory,
+        difficulty: row.difficulty ?? 'MEDIUM',
         prompt: row.prompt,
         imageUrl: row.imageUrl ?? undefined,
         countryCode: row.countryCode ?? undefined,

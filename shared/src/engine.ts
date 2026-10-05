@@ -123,6 +123,7 @@ export function applyTurn(
         playerId: player.id,
         category,
         cardId: outcome.card.id,
+        ...('difficulty' in outcome.card && { difficulty: outcome.card.difficulty }),
         delta: result.delta,
         correct: result.correct,
         ...(result.distanceKm !== undefined && { distanceKm: result.distanceKm }),

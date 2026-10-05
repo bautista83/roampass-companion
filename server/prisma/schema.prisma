@@ -22,6 +22,12 @@ enum GameStatus {
   FINISHED
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 enum CardCategory {
   LOCATION
   FLAG
@@ -87,9 +93,13 @@ model Player {
 /// - FLAG: countryCode, options, correctAnswer
 /// - CITY / HISTORY / PERSONALITY: options, correctAnswer, imageUrl opcional
 /// - TRAVEL_EVENT: prompt (titulo), description, icon, points
+/// `difficulty` aplica a todas salvo TRAVEL_EVENT (multiplica los puntos: x1 / x1,25 / x1,5).
+/// Las banderas y capitales de casi todos los paises no se guardan aqui: el cliente las genera
+/// desde shared/data/countries.json.
 model CardQuestion {
   id            String       @id // slug estable, ej. "flag-ar"
   category      CardCategory
+  difficulty    Difficulty?
   prompt        String
   description   String?
   icon          String?
@@ -107,5 +117,5 @@ model CardQuestion {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  @@index([category, isActive])
+  @@index([category, difficulty, isActive])
 }

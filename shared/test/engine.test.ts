@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import seed from '../data/seedData.json';
+import countryData from '../data/countries.json';
 import {
   applyTurn,
   createGame,
   drawCard,
+  generateCountryCards,
+  remainingByCategory,
   finish,
   GameRuleError,
   haversineKm,
@@ -12,6 +15,7 @@ import {
   scoreOutcome,
   type Card,
   type CardOutcome,
+  type CountryData,
   type LocationCard,
   type PlayerSetup,
   type QuizCard,
@@ -25,9 +29,10 @@ const PLAYERS: PlayerSetup[] = [
   { name: 'Beto', color: 'blue', avatar: '🎒' },
 ];
 
-const quiz = (category: QuizCard['category']): QuizCard => ({
-  id: `q-${category}`,
+const quiz = (category: QuizCard['category'], difficulty: QuizCard['difficulty'] = 'EASY'): QuizCard => ({
+  id: `q-${category}-${difficulty}`,
   category,
+  difficulty,
   prompt: '?',
   options: ['A', 'B', 'C', 'D'],
   correctAnswer: 'A',
@@ -82,10 +87,18 @@ describe('scoreOutcome', () => {
     expect(scoreOutcome(right('PERSONALITY')).delta).toBe(400);
     expect(scoreOutcome(wrong)).toEqual({ delta: 0, correct: false });
   });
+  it('aplica el bonus por dificultad (x1 / x1,25 / x1,5)', () => {
+    expect(scoreOutcome({ kind: 'QUIZ', card: quiz('CITY', 'MEDIUM'), answer: 'A' }).delta).toBe(375);
+    expect(scoreOutcome({ kind: 'QUIZ', card: quiz('HISTORY', 'HARD'), answer: 'A' }).delta).toBe(750);
+    expect(scoreOutcome({ kind: 'QUIZ', card: quiz('HISTORY', 'HARD'), answer: 'B' }).delta).toBe(0);
+    expect(scoreOutcome({ kind: 'EVENT', card: event(-300) }).delta).toBe(-300);
+  });
   it('calcula la distancia en cartas de LUGAR', () => {
     const card = deck.find((c) => c.id === 'loc-machu-picchu') as LocationCard;
     const r = scoreOutcome({ kind: 'LOCATION', card, guess: { lat: -13.5, lng: -72 } });
     expect(r.delta).toBe(1000);
+    const hard = deck.find((c) => c.id === 'loc-deadvlei') as LocationCard;
+    expect(scoreOutcome({ kind: 'LOCATION', card: hard, guess: hard.location }).delta).toBe(1500);
     expect(r.distanceKm).toBeGreaterThan(0);
   });
 });
@@ -145,12 +158,42 @@ describe('turnos y victoria', () => {
 });
 
 describe('drawCard', () => {
-  it('no repite cartas hasta agotar la categoria', () => {
-    const flags = deck.filter((c) => c.category === 'FLAG');
+  it('nunca repite una carta en la partida y avisa cuando se agota', () => {
+    const locations = deck.filter((c) => c.category === 'LOCATION');
     const used: string[] = [];
-    for (let i = 0; i < flags.length; i++) used.push(drawCard<Card>(deck, 'FLAG', used).id);
-    expect(new Set(used).size).toBe(flags.length);
-    expect(drawCard(deck, 'FLAG', used).category).toBe('FLAG');
+    for (let i = 0; i < locations.length; i++) used.push(drawCard<Card>(deck, 'LOCATION', used)!.id);
+    expect(new Set(used).size).toBe(locations.length);
+    expect(drawCard(deck, 'LOCATION', used)).toBeNull();
+    expect(remainingByCategory(deck, used).LOCATION).toBe(0);
+    expect(remainingByCategory(deck, used).HISTORY).toBe(deck.filter((c) => c.category === 'HISTORY').length);
+  });
+});
+
+describe('generateCountryCards', () => {
+  const generated = generateCountryCards(countryData as CountryData, deck);
+  const all = [...deck, ...generated];
+
+  it('genera banderas y capitales validas, sin duplicar las escritas a mano', () => {
+    expect(generated.filter((c) => c.category === 'FLAG').length).toBeGreaterThan(180);
+    expect(generated.filter((c) => c.category === 'CITY').length).toBeGreaterThan(160);
+    expect(new Set(all.map((c) => c.id)).size).toBe(all.length);
+    for (const c of generated) {
+      expect(new Set(c.options).size, c.id).toBe(4);
+      expect(c.options, c.id).toContain(c.correctAnswer);
+    }
+    expect(generated.some((c) => c.id === 'gen-flag-ar')).toBe(false);
+    expect(generated.some((c) => c.id === 'gen-capital-au')).toBe(false);
+  });
+
+  it('el nivel dificil usa banderas parecidas y ciudades trampa', () => {
+    const chad = generated.find((c) => c.id === 'gen-flag-ro')!;
+    expect(chad.options).toContain('Chad');
+    const brazil = generated.find((c) => c.id === 'gen-capital-br')!;
+    expect(brazil.correctAnswer).toBe('Brasilia');
+  });
+
+  it('es determinista (mismas opciones en todos los dispositivos)', () => {
+    expect(generateCountryCards(countryData as CountryData, deck)).toEqual(generated);
   });
 });
 
@@ -160,6 +203,7 @@ describe('seedData.json', () => {
       expect(deck.filter((c) => c.category === cat).length).toBeGreaterThanOrEqual(3);
     }
     for (const c of deck) {
+      if (c.category !== 'TRAVEL_EVENT') expect(['EASY', 'MEDIUM', 'HARD'], c.id).toContain(c.difficulty);
       if ('options' in c) {
         expect(c.options).toHaveLength(4);
         expect(c.options).toContain(c.correctAnswer);

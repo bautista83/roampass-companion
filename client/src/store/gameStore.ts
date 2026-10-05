@@ -9,10 +9,12 @@ import {
   createGame,
   drawCard,
   finish,
+  generateCountryCards,
   shuffle,
   type Card,
   type CardCategory,
   type CardOutcome,
+  type CountryData,
   type GameState,
   type LatLng,
   type PlayerSetup,
@@ -21,6 +23,7 @@ import {
   type VictoryCondition,
 } from '@roampass/shared';
 import seed from '@roampass/shared/seedData.json';
+import countries from '@roampass/shared/countries.json';
 import { api } from '../api';
 
 export interface ActiveDraw {
@@ -40,6 +43,8 @@ interface GameStore {
 
   startGame: (config: VictoryCondition, players: PlayerSetup[], selfIndex: number | null) => Promise<void>;
   resumeGame: (state: GameState) => Promise<void>;
+  /** Recarga el mazo si falta (p. ej. tras actualizar la app con una partida en curso). */
+  ensureDeck: () => Promise<void>;
   draw: (category: CardCategory) => void;
   resolve: (outcome: CardOutcome) => ScoreResult;
   dismissCard: () => void;
@@ -47,14 +52,16 @@ interface GameStore {
   clear: () => void;
 }
 
+/** Cartas escritas a mano (backend o seed incluido) + banderas y capitales generadas localmente. */
 async function loadDeck(): Promise<Card[]> {
+  let base = (seed as SeedData).cards;
   try {
     const cards = await api.getCards();
-    if (cards.length > 0) return cards;
+    if (cards.length > 0) base = cards;
   } catch {
     // backend caido: se juega con el mazo incluido en la app
   }
-  return (seed as SeedData).cards;
+  return [...base, ...generateCountryCards(countries as CountryData, base)];
 }
 
 export const useGameStore = create<GameStore>()(
@@ -88,10 +95,15 @@ export const useGameStore = create<GameStore>()(
           set({ game: state, deck: await loadDeck(), active: null });
         },
 
+        async ensureDeck() {
+          if (get().deck.length === 0) set({ deck: await loadDeck() });
+        },
+
         draw(category) {
           const { game, deck, active } = get();
           if (!game || game.status !== 'PLAYING' || active) return;
           const card = drawCard(deck, category, game.usedCardIds);
+          if (!card) return; // categoria agotada: la tarjeta ya se muestra bloqueada
           const player = game.players[game.currentPlayerIndex]!;
           set({ active: { card, playerId: player.id, options: 'options' in card ? shuffle(card.options) : undefined } });
         },
@@ -133,6 +145,13 @@ export const useGameStore = create<GameStore>()(
     },
     {
       name: 'roampass-game',
+      // v2: las cartas tienen dificultad. Un mazo guardado de v1 se descarta (la partida se conserva)
+      // y GameTable lo vuelve a cargar con ensureDeck().
+      version: 2,
+      migrate: (persisted, version) => {
+        const state = persisted as Pick<GameStore, 'game' | 'selfPlayerId' | 'deck' | 'active'>;
+        return version < 2 ? { ...state, deck: [], active: null } : state;
+      },
       partialize: ({ game, selfPlayerId, deck, active }) => ({ game, selfPlayerId, deck, active }),
     },
   ),

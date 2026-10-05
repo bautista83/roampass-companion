@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AVATARS,
+  DIFFICULTIES,
   formatNumber,
   MAX_PLAYERS,
   MIN_PLAYERS,
@@ -17,6 +18,7 @@ import {
 } from '@roampass/shared';
 import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
+import { DifficultyBadge } from '../ui/DifficultyBadge';
 
 const MODES: { mode: VictoryMode; title: string; icon: string; desc: string; targets: readonly number[]; unit: string }[] = [
   { mode: 'POINTS', title: 'Límite de Puntos', icon: '🎯', desc: 'Gana el primero en llegar a la meta.', targets: POINT_TARGETS, unit: 'pts' },
@@ -139,6 +141,15 @@ export function GameSetup() {
                   </div>
                 );
               })}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-passport-800/20 p-3 text-sm dark:border-white/15">
+              <span>Las cartas vienen en 3 niveles y las difíciles dan bonus:</span>
+              {DIFFICULTIES.map((d) => (
+                <DifficultyBadge key={d} difficulty={d} />
+              ))}
+              <span className="w-full text-xs text-passport-500 dark:text-passport-300">
+                Ninguna carta se repite en la partida: si una categoría se agota, se marca como «Agotada».
+              </span>
             </div>
             <div className="flex justify-between gap-2">
               <button className="btn-ghost" onClick={() => navigate('/')}>

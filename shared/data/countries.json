@@ -1,0 +1,1743 @@
+{
+ "source": "Wikidata (estados soberanos miembros de la ONU + Vaticano), consultado 2026-10-05; correcciones manuales",
+ "regions": {
+  "Europa Occidental": "Europa",
+  "Europa del Norte": "Europa",
+  "Europa del Este": "Europa",
+  "Balcanes": "Europa",
+  "Cáucaso y Asia Central": "Asia",
+  "Medio Oriente": "Asia",
+  "Asia del Sur": "Asia",
+  "Asia Oriental": "Asia",
+  "Sudeste Asiático": "Asia",
+  "Oceanía": "Oceanía",
+  "Norte de África": "África",
+  "África Occidental": "África",
+  "África Central": "África",
+  "África Oriental": "África",
+  "África Austral": "África",
+  "América del Norte": "Norteamérica y Caribe",
+  "Centroamérica": "Norteamérica y Caribe",
+  "Caribe": "Norteamérica y Caribe",
+  "Sudamérica": "Sudamérica"
+ },
+ "countries": [
+  {
+   "code": "fr",
+   "name": "Francia",
+   "capital": "París",
+   "region": "Europa Occidental",
+   "fame": 0
+  },
+  {
+   "code": "us",
+   "name": "Estados Unidos",
+   "capital": "Washington D. C.",
+   "region": "América del Norte",
+   "fame": 1
+  },
+  {
+   "code": "tr",
+   "name": "Turquía",
+   "capital": "Ankara",
+   "region": "Medio Oriente",
+   "fame": 2
+  },
+  {
+   "code": "ru",
+   "name": "Rusia",
+   "capital": "Moscú",
+   "region": "Europa del Este",
+   "fame": 3
+  },
+  {
+   "code": "jp",
+   "name": "Japón",
+   "capital": "Tokio",
+   "region": "Asia Oriental",
+   "fame": 4
+  },
+  {
+   "code": "dk",
+   "name": "Dinamarca",
+   "capital": "Copenhague",
+   "region": "Europa del Norte",
+   "fame": 5
+  },
+  {
+   "code": "it",
+   "name": "Italia",
+   "capital": "Roma",
+   "region": "Europa Occidental",
+   "fame": 6
+  },
+  {
+   "code": "de",
+   "name": "Alemania",
+   "capital": "Berlín",
+   "region": "Europa Occidental",
+   "fame": 7
+  },
+  {
+   "code": "fi",
+   "name": "Finlandia",
+   "capital": "Helsinki",
+   "region": "Europa del Norte",
+   "fame": 8
+  },
+  {
+   "code": "in",
+   "name": "India",
+   "capital": "Nueva Delhi",
+   "region": "Asia del Sur",
+   "fame": 9
+  },
+  {
+   "code": "mx",
+   "name": "México",
+   "capital": null,
+   "region": "América del Norte",
+   "fame": 10
+  },
+  {
+   "code": "cn",
+   "name": "China",
+   "capital": "Pekín",
+   "region": "Asia Oriental",
+   "fame": 11
+  },
+  {
+   "code": "au",
+   "name": "Australia",
+   "capital": "Canberra",
+   "region": "Oceanía",
+   "fame": 12
+  },
+  {
+   "code": "ca",
+   "name": "Canadá",
+   "capital": "Ottawa",
+   "region": "América del Norte",
+   "fame": 13
+  },
+  {
+   "code": "gb",
+   "name": "Reino Unido",
+   "capital": "Londres",
+   "region": "Europa Occidental",
+   "fame": 14
+  },
+  {
+   "code": "es",
+   "name": "España",
+   "capital": "Madrid",
+   "region": "Europa Occidental",
+   "fame": 15
+  },
+  {
+   "code": "no",
+   "name": "Noruega",
+   "capital": "Oslo",
+   "region": "Europa del Norte",
+   "fame": 16
+  },
+  {
+   "code": "eg",
+   "name": "Egipto",
+   "capital": "El Cairo",
+   "region": "Norte de África",
+   "fame": 17
+  },
+  {
+   "code": "pl",
+   "name": "Polonia",
+   "capital": "Varsovia",
+   "region": "Europa del Este",
+   "fame": 18
+  },
+  {
+   "code": "ua",
+   "name": "Ucrania",
+   "capital": "Kiev",
+   "region": "Europa del Este",
+   "fame": 19
+  },
+  {
+   "code": "ch",
+   "name": "Suiza",
+   "capital": "Berna",
+   "region": "Europa Occidental",
+   "fame": 20
+  },
+  {
+   "code": "br",
+   "name": "Brasil",
+   "capital": "Brasilia",
+   "region": "Sudamérica",
+   "fame": 21
+  },
+  {
+   "code": "al",
+   "name": "Albania",
+   "capital": "Tirana",
+   "region": "Balcanes",
+   "fame": 22
+  },
+  {
+   "code": "be",
+   "name": "Bélgica",
+   "capital": "Bruselas",
+   "region": "Europa Occidental",
+   "fame": 23
+  },
+  {
+   "code": "il",
+   "name": "Israel",
+   "capital": null,
+   "region": "Medio Oriente",
+   "fame": 24
+  },
+  {
+   "code": "cl",
+   "name": "Chile",
+   "capital": "Santiago",
+   "region": "Sudamérica",
+   "fame": 25
+  },
+  {
+   "code": "gr",
+   "name": "Grecia",
+   "capital": "Atenas",
+   "region": "Balcanes",
+   "fame": 26
+  },
+  {
+   "code": "ir",
+   "name": "Irán",
+   "capital": "Teherán",
+   "region": "Medio Oriente",
+   "fame": 27
+  },
+  {
+   "code": "dz",
+   "name": "Argelia",
+   "capital": "Argel",
+   "region": "Norte de África",
+   "fame": 28
+  },
+  {
+   "code": "at",
+   "name": "Austria",
+   "capital": "Viena",
+   "region": "Europa Occidental",
+   "fame": 29
+  },
+  {
+   "code": "ar",
+   "name": "Argentina",
+   "capital": "Buenos Aires",
+   "region": "Sudamérica",
+   "fame": 30
+  },
+  {
+   "code": "pt",
+   "name": "Portugal",
+   "capital": "Lisboa",
+   "region": "Europa Occidental",
+   "fame": 31
+  },
+  {
+   "code": "se",
+   "name": "Suecia",
+   "capital": "Estocolmo",
+   "region": "Europa del Norte",
+   "fame": 32
+  },
+  {
+   "code": "vn",
+   "name": "Vietnam",
+   "capital": "Hanói",
+   "region": "Sudeste Asiático",
+   "fame": 33
+  },
+  {
+   "code": "za",
+   "name": "Sudáfrica",
+   "capital": null,
+   "region": "África Austral",
+   "fame": 34
+  },
+  {
+   "code": "co",
+   "name": "Colombia",
+   "capital": "Bogotá",
+   "region": "Sudamérica",
+   "fame": 35
+  },
+  {
+   "code": "id",
+   "name": "Indonesia",
+   "capital": null,
+   "region": "Sudeste Asiático",
+   "fame": 36
+  },
+  {
+   "code": "af",
+   "name": "Afganistán",
+   "capital": "Kabul",
+   "region": "Asia del Sur",
+   "fame": 37
+  },
+  {
+   "code": "bg",
+   "name": "Bulgaria",
+   "capital": "Sofía",
+   "region": "Europa del Este",
+   "fame": 38
+  },
+  {
+   "code": "az",
+   "name": "Azerbaiyán",
+   "capital": "Bakú",
+   "region": "Cáucaso y Asia Central",
+   "fame": 39
+  },
+  {
+   "code": "hu",
+   "name": "Hungría",
+   "capital": "Budapest",
+   "region": "Europa del Este",
+   "fame": 40
+  },
+  {
+   "code": "by",
+   "name": "Bielorrusia",
+   "capital": "Minsk",
+   "region": "Europa del Este",
+   "fame": 41
+  },
+  {
+   "code": "kr",
+   "name": "Corea del Sur",
+   "capital": "Seúl",
+   "region": "Asia Oriental",
+   "fame": 42
+  },
+  {
+   "code": "hr",
+   "name": "Croacia",
+   "capital": "Zagreb",
+   "region": "Balcanes",
+   "fame": 43
+  },
+  {
+   "code": "pk",
+   "name": "Pakistán",
+   "capital": "Islamabad",
+   "region": "Asia del Sur",
+   "fame": 44
+  },
+  {
+   "code": "th",
+   "name": "Tailandia",
+   "capital": "Bangkok",
+   "region": "Sudeste Asiático",
+   "fame": 45
+  },
+  {
+   "code": "is",
+   "name": "Islandia",
+   "capital": "Reikiavik",
+   "region": "Europa del Norte",
+   "fame": 46
+  },
+  {
+   "code": "cz",
+   "name": "República Checa",
+   "capital": "Praga",
+   "region": "Europa del Este",
+   "fame": 47
+  },
+  {
+   "code": "ee",
+   "name": "Estonia",
+   "capital": "Tallin",
+   "region": "Europa del Norte",
+   "fame": 48
+  },
+  {
+   "code": "am",
+   "name": "Armenia",
+   "capital": "Ereván",
+   "region": "Cáucaso y Asia Central",
+   "fame": 49
+  },
+  {
+   "code": "lt",
+   "name": "Lituania",
+   "capital": "Vilna",
+   "region": "Europa del Norte",
+   "fame": 50
+  },
+  {
+   "code": "rs",
+   "name": "Serbia",
+   "capital": "Belgrado",
+   "region": "Balcanes",
+   "fame": 51
+  },
+  {
+   "code": "iq",
+   "name": "Irak",
+   "capital": "Bagdad",
+   "region": "Medio Oriente",
+   "fame": 52
+  },
+  {
+   "code": "sa",
+   "name": "Arabia Saudita",
+   "capital": "Riad",
+   "region": "Medio Oriente",
+   "fame": 53
+  },
+  {
+   "code": "kz",
+   "name": "Kazajistán",
+   "capital": "Astaná",
+   "region": "Cáucaso y Asia Central",
+   "fame": 54
+  },
+  {
+   "code": "ng",
+   "name": "Nigeria",
+   "capital": "Abuya",
+   "region": "África Occidental",
+   "fame": 55
+  },
+  {
+   "code": "nz",
+   "name": "Nueva Zelanda",
+   "capital": "Wellington",
+   "region": "Oceanía",
+   "fame": 56
+  },
+  {
+   "code": "bd",
+   "name": "Bangladés",
+   "capital": "Daca",
+   "region": "Asia del Sur",
+   "fame": 57
+  },
+  {
+   "code": "ro",
+   "name": "Rumania",
+   "capital": "Bucarest",
+   "region": "Europa del Este",
+   "fame": 58
+  },
+  {
+   "code": "ge",
+   "name": "Georgia",
+   "capital": "Tiflis",
+   "region": "Cáucaso y Asia Central",
+   "fame": 59
+  },
+  {
+   "code": "et",
+   "name": "Etiopía",
+   "capital": "Adís Abeba",
+   "region": "África Oriental",
+   "fame": 60
+  },
+  {
+   "code": "ve",
+   "name": "Venezuela",
+   "capital": "Caracas",
+   "region": "Sudamérica",
+   "fame": 61
+  },
+  {
+   "code": "va",
+   "name": "Ciudad del Vaticano",
+   "capital": null,
+   "region": "Europa Occidental",
+   "fame": 62
+  },
+  {
+   "code": "ie",
+   "name": "Irlanda",
+   "capital": "Dublín",
+   "region": "Europa Occidental",
+   "fame": 63
+  },
+  {
+   "code": "ba",
+   "name": "Bosnia y Herzegovina",
+   "capital": "Sarajevo",
+   "region": "Balcanes",
+   "fame": 64
+  },
+  {
+   "code": "sk",
+   "name": "Eslovaquia",
+   "capital": "Bratislava",
+   "region": "Europa del Este",
+   "fame": 65
+  },
+  {
+   "code": "my",
+   "name": "Malasia",
+   "capital": "Kuala Lumpur",
+   "region": "Sudeste Asiático",
+   "fame": 66
+  },
+  {
+   "code": "ke",
+   "name": "Kenia",
+   "capital": "Nairobi",
+   "region": "África Oriental",
+   "fame": 67
+  },
+  {
+   "code": "sy",
+   "name": "Siria",
+   "capital": "Damasco",
+   "region": "Medio Oriente",
+   "fame": 68
+  },
+  {
+   "code": "lv",
+   "name": "Letonia",
+   "capital": "Riga",
+   "region": "Europa del Norte",
+   "fame": 69
+  },
+  {
+   "code": "lu",
+   "name": "Luxemburgo",
+   "capital": null,
+   "region": "Europa Occidental",
+   "fame": 70
+  },
+  {
+   "code": "ph",
+   "name": "Filipinas",
+   "capital": "Manila",
+   "region": "Sudeste Asiático",
+   "fame": 71
+  },
+  {
+   "code": "cd",
+   "name": "República Democrática del Congo",
+   "capital": "Kinsasa",
+   "region": "África Central",
+   "fame": 72
+  },
+  {
+   "code": "ma",
+   "name": "Marruecos",
+   "capital": "Rabat",
+   "region": "Norte de África",
+   "fame": 73
+  },
+  {
+   "code": "sd",
+   "name": "Sudán",
+   "capital": "Jartum",
+   "region": "Norte de África",
+   "fame": 74
+  },
+  {
+   "code": "ly",
+   "name": "Libia",
+   "capital": "Trípoli",
+   "region": "Norte de África",
+   "fame": 75
+  },
+  {
+   "code": "ad",
+   "name": "Andorra",
+   "capital": null,
+   "region": "Europa Occidental",
+   "fame": 76
+  },
+  {
+   "code": "sg",
+   "name": "Singapur",
+   "capital": null,
+   "region": "Sudeste Asiático",
+   "fame": 77
+  },
+  {
+   "code": "pe",
+   "name": "Perú",
+   "capital": "Lima",
+   "region": "Sudamérica",
+   "fame": 78
+  },
+  {
+   "code": "si",
+   "name": "Eslovenia",
+   "capital": "Liubliana",
+   "region": "Balcanes",
+   "fame": 79
+  },
+  {
+   "code": "md",
+   "name": "Moldavia",
+   "capital": "Chisináu",
+   "region": "Europa del Este",
+   "fame": 80
+  },
+  {
+   "code": "kh",
+   "name": "Camboya",
+   "capital": "Nom Pen",
+   "region": "Sudeste Asiático",
+   "fame": 81
+  },
+  {
+   "code": "lb",
+   "name": "Líbano",
+   "capital": "Beirut",
+   "region": "Medio Oriente",
+   "fame": 82
+  },
+  {
+   "code": "tn",
+   "name": "Túnez",
+   "capital": null,
+   "region": "Norte de África",
+   "fame": 83
+  },
+  {
+   "code": "mt",
+   "name": "Malta",
+   "capital": "La Valeta",
+   "region": "Europa Occidental",
+   "fame": 84
+  },
+  {
+   "code": "so",
+   "name": "Somalia",
+   "capital": "Mogadiscio",
+   "region": "África Oriental",
+   "fame": 85
+  },
+  {
+   "code": "mk",
+   "name": "Macedonia del Norte",
+   "capital": "Skopie",
+   "region": "Balcanes",
+   "fame": 86
+  },
+  {
+   "code": "gh",
+   "name": "Ghana",
+   "capital": "Acra",
+   "region": "África Occidental",
+   "fame": 87
+  },
+  {
+   "code": "cy",
+   "name": "Chipre",
+   "capital": "Nicosia",
+   "region": "Balcanes",
+   "fame": 88
+  },
+  {
+   "code": "uy",
+   "name": "Uruguay",
+   "capital": "Montevideo",
+   "region": "Sudamérica",
+   "fame": 89
+  },
+  {
+   "code": "np",
+   "name": "Nepal",
+   "capital": "Katmandú",
+   "region": "Asia del Sur",
+   "fame": 90
+  },
+  {
+   "code": "ao",
+   "name": "Angola",
+   "capital": "Luanda",
+   "region": "África Central",
+   "fame": 91
+  },
+  {
+   "code": "me",
+   "name": "Montenegro",
+   "capital": "Podgorica",
+   "region": "Balcanes",
+   "fame": 92
+  },
+  {
+   "code": "mc",
+   "name": "Mónaco",
+   "capital": null,
+   "region": "Europa Occidental",
+   "fame": 93
+  },
+  {
+   "code": "mg",
+   "name": "Madagascar",
+   "capital": "Antananarivo",
+   "region": "África Oriental",
+   "fame": 94
+  },
+  {
+   "code": "mn",
+   "name": "Mongolia",
+   "capital": "Ulán Bator",
+   "region": "Asia Oriental",
+   "fame": 95
+  },
+  {
+   "code": "tz",
+   "name": "Tanzania",
+   "capital": "Dodoma",
+   "region": "África Oriental",
+   "fame": 96
+  },
+  {
+   "code": "zw",
+   "name": "Zimbabue",
+   "capital": "Harare",
+   "region": "África Oriental",
+   "fame": 97
+  },
+  {
+   "code": "kg",
+   "name": "Kirguistán",
+   "capital": "Biskek",
+   "region": "Cáucaso y Asia Central",
+   "fame": 98
+  },
+  {
+   "code": "ae",
+   "name": "Emiratos Árabes Unidos",
+   "capital": "Abu Dhabi",
+   "region": "Medio Oriente",
+   "fame": 99
+  },
+  {
+   "code": "mm",
+   "name": "Birmania (Myanmar)",
+   "capital": "Naipyidó",
+   "region": "Sudeste Asiático",
+   "fame": 100
+  },
+  {
+   "code": "td",
+   "name": "Chad",
+   "capital": "Yamena",
+   "region": "África Central",
+   "fame": 101
+  },
+  {
+   "code": "ye",
+   "name": "Yemen",
+   "capital": null,
+   "region": "Medio Oriente",
+   "fame": 102
+  },
+  {
+   "code": "li",
+   "name": "Liechtenstein",
+   "capital": "Vaduz",
+   "region": "Europa Occidental",
+   "fame": 103
+  },
+  {
+   "code": "la",
+   "name": "Laos",
+   "capital": "Vientián",
+   "region": "Sudeste Asiático",
+   "fame": 104
+  },
+  {
+   "code": "na",
+   "name": "Namibia",
+   "capital": "Windhoek",
+   "region": "África Austral",
+   "fame": 105
+  },
+  {
+   "code": "ec",
+   "name": "Ecuador",
+   "capital": "Quito",
+   "region": "Sudamérica",
+   "fame": 106
+  },
+  {
+   "code": "jo",
+   "name": "Jordania",
+   "capital": "Amán",
+   "region": "Medio Oriente",
+   "fame": 107
+  },
+  {
+   "code": "bw",
+   "name": "Botsuana",
+   "capital": "Gaborone",
+   "region": "África Austral",
+   "fame": 108
+  },
+  {
+   "code": "cm",
+   "name": "Camerún",
+   "capital": "Yaundé",
+   "region": "África Central",
+   "fame": 109
+  },
+  {
+   "code": "sm",
+   "name": "San Marino",
+   "capital": null,
+   "region": "Europa Occidental",
+   "fame": 110
+  },
+  {
+   "code": "bo",
+   "name": "Bolivia",
+   "capital": null,
+   "region": "Sudamérica",
+   "fame": 111
+  },
+  {
+   "code": "ml",
+   "name": "Mali",
+   "capital": "Bamako",
+   "region": "África Occidental",
+   "fame": 112
+  },
+  {
+   "code": "ci",
+   "name": "Costa de Marfil",
+   "capital": "Yamusukro",
+   "region": "África Occidental",
+   "fame": 113
+  },
+  {
+   "code": "ug",
+   "name": "Uganda",
+   "capital": "Kampala",
+   "region": "África Oriental",
+   "fame": 114
+  },
+  {
+   "code": "cu",
+   "name": "Cuba",
+   "capital": "La Habana",
+   "region": "Caribe",
+   "fame": 115
+  },
+  {
+   "code": "kp",
+   "name": "Corea del Norte",
+   "capital": "Pionyang",
+   "region": "Asia Oriental",
+   "fame": 116
+  },
+  {
+   "code": "py",
+   "name": "Paraguay",
+   "capital": "Asunción",
+   "region": "Sudamérica",
+   "fame": 117
+  },
+  {
+   "code": "zm",
+   "name": "Zambia",
+   "capital": "Lusaka",
+   "region": "África Oriental",
+   "fame": 118
+  },
+  {
+   "code": "bf",
+   "name": "Burkina Faso",
+   "capital": "Uagadugú",
+   "region": "África Occidental",
+   "fame": 119
+  },
+  {
+   "code": "sn",
+   "name": "Senegal",
+   "capital": "Dakar",
+   "region": "África Occidental",
+   "fame": 120
+  },
+  {
+   "code": "uz",
+   "name": "Uzbekistán",
+   "capital": "Taskent",
+   "region": "Cáucaso y Asia Central",
+   "fame": 121
+  },
+  {
+   "code": "lk",
+   "name": "Sri Lanka",
+   "capital": null,
+   "region": "Asia del Sur",
+   "fame": 122
+  },
+  {
+   "code": "bj",
+   "name": "Benín",
+   "capital": null,
+   "region": "África Occidental",
+   "fame": 123
+  },
+  {
+   "code": "tj",
+   "name": "Tayikistán",
+   "capital": "Dusambé",
+   "region": "Cáucaso y Asia Central",
+   "fame": 124
+  },
+  {
+   "code": "er",
+   "name": "Eritrea",
+   "capital": "Asmara",
+   "region": "África Oriental",
+   "fame": 125
+  },
+  {
+   "code": "bh",
+   "name": "Baréin",
+   "capital": "Manama",
+   "region": "Medio Oriente",
+   "fame": 126
+  },
+  {
+   "code": "kw",
+   "name": "Kuwait",
+   "capital": null,
+   "region": "Medio Oriente",
+   "fame": 127
+  },
+  {
+   "code": "bt",
+   "name": "Bután",
+   "capital": "Timbu",
+   "region": "Asia del Sur",
+   "fame": 128
+  },
+  {
+   "code": "mr",
+   "name": "Mauritania",
+   "capital": "Nuakchot",
+   "region": "Norte de África",
+   "fame": 129
+  },
+  {
+   "code": "rw",
+   "name": "Ruanda",
+   "capital": "Kigali",
+   "region": "África Oriental",
+   "fame": 130
+  },
+  {
+   "code": "cr",
+   "name": "Costa Rica",
+   "capital": "San José",
+   "region": "Centroamérica",
+   "fame": 131
+  },
+  {
+   "code": "pa",
+   "name": "Panamá",
+   "capital": null,
+   "region": "Centroamérica",
+   "fame": 132
+  },
+  {
+   "code": "tg",
+   "name": "Togo",
+   "capital": "Lomé",
+   "region": "África Occidental",
+   "fame": 133
+  },
+  {
+   "code": "bi",
+   "name": "Burundi",
+   "capital": "Guitega",
+   "region": "África Oriental",
+   "fame": 134
+  },
+  {
+   "code": "ne",
+   "name": "Níger",
+   "capital": "Niamey",
+   "region": "África Occidental",
+   "fame": 135
+  },
+  {
+   "code": "cf",
+   "name": "República Centroafricana",
+   "capital": "Bangui",
+   "region": "África Central",
+   "fame": 136
+  },
+  {
+   "code": "gn",
+   "name": "Guinea",
+   "capital": "Conakri",
+   "region": "África Occidental",
+   "fame": 137
+  },
+  {
+   "code": "mz",
+   "name": "Mozambique",
+   "capital": "Maputo",
+   "region": "África Oriental",
+   "fame": 138
+  },
+  {
+   "code": "cg",
+   "name": "República del Congo",
+   "capital": "Brazzaville",
+   "region": "África Central",
+   "fame": 139
+  },
+  {
+   "code": "dj",
+   "name": "Yibuti",
+   "capital": null,
+   "region": "África Oriental",
+   "fame": 140
+  },
+  {
+   "code": "gm",
+   "name": "Gambia",
+   "capital": "Banjul",
+   "region": "África Occidental",
+   "fame": 141
+  },
+  {
+   "code": "tm",
+   "name": "Turkmenistán",
+   "capital": "Asjabad",
+   "region": "Cáucaso y Asia Central",
+   "fame": 142
+  },
+  {
+   "code": "hn",
+   "name": "Honduras",
+   "capital": "Tegucigalpa",
+   "region": "Centroamérica",
+   "fame": 143
+  },
+  {
+   "code": "bn",
+   "name": "Brunéi",
+   "capital": "Bandar Seri Begawan",
+   "region": "Sudeste Asiático",
+   "fame": 144
+  },
+  {
+   "code": "gw",
+   "name": "Guinea-Bisáu",
+   "capital": "Bisáu",
+   "region": "África Occidental",
+   "fame": 145
+  },
+  {
+   "code": "mw",
+   "name": "Malaui",
+   "capital": "Lilongüe",
+   "region": "África Oriental",
+   "fame": 146
+  },
+  {
+   "code": "om",
+   "name": "Omán",
+   "capital": "Mascate",
+   "region": "Medio Oriente",
+   "fame": 147
+  },
+  {
+   "code": "ga",
+   "name": "Gabón",
+   "capital": "Libreville",
+   "region": "África Central",
+   "fame": 148
+  },
+  {
+   "code": "sl",
+   "name": "Sierra Leona",
+   "capital": "Freetown",
+   "region": "África Occidental",
+   "fame": 149
+  },
+  {
+   "code": "lr",
+   "name": "Liberia",
+   "capital": "Monrovia",
+   "region": "África Occidental",
+   "fame": 150
+  },
+  {
+   "code": "ht",
+   "name": "Haití",
+   "capital": "Puerto Príncipe",
+   "region": "Caribe",
+   "fame": 151
+  },
+  {
+   "code": "tl",
+   "name": "Timor Oriental",
+   "capital": "Dili",
+   "region": "Sudeste Asiático",
+   "fame": 152
+  },
+  {
+   "code": "qa",
+   "name": "Catar",
+   "capital": "Doha",
+   "region": "Medio Oriente",
+   "fame": 153
+  },
+  {
+   "code": "cv",
+   "name": "Cabo Verde",
+   "capital": "Praia",
+   "region": "África Occidental",
+   "fame": 154
+  },
+  {
+   "code": "mv",
+   "name": "Maldivas",
+   "capital": "Malé",
+   "region": "Asia del Sur",
+   "fame": 155
+  },
+  {
+   "code": "sr",
+   "name": "Surinam",
+   "capital": "Paramaribo",
+   "region": "Sudamérica",
+   "fame": 156
+  },
+  {
+   "code": "sv",
+   "name": "El Salvador",
+   "capital": "San Salvador",
+   "region": "Centroamérica",
+   "fame": 157
+  },
+  {
+   "code": "sz",
+   "name": "Esuatini",
+   "capital": null,
+   "region": "África Austral",
+   "fame": 158
+  },
+  {
+   "code": "gy",
+   "name": "Guyana",
+   "capital": "Georgetown",
+   "region": "Sudamérica",
+   "fame": 159
+  },
+  {
+   "code": "pg",
+   "name": "Papúa Nueva Guinea",
+   "capital": "Puerto Moresby",
+   "region": "Oceanía",
+   "fame": 160
+  },
+  {
+   "code": "km",
+   "name": "Comoras",
+   "capital": "Moroni",
+   "region": "África Oriental",
+   "fame": 161
+  },
+  {
+   "code": "gq",
+   "name": "Guinea Ecuatorial",
+   "capital": "Ciudad de la Paz",
+   "region": "África Central",
+   "fame": 162
+  },
+  {
+   "code": "mu",
+   "name": "Mauricio",
+   "capital": "Port Louis",
+   "region": "África Oriental",
+   "fame": 163
+  },
+  {
+   "code": "ni",
+   "name": "Nicaragua",
+   "capital": "Managua",
+   "region": "Centroamérica",
+   "fame": 164
+  },
+  {
+   "code": "ss",
+   "name": "Sudán del Sur",
+   "capital": "Yuba",
+   "region": "África Oriental",
+   "fame": 165
+  },
+  {
+   "code": "jm",
+   "name": "Jamaica",
+   "capital": "Kingston",
+   "region": "Caribe",
+   "fame": 166
+  },
+  {
+   "code": "gt",
+   "name": "Guatemala",
+   "capital": null,
+   "region": "Centroamérica",
+   "fame": 167
+  },
+  {
+   "code": "bz",
+   "name": "Belice",
+   "capital": "Belmopán",
+   "region": "Centroamérica",
+   "fame": 168
+  },
+  {
+   "code": "bs",
+   "name": "Bahamas",
+   "capital": "Nasáu",
+   "region": "Caribe",
+   "fame": 169
+  },
+  {
+   "code": "do",
+   "name": "República Dominicana",
+   "capital": "Santo Domingo",
+   "region": "Caribe",
+   "fame": 170
+  },
+  {
+   "code": "ls",
+   "name": "Lesoto",
+   "capital": "Maseru",
+   "region": "África Austral",
+   "fame": 171
+  },
+  {
+   "code": "fj",
+   "name": "Fiyi",
+   "capital": "Suva",
+   "region": "Oceanía",
+   "fame": 172
+  },
+  {
+   "code": "sc",
+   "name": "Seychelles",
+   "capital": "Victoria",
+   "region": "África Oriental",
+   "fame": 173
+  },
+  {
+   "code": "bb",
+   "name": "Barbados",
+   "capital": "Bridgetown",
+   "region": "Caribe",
+   "fame": 174
+  },
+  {
+   "code": "st",
+   "name": "Santo Tomé y Príncipe",
+   "capital": null,
+   "region": "África Central",
+   "fame": 175
+  },
+  {
+   "code": "ag",
+   "name": "Antigua y Barbuda",
+   "capital": "Saint John's",
+   "region": "Caribe",
+   "fame": 176
+  },
+  {
+   "code": "nr",
+   "name": "Nauru",
+   "capital": "Yaren",
+   "region": "Oceanía",
+   "fame": 177
+  },
+  {
+   "code": "dm",
+   "name": "Dominica",
+   "capital": "Roseau",
+   "region": "Caribe",
+   "fame": 178
+  },
+  {
+   "code": "vu",
+   "name": "Vanuatu",
+   "capital": "Port Vila",
+   "region": "Oceanía",
+   "fame": 179
+  },
+  {
+   "code": "ws",
+   "name": "Samoa",
+   "capital": "Apia",
+   "region": "Oceanía",
+   "fame": 180
+  },
+  {
+   "code": "to",
+   "name": "Tonga",
+   "capital": "Nukualofa",
+   "region": "Oceanía",
+   "fame": 181
+  },
+  {
+   "code": "pw",
+   "name": "Palaos",
+   "capital": "Ngerulmud",
+   "region": "Oceanía",
+   "fame": 182
+  },
+  {
+   "code": "tv",
+   "name": "Tuvalu",
+   "capital": "Funafuti",
+   "region": "Oceanía",
+   "fame": 183
+  },
+  {
+   "code": "gd",
+   "name": "Granada",
+   "capital": "Saint George's",
+   "region": "Caribe",
+   "fame": 184
+  },
+  {
+   "code": "tt",
+   "name": "Trinidad y Tobago",
+   "capital": "Puerto España",
+   "region": "Caribe",
+   "fame": 185
+  },
+  {
+   "code": "ki",
+   "name": "Kiribati",
+   "capital": "Tarawa Sur",
+   "region": "Oceanía",
+   "fame": 186
+  },
+  {
+   "code": "sb",
+   "name": "Islas Salomón",
+   "capital": "Honiara",
+   "region": "Oceanía",
+   "fame": 187
+  },
+  {
+   "code": "kn",
+   "name": "San Cristóbal y Nieves",
+   "capital": "Basseterre",
+   "region": "Caribe",
+   "fame": 188
+  },
+  {
+   "code": "vc",
+   "name": "San Vicente y las Granadinas",
+   "capital": "Kingstown",
+   "region": "Caribe",
+   "fame": 189
+  },
+  {
+   "code": "mh",
+   "name": "Islas Marshall",
+   "capital": "Majuro",
+   "region": "Oceanía",
+   "fame": 190
+  },
+  {
+   "code": "lc",
+   "name": "Santa Lucía",
+   "capital": "Castries",
+   "region": "Caribe",
+   "fame": 191
+  },
+  {
+   "code": "fm",
+   "name": "Estados Federados de Micronesia",
+   "capital": "Palikir",
+   "region": "Oceanía",
+   "fame": 192
+  },
+  {
+   "code": "nl",
+   "name": "Países Bajos",
+   "capital": "Ámsterdam",
+   "region": "Europa Occidental",
+   "fame": 193
+  }
+ ],
+ "similarFlags": [
+  [
+   "td",
+   "ro",
+   "ad",
+   "md"
+  ],
+  [
+   "id",
+   "mc",
+   "pl",
+   "sg"
+  ],
+  [
+   "nl",
+   "lu",
+   "py",
+   "hr"
+  ],
+  [
+   "ie",
+   "ci",
+   "it",
+   "mx",
+   "in",
+   "ne"
+  ],
+  [
+   "au",
+   "nz",
+   "fj",
+   "tv"
+  ],
+  [
+   "no",
+   "is",
+   "dk",
+   "se",
+   "fi"
+  ],
+  [
+   "ve",
+   "co",
+   "ec"
+  ],
+  [
+   "sn",
+   "ml",
+   "gn",
+   "cm",
+   "gh",
+   "bo",
+   "lt",
+   "et"
+  ],
+  [
+   "sy",
+   "eg",
+   "iq",
+   "ye"
+  ],
+  [
+   "ar",
+   "uy",
+   "hn",
+   "ni",
+   "sv",
+   "gt"
+  ],
+  [
+   "ru",
+   "si",
+   "sk",
+   "rs"
+  ],
+  [
+   "jo",
+   "sd",
+   "kw",
+   "ae"
+  ],
+  [
+   "qa",
+   "bh"
+  ],
+  [
+   "at",
+   "lv",
+   "lb",
+   "pe"
+  ],
+  [
+   "de",
+   "be",
+   "ug"
+  ],
+  [
+   "tr",
+   "tn",
+   "pk",
+   "dz",
+   "az",
+   "mv"
+  ],
+  [
+   "cn",
+   "vn",
+   "kg",
+   "mn"
+  ],
+  [
+   "us",
+   "lr",
+   "my",
+   "cu",
+   "gr"
+  ],
+  [
+   "cz",
+   "ph",
+   "sd",
+   "cu"
+  ]
+ ],
+ "decoyCities": {
+  "au": [
+   "Sídney",
+   "Melbourne",
+   "Perth"
+  ],
+  "ca": [
+   "Toronto",
+   "Montreal",
+   "Vancouver"
+  ],
+  "tr": [
+   "Estambul",
+   "Esmirna"
+  ],
+  "br": [
+   "Río de Janeiro",
+   "São Paulo",
+   "Salvador de Bahía"
+  ],
+  "us": [
+   "Nueva York",
+   "Filadelfia",
+   "Los Ángeles"
+  ],
+  "ch": [
+   "Zúrich",
+   "Ginebra",
+   "Basilea"
+  ],
+  "nz": [
+   "Auckland",
+   "Christchurch"
+  ],
+  "ma": [
+   "Casablanca",
+   "Marrakech"
+  ],
+  "ng": [
+   "Lagos",
+   "Kano"
+  ],
+  "pk": [
+   "Karachi",
+   "Lahore"
+  ],
+  "vn": [
+   "Ciudad Ho Chi Minh",
+   "Da Nang"
+  ],
+  "in": [
+   "Bombay",
+   "Calcuta"
+  ],
+  "kz": [
+   "Almatý"
+  ],
+  "tz": [
+   "Dar es-Salam",
+   "Zanzíbar"
+  ],
+  "cn": [
+   "Shanghái",
+   "Hong Kong"
+  ],
+  "ae": [
+   "Dubái",
+   "Sharjah"
+  ],
+  "ec": [
+   "Guayaquil",
+   "Cuenca"
+  ],
+  "it": [
+   "Milán",
+   "Nápoles"
+  ],
+  "de": [
+   "Múnich",
+   "Hamburgo",
+   "Fráncfort"
+  ],
+  "es": [
+   "Barcelona",
+   "Sevilla"
+  ],
+  "ru": [
+   "San Petersburgo"
+  ],
+  "jp": [
+   "Kioto",
+   "Osaka"
+  ],
+  "eg": [
+   "Alejandría"
+  ],
+  "sa": [
+   "Yeda",
+   "La Meca"
+  ],
+  "ir": [
+   "Isfahán"
+  ],
+  "cm": [
+   "Duala"
+  ],
+  "ci": [
+   "Abiyán"
+  ],
+  "mm": [
+   "Rangún",
+   "Mandalay"
+  ],
+  "ph": [
+   "Ciudad Quezón",
+   "Cebú"
+  ],
+  "nl": [
+   "Róterdam",
+   "La Haya"
+  ],
+  "be": [
+   "Amberes"
+  ],
+  "kr": [
+   "Busan"
+  ],
+  "th": [
+   "Chiang Mai"
+  ],
+  "co": [
+   "Medellín",
+   "Cali"
+  ],
+  "ve": [
+   "Maracaibo"
+  ],
+  "pe": [
+   "Cusco",
+   "Arequipa"
+  ],
+  "ar": [
+   "Córdoba",
+   "Rosario"
+  ],
+  "cl": [
+   "Valparaíso"
+  ],
+  "gr": [
+   "Tesalónica"
+  ],
+  "pl": [
+   "Cracovia"
+  ],
+  "cz": [
+   "Brno"
+  ],
+  "pt": [
+   "Oporto"
+  ],
+  "ie": [
+   "Cork"
+  ],
+  "gb": [
+   "Mánchester",
+   "Edimburgo"
+  ],
+  "no": [
+   "Bergen"
+  ],
+  "se": [
+   "Gotemburgo"
+  ],
+  "fi": [
+   "Turku"
+  ],
+  "dk": [
+   "Aarhus"
+  ],
+  "ke": [
+   "Mombasa"
+  ],
+  "gh": [
+   "Kumasi"
+  ],
+  "dz": [
+   "Orán"
+  ],
+  "ly": [
+   "Bengasi"
+  ],
+  "sd": [
+   "Omdurmán"
+  ],
+  "cu": [
+   "Santiago de Cuba"
+  ],
+  "do": [
+   "Santiago de los Caballeros"
+  ],
+  "jm": [
+   "Montego Bay"
+  ],
+  "py": [
+   "Ciudad del Este"
+  ],
+  "ua": [
+   "Leópolis",
+   "Járkov"
+  ],
+  "ge": [
+   "Batumi"
+  ],
+  "uz": [
+   "Samarcanda"
+  ],
+  "af": [
+   "Kandahar"
+  ],
+  "bd": [
+   "Chittagong"
+  ],
+  "np": [
+   "Pokhara"
+  ],
+  "kh": [
+   "Siem Riep"
+  ],
+  "fj": [
+   "Nadi"
+  ],
+  "pg": [
+   "Lae"
+  ]
+ }
+}
