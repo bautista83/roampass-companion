@@ -1,0 +1,14 @@
+# PostgreSQL local para el backend: docker compose up -d
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: roampass
+      POSTGRES_PASSWORD: roampass
+      POSTGRES_DB: roampass
+    ports:
+      - "5432:5432"
+    volumes:
+      - roampass-db:/var/lib/postgresql/data
+volumes:
+  roampass-db:
