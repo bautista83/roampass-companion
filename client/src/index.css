@@ -1,0 +1,97 @@
+@import 'tailwindcss';
+@import 'leaflet/dist/leaflet.css';
+
+/* Dark mode por clase en <html> (controlado por themeStore). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-stamp: 'Special Elite', 'Courier New', monospace;
+
+  /* Azul pasaporte */
+  --color-passport-50: #eef2fb;
+  --color-passport-100: #d9e1f4;
+  --color-passport-200: #b3c2e6;
+  --color-passport-300: #8099d1;
+  --color-passport-400: #5571b8;
+  --color-passport-500: #3a559c;
+  --color-passport-600: #2c427d;
+  --color-passport-700: #233462;
+  --color-passport-800: #1e2a4a;
+  --color-passport-900: #141c33;
+  --color-passport-950: #0b1020;
+
+  /* Papel de mapa vintage y tinta de sello */
+  --color-paper: #f6eedb;
+  --color-paper-dark: #e9dcbc;
+  --color-stamp: #b42318;
+  --color-stamp-green: #157347;
+  --color-brass: #c08a2d;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply min-h-dvh bg-paper font-sans text-passport-900 antialiased dark:bg-passport-950 dark:text-passport-50;
+    /* Cuadricula sutil de mapa antiguo */
+    background-image:
+      linear-gradient(to right, rgb(30 42 74 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(30 42 74 / 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .dark body {
+    background-image:
+      linear-gradient(to right, rgb(238 242 251 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(238 242 251 / 0.035) 1px, transparent 1px);
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brass;
+  }
+}
+
+/* Tailwind v4: @utility permite reutilizar estas clases con @apply y variantes (md:, dark:...). */
+@utility panel {
+  @apply rounded-2xl border border-passport-800/10 bg-white/80 shadow-sm backdrop-blur dark:border-white/10 dark:bg-passport-900/80;
+}
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-passport-700 text-white hover:bg-passport-600 dark:bg-brass dark:text-passport-950 dark:hover:bg-brass/90;
+}
+@utility btn-ghost {
+  @apply btn border border-passport-800/15 bg-transparent hover:bg-passport-800/5 dark:border-white/15 dark:hover:bg-white/5;
+}
+@utility btn-danger {
+  @apply btn bg-stamp text-white hover:bg-stamp/90;
+}
+@utility input {
+  @apply min-h-12 w-full rounded-xl border border-passport-800/20 bg-white px-4 text-base outline-none focus:border-passport-500 focus:ring-2 focus:ring-passport-300 dark:border-white/15 dark:bg-passport-950 dark:focus:ring-passport-600;
+}
+@utility label {
+  @apply mb-1 block text-xs font-semibold tracking-widest text-passport-500 uppercase dark:text-passport-300;
+}
+
+/* Sello de aduana: borde doble, tipografia de maquina de escribir y leve rotacion */
+.stamp {
+  @apply inline-block rounded-lg border-4 border-double px-3 py-1 font-stamp tracking-wider uppercase;
+  transform: rotate(-6deg);
+}
+
+/* Leaflet: los controles heredan el tema */
+.dark .leaflet-container {
+  background: #0b1020;
+}
+.dark .leaflet-control-zoom a,
+.dark .leaflet-control-attribution {
+  @apply bg-passport-900 text-passport-100;
+}
+.dark .leaflet-tile {
+  filter: brightness(0.75) contrast(1.1) saturate(0.8);
+}
+.leaflet-div-icon.rp-pin {
+  background: transparent;
+  border: none;
+}

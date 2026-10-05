@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PLAYER
+}
+
+enum VictoryMode {
+  POINTS
+  ROUNDS
+}
+
+enum GameStatus {
+  PLAYING
+  FINISHED
+}
+
+enum CardCategory {
+  LOCATION
+  FLAG
+  CITY
+  HISTORY
+  PERSONALITY
+  TRAVEL_EVENT
+}
+
+model User {
+  id           String        @id @default(cuid())
+  username     String        @unique
+  passwordHash String
+  role         Role          @default(PLAYER)
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  hostedGames  GameSession[]
+  players      Player[]
+}
+
+/// Partida. `state` guarda el snapshot completo del motor (@roampass/shared) para
+/// reanudarla tal cual; las columnas planas existen para consultas y estadisticas.
+model GameSession {
+  id                 String      @id // id generado por el cliente => sincronizacion idempotente
+  hostId             String
+  host               User        @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  victoryMode        VictoryMode
+  target             Int
+  status             GameStatus  @default(PLAYING)
+  currentRound       Int         @default(1)
+  currentPlayerIndex Int         @default(0)
+  state              Json
+  startedAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  finishedAt         DateTime?
+  players            Player[]
+
+  @@index([hostId, status])
+}
+
+model Player {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  /// Usuario registrado que juega con este peon (opcional: los invitados no tienen cuenta).
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  turnOrder Int
+  name      String
+  color     String
+  avatar    String
+  score     Int         @default(0)
+  isWinner  Boolean     @default(false)
+  stats     Json?
+
+  @@unique([sessionId, turnOrder])
+  @@index([userId])
+}
+
+/// Carta del mazo. Los campos aplican segun la categoria:
+/// - LOCATION: imageUrl, latitude, longitude, answerLabel
+/// - FLAG: countryCode, options, correctAnswer
+/// - CITY / HISTORY / PERSONALITY: options, correctAnswer, imageUrl opcional
+/// - TRAVEL_EVENT: prompt (titulo), description, icon, points
+model CardQuestion {
+  id            String       @id // slug estable, ej. "flag-ar"
+  category      CardCategory
+  prompt        String
+  description   String?
+  icon          String?
+  imageUrl      String?
+  countryCode   String?
+  options       String[]
+  correctAnswer String?
+  points        Int?
+  latitude      Float?
+  longitude     Float?
+  answerLabel   String?
+  funFact       String?
+  credit        Json?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([category, isActive])
+}

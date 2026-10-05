@@ -1,0 +1,533 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "id": "loc-machu-picchu",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Machu_Picchu%2C_Peru.jpg?width=1280",
+      "credit": {
+        "author": "Pedro Szekely",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Machu_Picchu%2C_Peru.jpg"
+      },
+      "location": {
+        "lat": -13.1631,
+        "lng": -72.545
+      },
+      "answerLabel": "Machu Picchu, Cusco (Perú)"
+    },
+    {
+      "id": "loc-perito-moreno",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Perito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG?width=1280",
+      "credit": {
+        "author": "Luca Galuzzi",
+        "license": "CC BY-SA 2.5",
+        "source": "https://commons.wikimedia.org/wiki/File:Perito_Moreno_Glacier_Patagonia_Argentina_Luca_Galuzzi_2005.JPG"
+      },
+      "location": {
+        "lat": -50.4967,
+        "lng": -73.1377
+      },
+      "answerLabel": "Glaciar Perito Moreno, Santa Cruz (Argentina)"
+    },
+    {
+      "id": "loc-uluru",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Uluru%2C_helicopter_view%2C_cropped.jpg?width=1280",
+      "credit": {
+        "author": "Corey Leopold",
+        "license": "CC BY 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Uluru%2C_helicopter_view%2C_cropped.jpg"
+      },
+      "location": {
+        "lat": -25.3444,
+        "lng": 131.0369
+      },
+      "answerLabel": "Uluru, Territorio del Norte (Australia)"
+    },
+    {
+      "id": "loc-iguazu",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Iguazu_Cataratas2.jpg?width=1280",
+      "credit": {
+        "author": "Enaldo Valadares",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Iguazu_Cataratas2.jpg"
+      },
+      "location": {
+        "lat": -25.6953,
+        "lng": -54.4367
+      },
+      "answerLabel": "Cataratas del Iguazú (Argentina / Brasil)"
+    },
+    {
+      "id": "loc-fuji",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Fuji_from_Lake_Kawaguchi.jpg?width=1280",
+      "credit": {
+        "author": "Subramaniam K V",
+        "license": "CC BY 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mount_Fuji_from_Lake_Kawaguchi.jpg"
+      },
+      "location": {
+        "lat": 35.5167,
+        "lng": 138.7514
+      },
+      "answerLabel": "Monte Fuji desde el lago Kawaguchi (Japón)"
+    },
+    {
+      "id": "loc-santorini",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Santorini_Oia.jpg?width=1280",
+      "credit": {
+        "author": "Danbu14",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Santorini_Oia.jpg"
+      },
+      "location": {
+        "lat": 36.4618,
+        "lng": 25.3753
+      },
+      "answerLabel": "Oia, Santorini (Grecia)"
+    },
+    {
+      "id": "loc-matterhorn",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Matterhorn_from_Domh%C3%BCtte_-_2.jpg?width=1280",
+      "credit": {
+        "author": "chil / Zacharie Grossen",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Matterhorn_from_Domh%C3%BCtte_-_2.jpg"
+      },
+      "location": {
+        "lat": 45.9763,
+        "lng": 7.6586
+      },
+      "answerLabel": "Monte Cervino / Matterhorn (Suiza / Italia)"
+    },
+    {
+      "id": "loc-taj-mahal",
+      "category": "LOCATION",
+      "prompt": "¿Dónde fue tomada esta foto? Marca el punto en el mapa.",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Taj_Mahal%2C_Agra%2C_India_edit3.jpg?width=1280",
+      "credit": {
+        "author": "Yann / King of Hearts / Jbarta",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Taj_Mahal%2C_Agra%2C_India_edit3.jpg"
+      },
+      "location": {
+        "lat": 27.1751,
+        "lng": 78.0421
+      },
+      "answerLabel": "Taj Mahal, Agra (India)"
+    },
+    {
+      "id": "flag-ar",
+      "category": "FLAG",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "ar",
+      "options": [
+        "Argentina",
+        "Honduras",
+        "Nicaragua",
+        "El Salvador"
+      ],
+      "correctAnswer": "Argentina",
+      "funFact": "El Sol de Mayo de su bandera tiene 32 rayos."
+    },
+    {
+      "id": "flag-np",
+      "category": "FLAG",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "np",
+      "options": [
+        "Nepal",
+        "Bután",
+        "Sri Lanka",
+        "Bangladés"
+      ],
+      "correctAnswer": "Nepal",
+      "funFact": "Es la única bandera nacional que no es rectangular."
+    },
+    {
+      "id": "flag-ca",
+      "category": "FLAG",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "ca",
+      "options": [
+        "Canadá",
+        "Perú",
+        "Austria",
+        "Líbano"
+      ],
+      "correctAnswer": "Canadá",
+      "funFact": "La hoja de arce tiene 11 puntas."
+    },
+    {
+      "id": "flag-ke",
+      "category": "FLAG",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "ke",
+      "options": [
+        "Kenia",
+        "Sudán del Sur",
+        "Malaui",
+        "Tanzania"
+      ],
+      "correctAnswer": "Kenia",
+      "funFact": "En el centro luce un escudo masái y dos lanzas."
+    },
+    {
+      "id": "flag-kr",
+      "category": "FLAG",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "kr",
+      "options": [
+        "Corea del Sur",
+        "Japón",
+        "Taiwán",
+        "Mongolia"
+      ],
+      "correctAnswer": "Corea del Sur",
+      "funFact": "Se llama Taegukgi; sus trigramas representan cielo, tierra, agua y fuego."
+    },
+    {
+      "id": "flag-pt",
+      "category": "FLAG",
+      "prompt": "¿A qué país pertenece esta bandera?",
+      "countryCode": "pt",
+      "options": [
+        "Portugal",
+        "España",
+        "Mozambique",
+        "Angola"
+      ],
+      "correctAnswer": "Portugal",
+      "funFact": "La esfera armilar recuerda la era de los descubrimientos."
+    },
+    {
+      "id": "city-australia",
+      "category": "CITY",
+      "prompt": "¿Cuál es la capital de Australia?",
+      "options": [
+        "Sídney",
+        "Canberra",
+        "Melbourne",
+        "Perth"
+      ],
+      "correctAnswer": "Canberra",
+      "funFact": "Canberra fue diseñada desde cero como capital de compromiso entre Sídney y Melbourne."
+    },
+    {
+      "id": "city-canada",
+      "category": "CITY",
+      "prompt": "¿Cuál es la capital de Canadá?",
+      "options": [
+        "Toronto",
+        "Montreal",
+        "Ottawa",
+        "Vancouver"
+      ],
+      "correctAnswer": "Ottawa",
+      "funFact": "La reina Victoria eligió Ottawa como capital en 1857."
+    },
+    {
+      "id": "city-bosforo",
+      "category": "CITY",
+      "prompt": "¿Qué ciudad está dividida por el estrecho del Bósforo entre Europa y Asia?",
+      "options": [
+        "Atenas",
+        "Estambul",
+        "Ankara",
+        "El Cairo"
+      ],
+      "correctAnswer": "Estambul",
+      "funFact": "Estambul fue antes Bizancio y Constantinopla."
+    },
+    {
+      "id": "city-turquia",
+      "category": "CITY",
+      "prompt": "¿Cuál es la capital de Turquía?",
+      "options": [
+        "Estambul",
+        "Esmirna",
+        "Antalya",
+        "Ankara"
+      ],
+      "correctAnswer": "Ankara",
+      "funFact": "Ankara es capital desde 1923, con la fundación de la república."
+    },
+    {
+      "id": "city-marruecos",
+      "category": "CITY",
+      "prompt": "¿Cuál es la capital de Marruecos?",
+      "options": [
+        "Casablanca",
+        "Marrakech",
+        "Rabat",
+        "Fez"
+      ],
+      "correctAnswer": "Rabat",
+      "funFact": "Casablanca es la ciudad más grande, pero la capital es Rabat."
+    },
+    {
+      "id": "city-cristo",
+      "category": "CITY",
+      "prompt": "¿En qué ciudad se encuentra el Cristo Redentor del cerro del Corcovado?",
+      "options": [
+        "São Paulo",
+        "Brasilia",
+        "Río de Janeiro",
+        "Salvador de Bahía"
+      ],
+      "correctAnswer": "Río de Janeiro",
+      "funFact": "Fue inaugurado en 1931 y mide unos 30 m sin el pedestal."
+    },
+    {
+      "id": "hist-iwo-jima",
+      "category": "HISTORY",
+      "prompt": "Marines izando la bandera en Iwo Jima. ¿En qué año fue tomada esta fotografía?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Raising_the_Flag_on_Iwo_Jima%2C_larger_-_edit1.jpg?width=1280",
+      "credit": {
+        "author": "Joe Rosenthal",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Raising_the_Flag_on_Iwo_Jima%2C_larger_-_edit1.jpg"
+      },
+      "options": [
+        "1942",
+        "1944",
+        "1945",
+        "1950"
+      ],
+      "correctAnswer": "1945",
+      "funFact": "La foto de Joe Rosenthal ganó el Premio Pulitzer."
+    },
+    {
+      "id": "hist-apollo-11",
+      "category": "HISTORY",
+      "prompt": "Buzz Aldrin caminando sobre la Luna durante la misión Apolo 11. ¿En qué año ocurrió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Aldrin_Apollo_11_original.jpg?width=1280",
+      "credit": {
+        "author": "Neil Armstrong / NASA",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Aldrin_Apollo_11_original.jpg"
+      },
+      "options": [
+        "1961",
+        "1965",
+        "1969",
+        "1972"
+      ],
+      "correctAnswer": "1969",
+      "funFact": "La foto la tomó Neil Armstrong, por eso casi no hay fotos de él en la Luna."
+    },
+    {
+      "id": "hist-wright",
+      "category": "HISTORY",
+      "prompt": "Primer vuelo motorizado y controlado de los hermanos Wright en Kitty Hawk. ¿En qué año fue?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/First_flight2.jpg?width=1280",
+      "credit": {
+        "author": "John T. Daniels",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:First_flight2.jpg"
+      },
+      "options": [
+        "1899",
+        "1903",
+        "1910",
+        "1914"
+      ],
+      "correctAnswer": "1903",
+      "funFact": "El primer vuelo duró 12 segundos y recorrió 36,6 metros."
+    },
+    {
+      "id": "hist-titanic",
+      "category": "HISTORY",
+      "prompt": "El RMS Titanic zarpando de Southampton en su viaje inaugural. ¿En qué año se hundió?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/RMS_Titanic_3.jpg?width=1280",
+      "credit": {
+        "author": "Francis G. O. Stuart",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:RMS_Titanic_3.jpg"
+      },
+      "options": [
+        "1905",
+        "1912",
+        "1915",
+        "1921"
+      ],
+      "correctAnswer": "1912",
+      "funFact": "Se hundió la madrugada del 15 de abril tras chocar con un iceberg."
+    },
+    {
+      "id": "hist-berlin-wall",
+      "category": "HISTORY",
+      "prompt": "Este muro pintado (foto de 1986) dividió Berlín durante la Guerra Fría. ¿En qué año cayó?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlinermauer.jpg?width=1280",
+      "credit": {
+        "author": "Thierry Noir",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Berlinermauer.jpg"
+      },
+      "options": [
+        "1979",
+        "1985",
+        "1989",
+        "1991"
+      ],
+      "correctAnswer": "1989",
+      "funFact": "Cayó la noche del 9 de noviembre; la reunificación alemana llegó en 1990."
+    },
+    {
+      "id": "pers-einstein",
+      "category": "PERSONALITY",
+      "prompt": "Albert Einstein, físico de la teoría de la relatividad: ¿cuál es su país de origen?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Albert_Einstein_Head.jpg?width=1280",
+      "credit": {
+        "author": "Orren Jack Turner",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head.jpg"
+      },
+      "options": [
+        "Austria",
+        "Suiza",
+        "Alemania",
+        "Estados Unidos"
+      ],
+      "correctAnswer": "Alemania",
+      "funFact": "Nació en Ulm en 1879; luego fue ciudadano suizo y estadounidense."
+    },
+    {
+      "id": "pers-frida",
+      "category": "PERSONALITY",
+      "prompt": "Frida Kahlo, pintora: ¿cuál es su país de origen?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg?width=1280",
+      "credit": {
+        "author": "Guillermo Kahlo",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg"
+      },
+      "options": [
+        "España",
+        "México",
+        "Colombia",
+        "Cuba"
+      ],
+      "correctAnswer": "México",
+      "funFact": "Su Casa Azul en Coyoacán es hoy un museo."
+    },
+    {
+      "id": "pers-mandela",
+      "category": "PERSONALITY",
+      "prompt": "Nelson Mandela, Nobel de la Paz 1993: ¿cuál es su país de origen?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Nelson_Mandela_1994.jpg?width=1280",
+      "credit": {
+        "author": "Kingkongphoto / celebrity-photos.com",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Nelson_Mandela_1994.jpg"
+      },
+      "options": [
+        "Kenia",
+        "Zimbabue",
+        "Sudáfrica",
+        "Nigeria"
+      ],
+      "correctAnswer": "Sudáfrica",
+      "funFact": "Pasó 27 años en prisión antes de ser presidente en 1994."
+    },
+    {
+      "id": "pers-curie",
+      "category": "PERSONALITY",
+      "prompt": "Marie Curie, doble Premio Nobel: ¿cuál es su país de origen?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Marie_Curie_c1920.jpg?width=1280",
+      "credit": {
+        "author": "Henri Manuel",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Marie_Curie_c1920.jpg"
+      },
+      "options": [
+        "Francia",
+        "Polonia",
+        "Rusia",
+        "Austria"
+      ],
+      "correctAnswer": "Polonia",
+      "funFact": "Nació en Varsovia como Maria Skłodowska y desarrolló su carrera en Francia."
+    },
+    {
+      "id": "pers-gandhi",
+      "category": "PERSONALITY",
+      "prompt": "Mahatma Gandhi, líder de la no violencia: ¿cuál es su país de origen?",
+      "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Mahatma-Gandhi%2C_studio%2C_1931.jpg?width=1280",
+      "credit": {
+        "author": "Elliott and Fry",
+        "license": "Dominio público",
+        "source": "https://commons.wikimedia.org/wiki/File:Mahatma-Gandhi%2C_studio%2C_1931.jpg"
+      },
+      "options": [
+        "Pakistán",
+        "India",
+        "Sudáfrica",
+        "Nepal"
+      ],
+      "correctAnswer": "India",
+      "funFact": "Nació en Porbandar en 1869; vivió 21 años en Sudáfrica."
+    },
+    {
+      "id": "evt-visa-denied",
+      "category": "TRAVEL_EVENT",
+      "icon": "🛂",
+      "title": "Visa Denegada",
+      "description": "Tu papeleo no convenció al oficial de migraciones. Pierdes 300 pts.",
+      "points": -300
+    },
+    {
+      "id": "evt-flight-voucher",
+      "category": "TRAVEL_EVENT",
+      "icon": "✈️",
+      "title": "Voucher de Vuelo",
+      "description": "¡Sobreventa en tu vuelo! La aerolínea te compensa con un voucher. Ganas 500 pts.",
+      "points": 500
+    },
+    {
+      "id": "evt-lost-luggage",
+      "category": "TRAVEL_EVENT",
+      "icon": "🧳",
+      "title": "Equipaje Perdido",
+      "description": "Tu mochila se fue a otro continente. Pierdes 200 pts.",
+      "points": -200
+    },
+    {
+      "id": "evt-upgrade",
+      "category": "TRAVEL_EVENT",
+      "icon": "💺",
+      "title": "Upgrade a Primera Clase",
+      "description": "Asiento libre en primera: viajas como realeza. Ganas 300 pts.",
+      "points": 300
+    },
+    {
+      "id": "evt-cancelled",
+      "category": "TRAVEL_EVENT",
+      "icon": "⛈️",
+      "title": "Vuelo Cancelado",
+      "description": "Tormenta en el aeropuerto: noche en la terminal. Pierdes 100 pts.",
+      "points": -100
+    },
+    {
+      "id": "evt-local-guide",
+      "category": "TRAVEL_EVENT",
+      "icon": "🤝",
+      "title": "Guía Local",
+      "description": "Un local te muestra los secretos de la ciudad. Ganas 200 pts.",
+      "points": 200
+    }
+  ]
+}
