@@ -716,6 +716,446 @@
       "answerLabel": "Valle de Göreme, Capadocia (Turquía)"
     },
     {
+      "id": "sv-palermo",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -34.588362,
+        "lng": -58.421118
+      },
+      "answerLabel": "Palermo, Buenos Aires (Argentina)"
+    },
+    {
+      "id": "sv-malasana",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 40.425487,
+        "lng": -3.701087
+      },
+      "answerLabel": "Malasaña, Madrid (España)"
+    },
+    {
+      "id": "sv-roma-cdmx",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 19.417948,
+        "lng": -99.162021
+      },
+      "answerLabel": "Colonia Roma, Ciudad de México (México)"
+    },
+    {
+      "id": "sv-shimokitazawa",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 35.66177,
+        "lng": 139.667984
+      },
+      "answerLabel": "Shimokitazawa, Tokio (Japón)"
+    },
+    {
+      "id": "sv-graca",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 38.719028,
+        "lng": -9.129909
+      },
+      "answerLabel": "Graça, Lisboa (Portugal)"
+    },
+    {
+      "id": "sv-trastevere",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 41.889293,
+        "lng": 12.470117
+      },
+      "answerLabel": "Trastevere, Roma (Italia)"
+    },
+    {
+      "id": "sv-park-slope",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 40.671057,
+        "lng": -73.978024
+      },
+      "answerLabel": "Park Slope, Brooklyn, Nueva York (EE. UU.)"
+    },
+    {
+      "id": "sv-islington",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 51.539939,
+        "lng": -0.102828
+      },
+      "answerLabel": "Islington, Londres (Reino Unido)"
+    },
+    {
+      "id": "sv-oberkampf",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 48.865114,
+        "lng": 2.375008
+      },
+      "answerLabel": "Oberkampf, París (Francia)"
+    },
+    {
+      "id": "sv-copacabana",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -22.970122,
+        "lng": -43.188244
+      },
+      "answerLabel": "Copacabana, Río de Janeiro (Brasil)"
+    },
+    {
+      "id": "sv-newtown",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -33.897008,
+        "lng": 151.178979
+      },
+      "answerLabel": "Newtown, Sídney (Australia)"
+    },
+    {
+      "id": "sv-ari",
+      "category": "LOCATION",
+      "difficulty": "EASY",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 13.779128,
+        "lng": 100.544203
+      },
+      "answerLabel": "Ari, Bangkok (Tailandia)"
+    },
+    {
+      "id": "sv-valparaiso",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -33.041951,
+        "lng": -71.627908
+      },
+      "answerLabel": "Cerro Alegre, Valparaíso (Chile)"
+    },
+    {
+      "id": "sv-arequipa",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -16.398883,
+        "lng": -71.536992
+      },
+      "answerLabel": "Centro de Arequipa (Perú)"
+    },
+    {
+      "id": "sv-oaxaca",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 17.064976,
+        "lng": -96.724947
+      },
+      "answerLabel": "Oaxaca de Juárez (México)"
+    },
+    {
+      "id": "sv-curitiba",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -25.442193,
+        "lng": -49.289176
+      },
+      "answerLabel": "Batel, Curitiba (Brasil)"
+    },
+    {
+      "id": "sv-bergen",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 60.387901,
+        "lng": 5.329832
+      },
+      "answerLabel": "Bergen (Noruega)"
+    },
+    {
+      "id": "sv-gdansk",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 54.379861,
+        "lng": 18.607952
+      },
+      "answerLabel": "Wrzeszcz, Gdansk (Polonia)"
+    },
+    {
+      "id": "sv-kanazawa",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 36.560856,
+        "lng": 136.656146
+      },
+      "answerLabel": "Kanazawa (Japón)"
+    },
+    {
+      "id": "sv-observatory",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -33.938026,
+        "lng": 18.471891
+      },
+      "answerLabel": "Observatory, Ciudad del Cabo (Sudáfrica)"
+    },
+    {
+      "id": "sv-pocitos",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -34.909073,
+        "lng": -56.149963
+      },
+      "answerLabel": "Pocitos, Montevideo (Uruguay)"
+    },
+    {
+      "id": "sv-laureles",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 6.244946,
+        "lng": -75.595022
+      },
+      "answerLabel": "Laureles, Medellín (Colombia)"
+    },
+    {
+      "id": "sv-chiang-mai",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 18.789984,
+        "lng": 98.990013
+      },
+      "answerLabel": "Ciudad vieja de Chiang Mai (Tailandia)"
+    },
+    {
+      "id": "sv-reikiavik",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 64.142113,
+        "lng": -21.927701
+      },
+      "answerLabel": "Barrio residencial de Reikiavik (Islandia)"
+    },
+    {
+      "id": "sv-cuenca",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -2.896972,
+        "lng": -79.005018
+      },
+      "answerLabel": "Cuenca (Ecuador)"
+    },
+    {
+      "id": "sv-quetzaltenango",
+      "category": "LOCATION",
+      "difficulty": "MEDIUM",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 14.833964,
+        "lng": -91.517957
+      },
+      "answerLabel": "Quetzaltenango (Guatemala)"
+    },
+    {
+      "id": "sv-perito-moreno-town",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -46.590042,
+        "lng": -70.930012
+      },
+      "answerLabel": "Perito Moreno, Santa Cruz (Argentina)"
+    },
+    {
+      "id": "sv-tennant-creek",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -19.64596,
+        "lng": 134.189723
+      },
+      "answerLabel": "Tennant Creek, Territorio del Norte (Australia)"
+    },
+    {
+      "id": "sv-vik",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 63.419154,
+        "lng": -19.00578
+      },
+      "answerLabel": "Vík í Mýrdal (Islandia)"
+    },
+    {
+      "id": "sv-kochkor",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 42.214473,
+        "lng": 75.755025
+      },
+      "answerLabel": "Kochkor (Kirguistán)"
+    },
+    {
+      "id": "sv-roma-lesotho",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -29.450612,
+        "lng": 27.719392
+      },
+      "answerLabel": "Roma (Lesoto)"
+    },
+    {
+      "id": "sv-thimphu",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 27.471641,
+        "lng": 89.63902
+      },
+      "answerLabel": "Timbu (Bután)"
+    },
+    {
+      "id": "sv-klaksvik",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 62.226209,
+        "lng": -6.587685
+      },
+      "answerLabel": "Klaksvík, Islas Feroe (Dinamarca)"
+    },
+    {
+      "id": "sv-thies",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 14.790988,
+        "lng": -16.926001
+      },
+      "answerLabel": "Thiès (Senegal)"
+    },
+    {
+      "id": "sv-kumasi",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 6.687984,
+        "lng": -1.624046
+      },
+      "answerLabel": "Kumasi (Ghana)"
+    },
+    {
+      "id": "sv-biei",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 43.588187,
+        "lng": 142.466972
+      },
+      "answerLabel": "Biei, Hokkaidō (Japón)"
+    },
+    {
+      "id": "sv-kandy",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 7.292962,
+        "lng": 80.634979
+      },
+      "answerLabel": "Kandy (Sri Lanka)"
+    },
+    {
+      "id": "sv-nakuru",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -0.283528,
+        "lng": 36.070099
+      },
+      "answerLabel": "Nakuru (Kenia)"
+    },
+    {
+      "id": "sv-tacuarembo",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": -31.710935,
+        "lng": -55.982992
+      },
+      "answerLabel": "Tacuarembó (Uruguay)"
+    },
+    {
+      "id": "sv-gjirokaster",
+      "category": "LOCATION",
+      "difficulty": "HARD",
+      "prompt": "¿Dónde estás? Explora la calle y marca el punto en el mapa.",
+      "location": {
+        "lat": 40.075028,
+        "lng": 20.138885
+      },
+      "answerLabel": "Gjirokastër (Albania)"
+    },
+    {
       "id": "flag-ar",
       "category": "FLAG",
       "difficulty": "HARD",

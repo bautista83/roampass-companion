@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '../src/loadEnv';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { PrismaClient } from '@prisma/client';

@@ -3,6 +3,8 @@ import { useGameStore, type ActiveDraw } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { CardImage } from '../ui/CardImage';
 import { DifficultyBadge } from '../ui/DifficultyBadge';
+import { CardTimer } from '../ui/CardTimer';
+import { useCardTimer } from '../../hooks/useCountdown';
 import { CardResult } from './CardResult';
 
 /** Cartas de seleccion multiple: BANDERA, CAPITALES Y CIUDADES, HISTORIA y PERSONALIDADES. */
@@ -14,6 +16,8 @@ export function QuizModal({ draw }: { draw: ActiveDraw }) {
   const resolved = draw.resolved;
   const image = card.category === 'FLAG' && card.countryCode ? flagUrl(card.countryCode, 640) : card.imageUrl;
   const options = draw.options ?? card.options;
+  // Si se acaba el tiempo sin respuesta, cuenta como error.
+  const timer = useCardTimer(draw, () => resolve({ kind: 'TIMEOUT', card }));
 
   const optionClass = (opt: string) => {
     if (!resolved) return 'bg-white ring-1 ring-passport-800/15 hover:ring-2 hover:ring-passport-500 dark:bg-passport-950 dark:ring-white/15';
@@ -34,6 +38,11 @@ export function QuizModal({ draw }: { draw: ActiveDraw }) {
             +{withDifficulty(QUIZ_POINTS[card.category], card.difficulty)}
           </span>
           <DifficultyBadge difficulty={card.difficulty} />
+          {timer.hasTimer && (
+            <span className="ml-auto">
+              <CardTimer remainingMs={timer.remainingMs} totalSeconds={timer.totalSeconds} stopped={timer.stopped} timedOut={timer.timedOut} />
+            </span>
+          )}
         </span>
       }
     >

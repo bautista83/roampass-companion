@@ -1,8 +1,8 @@
-import 'dotenv/config';
+import './loadEnv';
 
 function required(name: string): string {
   const value = process.env[name];
-  if (!value) throw new Error(`Falta la variable de entorno ${name} (ver server/.env.example)`);
+  if (!value) throw new Error(`Falta la variable de entorno ${name} (ver .env.example en la raiz)`);
   return value;
 }
 

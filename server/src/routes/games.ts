@@ -1,7 +1,15 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import type { Prisma } from '@prisma/client';
-import { CARD_CATEGORIES, MAX_PLAYERS, MIN_PLAYERS, PAWN_COLORS, validateConfig, type GameState } from '@roampass/shared';
+import {
+  CARD_CATEGORIES,
+  MAX_PLAYERS,
+  MIN_PLAYERS,
+  PAWN_COLORS,
+  validateConfig,
+  validateTimer,
+  type GameState,
+} from '@roampass/shared';
 import { prisma } from '../db';
 import { HttpError } from '../http';
 import { requireAuth } from '../auth/middleware';
@@ -33,6 +41,7 @@ const stateSchema = z.object({
   status: z.enum(['PLAYING', 'FINISHED']),
   history: z.array(z.record(z.string(), z.unknown())),
   usedCardIds: z.array(z.string()),
+  timerSeconds: z.number().int().optional(),
   finishedAt: z.string().optional(),
   winnerIds: z.array(z.string()).optional(),
 });
@@ -51,6 +60,7 @@ gamesRouter.put('/:id', async (req, res) => {
   const { state, selfPlayerId } = syncSchema.parse(req.body);
   if (state.id !== req.params.id) throw new HttpError(400, 'El id no coincide');
   validateConfig(state.config);
+  if (state.timerSeconds !== undefined) validateTimer(state.timerSeconds);
 
   const existing = await prisma.gameSession.findUnique({ where: { id: state.id }, select: { hostId: true } });
   if (existing && existing.hostId !== req.user!.id) throw new HttpError(403, 'La partida pertenece a otro usuario');

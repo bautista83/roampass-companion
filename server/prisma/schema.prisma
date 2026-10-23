@@ -89,7 +89,7 @@ model Player {
 }
 
 /// Carta del mazo. Los campos aplican segun la categoria:
-/// - LOCATION: imageUrl, latitude, longitude, answerLabel
+/// - LOCATION: latitude, longitude, answerLabel; imageUrl solo en las de foto (sin imageUrl = Street View)
 /// - FLAG: countryCode, options, correctAnswer
 /// - CITY / HISTORY / PERSONALITY: options, correctAnswer, imageUrl opcional
 /// - TRAVEL_EVENT: prompt (titulo), description, icon, points

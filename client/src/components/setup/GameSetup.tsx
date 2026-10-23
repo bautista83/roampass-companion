@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AVATARS,
+  DEFAULT_TIMER_SECONDS,
   DIFFICULTIES,
   formatNumber,
   MAX_PLAYERS,
@@ -11,6 +12,7 @@ import {
   PAWN_COLORS,
   POINT_TARGETS,
   ROUND_TARGETS,
+  TIMER_OPTIONS,
   validatePlayers,
   type PawnColor,
   type PlayerSetup,
@@ -43,6 +45,7 @@ export function GameSetup() {
   /** Índice del peón que controla el usuario logueado (cuenta para su récord). */
   const [selfIndex, setSelfIndex] = useState<number | null>(0);
   const [error, setError] = useState<string | null>(null);
+  const [timerSeconds, setTimerSeconds] = useState<number>(DEFAULT_TIMER_SECONDS);
   const [busy, setBusy] = useState(false);
 
   const chooseMode = (m: VictoryMode) => {
@@ -66,7 +69,7 @@ export function GameSetup() {
     try {
       validatePlayers(players);
       setBusy(true);
-      await startGame({ mode, target }, players, selfIndex);
+      await startGame({ mode, target }, players, selfIndex, timerSeconds);
       navigate('/play');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error inesperado');
@@ -142,6 +145,34 @@ export function GameSetup() {
                 );
               })}
             </div>
+            <div className="rounded-2xl border-2 border-passport-800/10 p-4 dark:border-white/10">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-lg font-bold">⏱ Tiempo por carta</p>
+                  <p className="text-sm text-passport-500 dark:text-passport-300">
+                    Si se agota, la carta cuenta como error. Los eventos de viajero no tienen tiempo.
+                  </p>
+                </div>
+                <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label="Segundos por carta">
+                  {TIMER_OPTIONS.map((value) => (
+                    <button
+                      key={value}
+                      role="radio"
+                      aria-checked={timerSeconds === value}
+                      onClick={() => setTimerSeconds(value)}
+                      className={`min-h-12 min-w-14 rounded-xl px-3 font-bold tabular-nums transition ${
+                        timerSeconds === value
+                          ? 'bg-passport-700 text-white dark:bg-brass dark:text-passport-950'
+                          : 'bg-white ring-1 ring-passport-800/15 hover:ring-passport-500 dark:bg-passport-950 dark:ring-white/15'
+                      }`}
+                    >
+                      {value}
+                      <span className="text-xs font-medium opacity-70"> s</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
             <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-passport-800/20 p-3 text-sm dark:border-white/15">
               <span>Las cartas vienen en 3 niveles y las difíciles dan bonus:</span>
               {DIFFICULTIES.map((d) => (
@@ -171,7 +202,7 @@ export function GameSetup() {
             <div className="flex items-end justify-between gap-3">
               <h1 className="text-2xl font-bold">Viajeros</h1>
               <span className="text-sm text-passport-500 dark:text-passport-300">
-                {players.length}/{MAX_PLAYERS} · {mode === 'POINTS' ? `${formatNumber(target)} pts` : `${target} rondas`}
+                {players.length}/{MAX_PLAYERS} · {mode === 'POINTS' ? `${formatNumber(target)} pts` : `${target} rondas`} · ⏱ {timerSeconds} s
               </span>
             </div>
 

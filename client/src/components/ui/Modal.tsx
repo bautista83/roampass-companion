@@ -58,7 +58,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
           >
             {(title || onClose) && (
               <div className="flex items-center justify-between gap-3 border-b border-passport-800/10 px-4 py-3 md:px-6 dark:border-white/10">
-                <div className="min-w-0 font-semibold">{title}</div>
+                <div className="min-w-0 flex-1 font-semibold">{title}</div>
                 {onClose && (
                   <button className="btn-ghost size-12 shrink-0 px-0" onClick={onClose} aria-label="Cerrar">
                     ✕
