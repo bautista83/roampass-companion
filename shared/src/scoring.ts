@@ -48,5 +48,7 @@ export function scoreOutcome(outcome: CardOutcome): ScoreResult {
     }
     case 'EVENT':
       return { delta: outcome.card.points, correct: null };
+    case 'TIMEOUT':
+      return { delta: 0, correct: false, timedOut: true };
   }
 }

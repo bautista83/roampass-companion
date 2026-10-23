@@ -4,6 +4,8 @@
 import { scoreOutcome } from './scoring';
 import {
   CARD_CATEGORIES,
+  DEFAULT_TIMER_SECONDS,
+  TIMER_OPTIONS,
   POINT_TARGETS,
   ROUND_TARGETS,
   type CardCategory,
@@ -54,10 +56,12 @@ export function validatePlayers(players: readonly PlayerSetup[]): void {
 export function createGame(
   config: VictoryCondition,
   setups: readonly PlayerSetup[],
-  opts: { id?: string; now?: Date } = {},
+  opts: { id?: string; now?: Date; timerSeconds?: number } = {},
 ): GameState {
   validateConfig(config);
   validatePlayers(setups);
+  const timerSeconds = opts.timerSeconds ?? DEFAULT_TIMER_SECONDS;
+  validateTimer(timerSeconds);
   const now = opts.now ?? new Date();
   return {
     id: opts.id ?? `game-${now.getTime().toString(36)}`,
@@ -71,8 +75,18 @@ export function createGame(
     status: 'PLAYING',
     history: [],
     usedCardIds: [],
+    timerSeconds,
   };
 }
+
+export function validateTimer(seconds: number): void {
+  if (!(TIMER_OPTIONS as readonly number[]).includes(seconds)) {
+    throw new GameRuleError(`Tiempo por carta invalido: ${seconds}. Opciones: ${TIMER_OPTIONS.join(', ')}`);
+  }
+}
+
+/** Partidas creadas antes de existir el timer usan el valor por defecto. */
+export const timerSecondsOf = (state: GameState): number => state.timerSeconds ?? DEFAULT_TIMER_SECONDS;
 
 export const currentPlayer = (state: GameState): GamePlayer => state.players[state.currentPlayerIndex]!;
 
@@ -127,6 +141,7 @@ export function applyTurn(
         delta: result.delta,
         correct: result.correct,
         ...(result.distanceKm !== undefined && { distanceKm: result.distanceKm }),
+        ...(result.timedOut && { timedOut: true }),
         at: now.toISOString(),
       },
     ],

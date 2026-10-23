@@ -9,7 +9,15 @@ export function CardResult({ result, playerName, children }: { result: ScoreResu
   const dismiss = useGameStore((s) => s.dismissCard);
   const finished = useGameStore((s) => s.game?.status === 'FINISHED');
   const positive = result.delta > 0;
-  const label = result.correct === null ? (positive ? 'Bonus' : 'Penalización') : result.correct ? 'Aprobado' : 'Denegado';
+  const label = result.timedOut
+    ? '¡Tiempo!'
+    : result.correct === null
+      ? positive
+        ? 'Bonus'
+        : 'Penalización'
+      : result.correct
+        ? 'Aprobado'
+        : 'Denegado';
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-4 text-center">

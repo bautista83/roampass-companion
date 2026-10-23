@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { CATEGORY_META, LOCATION_BRACKETS, formatNumber, normalizeLng, withDifficulty, type LatLng, type LocationCard } from '@roampass/shared';
+import {
+  CATEGORY_META,
+  LOCATION_BRACKETS,
+  formatNumber,
+  isStreetViewCard,
+  normalizeLng,
+  withDifficulty,
+  type LatLng,
+  type LocationCard,
+} from '@roampass/shared';
 import { useGameStore, type ActiveDraw } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { CardImage } from '../ui/CardImage';
 import { DifficultyBadge } from '../ui/DifficultyBadge';
+import { CardTimer } from '../ui/CardTimer';
+import { useCardTimer } from '../../hooks/useCountdown';
 import { CardResult } from './CardResult';
 
 // divIcon evita el problema clasico de rutas de imagenes de Leaflet con bundlers.
@@ -43,6 +54,30 @@ function FixSizeAndFit({ from, to }: { from: LatLng | null; to: LatLng }) {
   return null;
 }
 
+// Camara inicial del panorama: mirando al suroeste, apenas hacia arriba y con zoom (fov angosto).
+const STREET_VIEW_CAMERA = { heading: 210, pitch: 10, fov: 35 };
+
+/** Vista 360° interactiva con la Maps Embed API (gratis e ilimitada; requiere API key). */
+function StreetViewFrame({ location }: { location: LatLng }) {
+  const params = new URLSearchParams({
+    key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    location: `${location.lat},${location.lng}`,
+    heading: String(STREET_VIEW_CAMERA.heading),
+    pitch: String(STREET_VIEW_CAMERA.pitch),
+    fov: String(STREET_VIEW_CAMERA.fov),
+  });
+  return (
+    <iframe
+      title="Vista de calle del lugar misterioso"
+      src={`https://www.google.com/maps/embed/v1/streetview?${params}`}
+      className="min-h-0 w-full flex-1 border-0"
+      // Necesario para que funcione una clave restringida por dominio (HTTP referrer).
+      referrerPolicy="no-referrer-when-downgrade"
+      allowFullScreen
+    />
+  );
+}
+
 const formatKm = (km: number) => `${km < 10 ? km.toFixed(1) : formatNumber(Math.round(km))} km`;
 
 /** LUGAR: foto panoramica + mapa Leaflet/OpenStreetMap; puntua por distancia Haversine. */
@@ -54,6 +89,11 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
   const [guess, setGuess] = useState<LatLng | null>(null);
   const shownGuess = resolved?.guess ?? guess;
   const meta = CATEGORY_META.LOCATION;
+  const streetView = isStreetViewCard(card);
+  // Al vencer el tiempo: si ya marco un punto se envia tal cual; si no, cuenta como error.
+  const timer = useCardTimer(draw, () =>
+    resolve(guess ? { kind: 'LOCATION', card, guess } : { kind: 'TIMEOUT', card }),
+  );
 
   return (
     <Modal
@@ -68,31 +108,43 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
           <span className="truncate text-sm font-normal text-passport-500 dark:text-passport-300">
             · {player?.avatar} {player?.name}
           </span>
+          {timer.hasTimer && (
+            <span className="ml-auto">
+              <CardTimer remainingMs={timer.remainingMs} totalSeconds={timer.totalSeconds} stopped={timer.stopped} timedOut={timer.timedOut} />
+            </span>
+          )}
         </span>
       }
     >
       <div className="flex h-full flex-col md:grid md:h-[78dvh] md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-        {/* Panorama: se desplaza horizontalmente para "mirar alrededor" */}
-        <div className="flex h-[30dvh] shrink-0 flex-col md:h-full">
-          <CardImage
-            src={card.imageUrl}
-            alt="Lugar misterioso"
-            credit={card.credit}
-            className="min-h-0 flex-1 overflow-x-auto"
-            imgClassName="h-full w-auto max-w-none md:h-full md:w-full md:object-cover"
-          />
-          <p className="hidden px-4 py-2 text-xs text-passport-500 md:block dark:text-passport-300">↔ {card.prompt}</p>
-        </div>
+        {streetView ? (
+          <div className="flex h-[42dvh] shrink-0 flex-col md:h-full">
+            <StreetViewFrame location={card.location} />
+            <p className="hidden px-4 py-2 text-xs text-passport-500 md:block dark:text-passport-300">🧭 Arrastra para mirar alrededor y usa las flechas para avanzar por la calle.</p>
+          </div>
+        ) : (
+          // Foto panoramica: se desplaza horizontalmente para "mirar alrededor"
+          <div className="flex h-[30dvh] shrink-0 flex-col md:h-full">
+            <CardImage
+              src={card.imageUrl!}
+              alt="Lugar misterioso"
+              credit={card.credit}
+              className="min-h-0 flex-1 overflow-x-auto"
+              imgClassName="h-full w-auto max-w-none md:h-full md:w-full md:object-cover"
+            />
+            <p className="hidden px-4 py-2 text-xs text-passport-500 md:block dark:text-passport-300">↔ {card.prompt}</p>
+          </div>
+        )}
 
         <div className="relative flex min-h-0 flex-1 flex-col">
-          <div className="relative min-h-[38dvh] flex-1">
+          <div className={`relative flex-1 ${streetView ? 'min-h-[28dvh]' : 'min-h-[38dvh]'}`}>
             <MapContainer center={[20, 0]} zoom={2} minZoom={1} worldCopyJump className="absolute inset-0 z-0" attributionControl>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               />
               <PickOnClick enabled={!resolved} onPick={setGuess} />
-              <FixSizeAndFit from={resolved?.guess ?? null} to={card.location} />
+              <FixSizeAndFit from={resolved ? (resolved.guess ?? card.location) : null} to={card.location} />
               {shownGuess && <Marker position={shownGuess} icon={GUESS_ICON} />}
               {resolved && (
                 <>
@@ -109,13 +161,23 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
                 <p className="text-lg">
                   📍 <strong>{card.answerLabel}</strong>
                   <br />
-                  Distancia: <strong className="tabular-nums">{formatKm(resolved.result.distanceKm ?? 0)}</strong>
+                  {resolved.result.distanceKm === undefined ? (
+                    'No marcaste ningún punto a tiempo.'
+                  ) : (
+                    <>
+                      Distancia: <strong className="tabular-nums">{formatKm(resolved.result.distanceKm)}</strong>
+                    </>
+                  )}
                 </p>
               </CardResult>
             ) : (
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-passport-500 dark:text-passport-300">
-                  {guess ? '¿Seguro? Puedes tocar otro punto para moverlo.' : '👆 Toca el mapa donde crees que se tomó la foto.'}
+                  {guess
+                    ? '¿Seguro? Puedes tocar otro punto para moverlo.'
+                    : streetView
+                      ? '👆 Toca el mapa donde crees que estás.'
+                      : '👆 Toca el mapa donde crees que se tomó la foto.'}
                   <span className="block text-xs">
                     {LOCATION_BRACKETS.map((b) => `≤${formatNumber(b.maxKm)} km: ${formatNumber(withDifficulty(b.points, card.difficulty))}`).join(' · ')}
                   </span>

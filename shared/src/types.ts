@@ -23,6 +23,10 @@ export const DIFFICULTIES: readonly Difficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 export type VictoryMode = 'POINTS' | 'ROUNDS';
 
 export const POINT_TARGETS = [3000, 5000, 10000] as const;
+
+/** Segundos para responder cada carta; se elige al crear cada partida (los eventos de viajero no tienen timer). */
+export const TIMER_OPTIONS = [10, 15, 20, 25, 30] as const;
+export const DEFAULT_TIMER_SECONDS = 10;
 export const ROUND_TARGETS = [10, 15, 20] as const;
 
 export interface VictoryCondition {
@@ -52,7 +56,11 @@ export interface LocationCard extends BaseCard {
   category: 'LOCATION';
   difficulty: Difficulty;
   prompt: string;
-  imageUrl: string;
+  /**
+   * Foto del lugar. Si no tiene, es una carta de Street View: `location` es un punto de una
+   * calle o camino con cobertura y se muestra con la Maps Embed API (requiere API key).
+   */
+  imageUrl?: string;
   location: LatLng;
   /** Nombre del lugar revelado tras responder. */
   answerLabel: string;
@@ -142,6 +150,7 @@ export interface TurnRecord {
   /** null en eventos de viajero (no hay pregunta). */
   correct: boolean | null;
   distanceKm?: number;
+  timedOut?: boolean;
   at: string;
 }
 
@@ -158,6 +167,8 @@ export interface GameState {
   status: GameStatus;
   history: TurnRecord[];
   usedCardIds: string[];
+  /** Segundos por carta elegidos en el wizard al crear la partida. */
+  timerSeconds?: number;
   finishedAt?: string;
   winnerIds?: string[];
 }
@@ -166,10 +177,13 @@ export interface GameState {
 export type CardOutcome =
   | { kind: 'LOCATION'; card: LocationCard; guess: LatLng }
   | { kind: 'QUIZ'; card: QuizCard; answer: string }
-  | { kind: 'EVENT'; card: TravelEventCard };
+  | { kind: 'EVENT'; card: TravelEventCard }
+  /** Se acabo el tiempo sin respuesta: cuenta como error (0 pts). */
+  | { kind: 'TIMEOUT'; card: LocationCard | QuizCard };
 
 export interface ScoreResult {
   delta: number;
   correct: boolean | null;
   distanceKm?: number;
+  timedOut?: boolean;
 }

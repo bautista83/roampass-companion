@@ -5,6 +5,8 @@ import {
   applyTurn,
   createGame,
   drawCard,
+  filterLocationMode,
+  isStreetViewCard,
   generateCountryCards,
   remainingByCategory,
   finish,
@@ -13,6 +15,7 @@ import {
   rankPlayers,
   scoreLocation,
   scoreOutcome,
+  timerSecondsOf,
   type Card,
   type CardOutcome,
   type CountryData,
@@ -210,5 +213,52 @@ describe('seedData.json', () => {
       }
     }
     expect(new Set(deck.map((c) => c.id)).size).toBe(deck.length);
+  });
+});
+
+describe('timer por carta', () => {
+  it('por defecto son 10 segundos y solo acepta 10/15/20/25/30', () => {
+    expect(createGame({ mode: 'ROUNDS', target: 10 }, PLAYERS).timerSeconds).toBe(10);
+    expect(createGame({ mode: 'ROUNDS', target: 10 }, PLAYERS, { timerSeconds: 25 }).timerSeconds).toBe(25);
+    expect(() => createGame({ mode: 'ROUNDS', target: 10 }, PLAYERS, { timerSeconds: 12 })).toThrow(GameRuleError);
+  });
+
+  it('las partidas guardadas antes del timer usan el valor por defecto', () => {
+    const { timerSeconds: _, ...old } = createGame({ mode: 'ROUNDS', target: 10 }, PLAYERS, { timerSeconds: 30 });
+    expect(timerSecondsOf(old)).toBe(10);
+  });
+
+  it('agotar el tiempo cuenta como error, da 0 puntos y pasa el turno', () => {
+    const g = createGame({ mode: 'ROUNDS', target: 10 }, PLAYERS);
+    const { state, result } = applyTurn(g, { kind: 'TIMEOUT', card: quiz('HISTORY', 'HARD') });
+    expect(result).toEqual({ delta: 0, correct: false, timedOut: true });
+    expect(state.players[0]!.stats.wrong).toBe(1);
+    expect(state.history[0]).toMatchObject({ timedOut: true, correct: false, delta: 0 });
+    expect(state.currentPlayerIndex).toBe(1);
+  });
+});
+
+describe('Street View', () => {
+  it('con clave solo hay calles; sin clave solo fotos (nunca se mezclan)', () => {
+    const withKey = filterLocationMode(deck, true).filter((c) => c.category === 'LOCATION');
+    const withoutKey = filterLocationMode(deck, false).filter((c) => c.category === 'LOCATION');
+    expect(withKey.length).toBeGreaterThanOrEqual(30);
+    expect(withKey.every(isStreetViewCard)).toBe(true);
+    expect(withoutKey.length).toBeGreaterThanOrEqual(30);
+    expect(withoutKey.some(isStreetViewCard)).toBe(false);
+    // El resto de las categorias no cambia.
+    expect(filterLocationMode(deck, true).filter((c) => c.category !== 'LOCATION')).toHaveLength(
+      deck.filter((c) => c.category !== 'LOCATION').length,
+    );
+  });
+
+  it('las cartas de Street View tienen coordenadas validas y los 3 niveles', () => {
+    const streets = deck.filter(isStreetViewCard) as LocationCard[];
+    for (const c of streets) {
+      expect(Math.abs(c.location.lat), c.id).toBeLessThanOrEqual(90);
+      expect(Math.abs(c.location.lng), c.id).toBeLessThanOrEqual(180);
+      expect(c.answerLabel, c.id).not.toBe('');
+    }
+    expect(new Set(streets.map((c) => c.difficulty))).toEqual(new Set(['EASY', 'MEDIUM', 'HARD']));
   });
 });

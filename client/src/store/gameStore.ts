@@ -8,9 +8,11 @@ import {
   applyTurn,
   createGame,
   drawCard,
+  filterLocationMode,
   finish,
   generateCountryCards,
   shuffle,
+  timerSecondsOf,
   type Card,
   type CardCategory,
   type CardOutcome,
@@ -31,6 +33,11 @@ export interface ActiveDraw {
   /** Opciones ya mezcladas (se guardan para que no cambien al refrescar). */
   options?: string[];
   playerId: string;
+  /**
+   * Hora (epoch ms) en que vence el tiempo para responder. Se guarda como hora absoluta para que
+   * refrescar la pagina no reinicie el reloj. Los eventos de viajero no tienen timer.
+   */
+  deadline?: number;
   resolved?: { result: ScoreResult; answer?: string; guess?: LatLng };
 }
 
@@ -41,7 +48,12 @@ interface GameStore {
   active: ActiveDraw | null;
   syncError: string | null;
 
-  startGame: (config: VictoryCondition, players: PlayerSetup[], selfIndex: number | null) => Promise<void>;
+  startGame: (
+    config: VictoryCondition,
+    players: PlayerSetup[],
+    selfIndex: number | null,
+    timerSeconds: number,
+  ) => Promise<void>;
   resumeGame: (state: GameState) => Promise<void>;
   /** Recarga el mazo si falta (p. ej. tras actualizar la app con una partida en curso). */
   ensureDeck: () => Promise<void>;
@@ -52,6 +64,9 @@ interface GameStore {
   clear: () => void;
 }
 
+/** Con clave de Google, LUGAR se juega con Street View; sin ella, con fotos. */
+export const hasStreetView = Boolean(import.meta.env.VITE_GOOGLE_MAPS_API_KEY);
+
 /** Cartas escritas a mano (backend o seed incluido) + banderas y capitales generadas localmente. */
 async function loadDeck(): Promise<Card[]> {
   let base = (seed as SeedData).cards;
@@ -61,7 +76,7 @@ async function loadDeck(): Promise<Card[]> {
   } catch {
     // backend caido: se juega con el mazo incluido en la app
   }
-  return [...base, ...generateCountryCards(countries as CountryData, base)];
+  return [...filterLocationMode(base, hasStreetView), ...generateCountryCards(countries as CountryData, base)];
 }
 
 export const useGameStore = create<GameStore>()(
@@ -83,9 +98,9 @@ export const useGameStore = create<GameStore>()(
         active: null,
         syncError: null,
 
-        async startGame(config, players, selfIndex) {
+        async startGame(config, players, selfIndex, timerSeconds) {
           const deck = await loadDeck();
-          const game = createGame(config, players);
+          const game = createGame(config, players, { timerSeconds });
           const selfPlayerId = selfIndex === null ? null : (game.players[selfIndex]?.id ?? null);
           set({ game, deck, selfPlayerId, active: null, syncError: null });
           sync();
@@ -105,7 +120,14 @@ export const useGameStore = create<GameStore>()(
           const card = drawCard(deck, category, game.usedCardIds);
           if (!card) return; // categoria agotada: la tarjeta ya se muestra bloqueada
           const player = game.players[game.currentPlayerIndex]!;
-          set({ active: { card, playerId: player.id, options: 'options' in card ? shuffle(card.options) : undefined } });
+          set({
+            active: {
+              card,
+              playerId: player.id,
+              options: 'options' in card ? shuffle(card.options) : undefined,
+              deadline: card.category === 'TRAVEL_EVENT' ? undefined : Date.now() + timerSecondsOf(game) * 1000,
+            },
+          });
         },
 
         resolve(outcome) {

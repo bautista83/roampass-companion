@@ -2,6 +2,16 @@ import { CARD_CATEGORIES, type Card, type CardCategory } from './types';
 
 export type Rng = () => number;
 
+/** Carta de LUGAR que se juega con Street View (no trae foto). */
+export const isStreetViewCard = (card: Card): boolean => card.category === 'LOCATION' && !card.imageUrl;
+
+/**
+ * Con API key de Google se juega LUGAR con Street View (calles poco obvias); sin clave, con las
+ * fotos de lugares conocidos. Nunca se mezclan: las fotos serian demasiado faciles a su lado.
+ */
+export const filterLocationMode = (deck: readonly Card[], streetView: boolean): Card[] =>
+  deck.filter((c) => c.category !== 'LOCATION' || isStreetViewCard(c) === streetView);
+
 /**
  * Roba una carta de la categoria que no se haya usado en la partida.
  * Devuelve null si la categoria se agoto: dentro de una partida nunca se repiten cartas.

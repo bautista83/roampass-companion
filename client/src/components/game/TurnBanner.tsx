@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { PAWN_COLOR_META, type GamePlayer, type GameState, formatNumber } from '@roampass/shared';
+import { PAWN_COLOR_META, formatNumber, timerSecondsOf, type GamePlayer, type GameState } from '@roampass/shared';
 
 /** Header del turno: sticky en movil, tarjeta fija en la columna izquierda en tablet. */
 export function TurnBanner({ game, player, className = '' }: { game: GameState; player: GamePlayer; className?: string }) {
@@ -34,6 +34,7 @@ export function TurnBanner({ game, player, className = '' }: { game: GameState; 
             {mode === 'ROUNDS' && <span className="text-sm text-white/60">/{target}</span>}
           </p>
           {mode === 'POINTS' && <p className="text-[11px] text-white/60">Meta {formatNumber(target)}</p>}
+          <p className="text-[11px] text-white/60">⏱ {timerSecondsOf(game)} s por carta</p>
         </div>
       </div>
     </div>
