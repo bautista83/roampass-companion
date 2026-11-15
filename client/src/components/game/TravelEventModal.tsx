@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CATEGORY_META, type TravelEventCard } from '@roampass/shared';
+import { CATEGORY_META, formatNumber, type TravelEventCard } from '@roampass/shared';
 import { useGameStore, type ActiveDraw } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { CardResult } from './CardResult';
@@ -31,7 +31,7 @@ export function TravelEventModal({ draw }: { draw: ActiveDraw }) {
           <CardResult result={draw.resolved.result} playerName={player.name} />
         ) : (
           <button className={`${good ? 'btn-primary' : 'btn-danger'} w-full text-lg sm:w-auto`} onClick={() => resolve({ kind: 'EVENT', card })}>
-            {good ? `Cobrar +${card.points} pts` : `Aceptar ${card.points} pts`} · {player?.avatar} {player?.name}
+            {good ? `Avanzar +${formatNumber(card.points)} mi` : `Retroceder ${formatNumber(Math.abs(card.points))} mi`} · {player?.avatar} {player?.name}
           </button>
         )}
       </div>

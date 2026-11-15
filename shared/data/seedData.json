@@ -2698,144 +2698,144 @@
       "category": "TRAVEL_EVENT",
       "icon": "🛂",
       "title": "Visa Denegada",
-      "description": "Tu papeleo no convenció al oficial de migraciones. Pierdes 300 pts.",
-      "points": -300
+      "description": "Tu papeleo no convenció al oficial de migraciones. Retrocedes 1.500 millas.",
+      "points": -1500
     },
     {
       "id": "evt-flight-voucher",
       "category": "TRAVEL_EVENT",
       "icon": "✈️",
       "title": "Voucher de Vuelo",
-      "description": "¡Sobreventa en tu vuelo! La aerolínea te compensa con un voucher. Ganas 500 pts.",
-      "points": 500
+      "description": "¡Sobreventa en tu vuelo! La aerolínea te compensa con un voucher. Avanzas 2.500 millas.",
+      "points": 2500
     },
     {
       "id": "evt-lost-luggage",
       "category": "TRAVEL_EVENT",
       "icon": "🧳",
       "title": "Equipaje Perdido",
-      "description": "Tu mochila se fue a otro continente. Pierdes 200 pts.",
-      "points": -200
+      "description": "Tu mochila se fue a otro continente. Retrocedes 1.000 millas.",
+      "points": -1000
     },
     {
       "id": "evt-upgrade",
       "category": "TRAVEL_EVENT",
       "icon": "💺",
       "title": "Upgrade a Primera Clase",
-      "description": "Asiento libre en primera: viajas como realeza. Ganas 300 pts.",
-      "points": 300
+      "description": "Asiento libre en primera: viajas como realeza. Avanzas 1.500 millas.",
+      "points": 1500
     },
     {
       "id": "evt-cancelled",
       "category": "TRAVEL_EVENT",
       "icon": "⛈️",
       "title": "Vuelo Cancelado",
-      "description": "Tormenta en el aeropuerto: noche en la terminal. Pierdes 100 pts.",
-      "points": -100
+      "description": "Tormenta en el aeropuerto: noche en la terminal. Retrocedes 500 millas.",
+      "points": -500
     },
     {
       "id": "evt-local-guide",
       "category": "TRAVEL_EVENT",
       "icon": "🤝",
       "title": "Guía Local",
-      "description": "Un local te muestra los secretos de la ciudad. Ganas 200 pts.",
-      "points": 200
+      "description": "Un local te muestra los secretos de la ciudad. Avanzas 1.000 millas.",
+      "points": 1000
     },
     {
       "id": "evt-exchange",
       "category": "TRAVEL_EVENT",
       "icon": "💱",
       "title": "Cambio Favorable",
-      "description": "La moneda local se desplomó justo cuando cambiaste dinero. Ganas 150 pts.",
-      "points": 150
+      "description": "La moneda local se desplomó justo cuando cambiaste dinero. Avanzas 1.000 millas.",
+      "points": 1000
     },
     {
       "id": "evt-expired-passport",
       "category": "TRAVEL_EVENT",
       "icon": "📕",
       "title": "Pasaporte Vencido",
-      "description": "Descubres en el control que tu pasaporte venció ayer. Pierdes 250 pts.",
-      "points": -250
+      "description": "Descubres en el control que tu pasaporte venció ayer. Retrocedes 1.500 millas.",
+      "points": -1500
     },
     {
       "id": "evt-street-food",
       "category": "TRAVEL_EVENT",
       "icon": "🍜",
       "title": "Banquete Callejero",
-      "description": "Una familia te invita a comer el plato típico. Ganas 100 pts.",
-      "points": 100
+      "description": "Una familia te invita a comer el plato típico. Avanzas 500 millas.",
+      "points": 500
     },
     {
       "id": "evt-food-poisoning",
       "category": "TRAVEL_EVENT",
       "icon": "🤢",
       "title": "Intoxicación",
-      "description": "Ese puesto callejero no era tan buena idea. Pierdes 150 pts.",
-      "points": -150
+      "description": "Ese puesto callejero no era tan buena idea. Retrocedes 1.000 millas.",
+      "points": -1000
     },
     {
       "id": "evt-night-train",
       "category": "TRAVEL_EVENT",
       "icon": "🚆",
       "title": "Tren Nocturno",
-      "description": "Viajas dormido y te ahorras una noche de hotel. Ganas 150 pts.",
-      "points": 150
+      "description": "Viajas dormido y te ahorras una noche de hotel. Avanzas 1.000 millas.",
+      "points": 1000
     },
     {
       "id": "evt-strike",
       "category": "TRAVEL_EVENT",
       "icon": "🪧",
       "title": "Huelga de Controladores",
-      "description": "Todos los vuelos en tierra hasta nuevo aviso. Pierdes 200 pts.",
-      "points": -200
+      "description": "Todos los vuelos en tierra hasta nuevo aviso. Retrocedes 1.000 millas.",
+      "points": -1000
     },
     {
       "id": "evt-couchsurfing",
       "category": "TRAVEL_EVENT",
       "icon": "🛋️",
       "title": "Couchsurfing Perfecto",
-      "description": "Tu anfitrión resulta ser chef y guía turístico. Ganas 250 pts.",
-      "points": 250
+      "description": "Tu anfitrión resulta ser chef y guía turístico. Avanzas 1.500 millas.",
+      "points": 1500
     },
     {
       "id": "evt-overweight",
       "category": "TRAVEL_EVENT",
       "icon": "⚖️",
       "title": "Exceso de Equipaje",
-      "description": "Tu maleta pesa 3 kg de más. Pierdes 100 pts.",
-      "points": -100
+      "description": "Tu maleta pesa 3 kg de más. Retrocedes 500 millas.",
+      "points": -500
     },
     {
       "id": "evt-viral",
       "category": "TRAVEL_EVENT",
       "icon": "📸",
       "title": "Foto Viral",
-      "description": "Tu foto del atardecer se hace viral. Ganas 300 pts.",
-      "points": 300
+      "description": "Tu foto del atardecer se hace viral. Avanzas 1.500 millas.",
+      "points": 1500
     },
     {
       "id": "evt-pickpocket",
       "category": "TRAVEL_EVENT",
       "icon": "👛",
       "title": "Carterista",
-      "description": "Alguien se llevó tu billetera en el metro. Pierdes 250 pts.",
-      "points": -250
+      "description": "Alguien se llevó tu billetera en el metro. Retrocedes 1.500 millas.",
+      "points": -1500
     },
     {
       "id": "evt-perfect-weather",
       "category": "TRAVEL_EVENT",
       "icon": "☀️",
       "title": "Clima Perfecto",
-      "description": "Una semana entera de sol y cielo despejado. Ganas 100 pts.",
-      "points": 100
+      "description": "Una semana entera de sol y cielo despejado. Avanzas 500 millas.",
+      "points": 500
     },
     {
       "id": "evt-miles",
       "category": "TRAVEL_EVENT",
       "icon": "🎟️",
       "title": "Millas Acumuladas",
-      "description": "Canjeas tus millas por un vuelo gratis. Ganas 400 pts.",
-      "points": 400
+      "description": "Canjeas tus millas por un vuelo gratis. Avanzas 2.000 millas.",
+      "points": 2000
     }
   ]
 }

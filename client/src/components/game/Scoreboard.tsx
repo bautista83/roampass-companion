@@ -30,6 +30,7 @@ export function Scoreboard({ game }: { game: GameState }) {
                 <div className="relative text-right">
                   <motion.span key={player.score} initial={{ scale: 1.35 }} animate={{ scale: 1 }} className="block text-xl font-extrabold tabular-nums">
                     {formatNumber(player.score)}
+                    <span className="ml-1 text-xs font-semibold text-passport-400">mi</span>
                   </motion.span>
                   {justScored !== null && justScored !== 0 && (
                     <motion.span
@@ -40,7 +41,7 @@ export function Scoreboard({ game }: { game: GameState }) {
                       className={`absolute -top-3 right-0 text-xs font-bold ${justScored > 0 ? 'text-stamp-green' : 'text-stamp'}`}
                     >
                       {justScored > 0 ? '+' : ''}
-                      {justScored}
+                      {formatNumber(justScored)}
                     </motion.span>
                   )}
                 </div>

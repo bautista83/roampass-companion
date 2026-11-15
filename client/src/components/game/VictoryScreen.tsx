@@ -49,7 +49,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
           <strong>{winners.map((w) => `${w.avatar} ${w.name}`).join(' y ')}</strong>
           <span className="block text-sm text-white/60">
             {roundsPlayed} {roundsPlayed === 1 ? 'ronda' : 'rondas'} · {totalTurns} cartas jugadas ·{' '}
-            {game.config.mode === 'POINTS' ? `meta ${formatNumber(game.config.target)} pts` : `${game.config.target} rondas`}
+            {game.config.mode === 'POINTS' ? `meta ${formatNumber(game.config.target)} mi` : `${game.config.target} rondas`}
           </span>
         </p>
 
@@ -81,7 +81,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
               <tr>
                 <th className="p-3">#</th>
                 <th className="p-3">Viajero</th>
-                <th className="p-3 text-right">Puntos</th>
+                <th className="p-3 text-right">Millas</th>
                 <th className="p-3 text-right">Aciertos</th>
                 <th className="p-3 text-right">Mejor distancia</th>
                 <th className="p-3">Fuerte en</th>

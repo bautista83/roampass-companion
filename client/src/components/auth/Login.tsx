@@ -44,14 +44,14 @@ export function Login() {
       <motion.div
         initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative w-full max-w-md overflow-hidden rounded-3xl bg-passport-800 p-1 shadow-2xl"
+        className="panel relative w-full max-w-md overflow-hidden shadow-hard-lg"
       >
         {/* Tapa de pasaporte */}
-        <div className="rounded-[1.4rem] border-2 border-brass/50 bg-paper p-6 sm:p-8 dark:bg-passport-900">
+        <div className="p-6 sm:p-8">
           <div className="mb-6 flex justify-center">
             <Brand />
           </div>
-          <div className="mb-6 grid grid-cols-2 rounded-xl bg-passport-800/5 p-1 dark:bg-white/5" role="tablist">
+          <div className="mb-6 grid grid-cols-2 gap-1 rounded-2xl border-3 border-ink bg-paper p-1 dark:border-black dark:bg-[#141714]" role="tablist">
             {(['login', 'register'] as const).map((m) => (
               <button
                 key={m}
@@ -61,8 +61,8 @@ export function Login() {
                   setMode(m);
                   setError(null);
                 }}
-                className={`min-h-12 rounded-lg font-semibold transition ${
-                  mode === m ? 'bg-white shadow dark:bg-passport-700' : 'text-passport-500 dark:text-passport-300'
+                className={`min-h-12 rounded-xl font-bold transition ${
+                  mode === m ? 'border-2 border-ink bg-sun text-ink' : 'text-passport-500 dark:text-passport-300'
                 }`}
               >
                 {m === 'login' ? 'Iniciar sesión' : 'Registrarse'}
@@ -101,7 +101,7 @@ export function Login() {
               />
             </div>
             {error && (
-              <p role="alert" className="rounded-lg bg-stamp/10 px-3 py-2 text-sm font-medium text-stamp">
+              <p role="alert" className="rounded-xl border-2 border-ink bg-coral px-3 py-2 text-sm font-bold text-ink">
                 {error}
               </p>
             )}
@@ -111,7 +111,7 @@ export function Login() {
           </form>
 
           {api.mode === 'local' && (
-            <p className="mt-6 rounded-xl border border-dashed border-brass/60 p-3 text-center text-xs text-passport-600 dark:text-passport-200">
+            <p className="mt-6 rounded-xl border-2 border-dashed border-ink p-3 text-center text-xs text-passport-600 dark:border-passport-400 dark:text-passport-200">
               <strong>Modo demo local</strong> (sin backend). Admin de prueba:{' '}
               <code className="font-mono">{DEMO_ADMIN.username}</code> /{' '}
               <code className="font-mono">{DEMO_ADMIN.password}</code>

@@ -1,0 +1,144 @@
+{
+  "schema": "codeart2d.codeart_meta.v1",
+  "art_source": "code",
+  "placeholder": false,
+  "disclosure": "code-drawn, no image model",
+  "generator": "svg_render.py",
+  "spec_sha256": "01c45cef8a23b51560f29457de3f5f8f47b98badeee8096dc61a9cba87f5f712",
+  "renderer": {
+    "backend": "chrome",
+    "name": "chrome",
+    "version": "157.0.8103.51",
+    "zoom": 1,
+    "size": [
+      1920,
+      1200
+    ]
+  },
+  "palette": {
+    "colors": {
+      "bg": "#eaf2e6",
+      "ink": "#111111",
+      "paper": "#ffffff",
+      "ocean": "#7ec4f5",
+      "wave": "#a9d8fa",
+      "yellow": "#ffd43b",
+      "green": "#6bcf8b",
+      "blue": "#7ec4f5",
+      "coral": "#ff8a6b",
+      "lilac": "#c7b3ff",
+      "l0": "#fff0a8",
+      "l1": "#bfe8c6",
+      "l2": "#cfe6fb",
+      "l3": "#ffcdbd",
+      "l4": "#e3d9ff",
+      "sand": "#ffe2a8",
+      "snow": "#ffffff",
+      "red": "#ff5a5a",
+      "na": "#ffc2ad",
+      "sa": "#a8dc9a",
+      "eu": "#d6c8ff",
+      "af": "#ffe38f",
+      "as": "#a6e3cf",
+      "oc": "#ffbfd9",
+      "arg": "#ffd43b",
+      "road": "#ffffff",
+      "an": "#f2f8ff",
+      "ice": "#e3f4ff",
+      "grey": "#bcc3dc",
+      "brown": "#d39a68",
+      "orange": "#ff9f43",
+      "whale": "#6f8fe6"
+    },
+    "variants": {}
+  },
+  "outputs": [
+    {
+      "path": "base/board-v3.svg",
+      "sha256": "8ebe357062dcee1342ea045efea614646af1253971dd7a83e6a0632df8f461af",
+      "bytes": 1252950
+    },
+    {
+      "path": "base/board-v3.png",
+      "sha256": "9f3058bf3f9fe0771a42506227596337b1d495b367ca4e9c1a628afbd53cae5b",
+      "bytes": 698963
+    }
+  ],
+  "qa": {
+    "status": "pass",
+    "method": "svg_render.py render: every variant's compiled SVG passed codeart_core.lint_portable_svg (portable profile) before rasterizing",
+    "notProven": [
+      "Appearance, readability and appeal; look at the PNGs at game size.",
+      "Agreement with other renderers on this machine; run svg_render.py doctor (renders are bit-exact only for the recorded renderer version).",
+      "That the art matches the brief and the intent of the SVG.",
+      "Pixel gates: vector renders are anti-aliased by design, so partial alpha and colours outside the palette are expected and not checked (render with --crisp for pixel art)."
+    ],
+    "checks": [
+      {
+        "id": "lint",
+        "status": "pass",
+        "value": 0,
+        "threshold": 0,
+        "profile": "portable"
+      }
+    ],
+    "inputs": [
+      {
+        "path": "../board-v3.svg",
+        "sha256": "01c45cef8a23b51560f29457de3f5f8f47b98badeee8096dc61a9cba87f5f712",
+        "bytes": 1252416
+      },
+      {
+        "path": "../palette-board-v3.json",
+        "sha256": "8dbdab89e251f06079a10db8344c88776b638bdc4dc5289b9754f0f7b8d953d8",
+        "bytes": 706
+      }
+    ],
+    "outputs": [
+      {
+        "path": "base/board-v3.svg",
+        "sha256": "8ebe357062dcee1342ea045efea614646af1253971dd7a83e6a0632df8f461af",
+        "bytes": 1252950
+      },
+      {
+        "path": "base/board-v3.png",
+        "sha256": "9f3058bf3f9fe0771a42506227596337b1d495b367ca4e9c1a628afbd53cae5b",
+        "bytes": 698963
+      }
+    ],
+    "tool": {
+      "name": "svg_render.py render",
+      "version": "0.4.0"
+    }
+  },
+  "svg": {
+    "mode": "vector",
+    "profile": "portable",
+    "zoom": 1,
+    "canvas": [
+      1920,
+      1200
+    ],
+    "anchor_px": null,
+    "palette_source": "file",
+    "variants": {
+      "base": "base"
+    },
+    "images": [
+      {
+        "variant": "base",
+        "file": "base/board-v3.png",
+        "scale": 1,
+        "size": [
+          1920,
+          1200
+        ],
+        "anchor_px": null,
+        "visible": 2304000,
+        "partial_alpha": 0,
+        "off_palette": 138210,
+        "colors": 6351
+      }
+    ]
+  }
+}

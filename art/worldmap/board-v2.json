@@ -1,0 +1,307 @@
+{
+ "total_miles": 25000,
+ "miles_per_space": 500,
+ "spaces": 50,
+ "track": [
+  {
+   "space": 0,
+   "type": "monument",
+   "id": "obelisco",
+   "miles": 0
+  },
+  {
+   "space": 1,
+   "type": "monument",
+   "id": "iguazu",
+   "miles": 500
+  },
+  {
+   "space": 2,
+   "type": "monument",
+   "id": "cristo",
+   "miles": 1000
+  },
+  {
+   "space": 3,
+   "type": "monument",
+   "id": "amazonas",
+   "miles": 1500
+  },
+  {
+   "space": 4,
+   "type": "monument",
+   "id": "machu",
+   "miles": 2000
+  },
+  {
+   "space": 5,
+   "type": "monument",
+   "id": "chichen",
+   "miles": 2500
+  },
+  {
+   "space": 6,
+   "type": "monument",
+   "id": "golden",
+   "miles": 3000
+  },
+  {
+   "space": 7,
+   "type": "monument",
+   "id": "needle",
+   "miles": 3500
+  },
+  {
+   "space": 8,
+   "type": "monument",
+   "id": "totem",
+   "miles": 4000
+  },
+  {
+   "space": 9,
+   "type": "monument",
+   "id": "cntower",
+   "miles": 4500
+  },
+  {
+   "space": 10,
+   "type": "monument",
+   "id": "libertad",
+   "miles": 5000
+  },
+  {
+   "space": 11,
+   "type": "monument",
+   "id": "igloo",
+   "miles": 5500
+  },
+  {
+   "space": 12,
+   "type": "transport",
+   "id": "t_barco",
+   "miles": 6000
+  },
+  {
+   "space": 13,
+   "type": "monument",
+   "id": "bigben",
+   "miles": 6500
+  },
+  {
+   "space": 14,
+   "type": "monument",
+   "id": "eiffel",
+   "miles": 7000
+  },
+  {
+   "space": 15,
+   "type": "monument",
+   "id": "castillo",
+   "miles": 7500
+  },
+  {
+   "space": 16,
+   "type": "monument",
+   "id": "basilio",
+   "miles": 8000
+  },
+  {
+   "space": 17,
+   "type": "transport",
+   "id": "t_globo",
+   "miles": 8500
+  },
+  {
+   "space": 18,
+   "type": "monument",
+   "id": "hagia",
+   "miles": 9000
+  },
+  {
+   "space": 19,
+   "type": "monument",
+   "id": "partenon",
+   "miles": 9500
+  },
+  {
+   "space": 20,
+   "type": "monument",
+   "id": "coliseo",
+   "miles": 10000
+  },
+  {
+   "space": 21,
+   "type": "monument",
+   "id": "sagrada",
+   "miles": 10500
+  },
+  {
+   "space": 22,
+   "type": "transport",
+   "id": "t_camello",
+   "miles": 11000
+  },
+  {
+   "space": 23,
+   "type": "monument",
+   "id": "tombuctu",
+   "miles": 11500
+  },
+  {
+   "space": 24,
+   "type": "monument",
+   "id": "table",
+   "miles": 12000
+  },
+  {
+   "space": 25,
+   "type": "monument",
+   "id": "victoria",
+   "miles": 12500
+  },
+  {
+   "space": 26,
+   "type": "monument",
+   "id": "baobab",
+   "miles": 13000
+  },
+  {
+   "space": 27,
+   "type": "monument",
+   "id": "kilimanjaro",
+   "miles": 13500
+  },
+  {
+   "space": 28,
+   "type": "monument",
+   "id": "lalibela",
+   "miles": 14000
+  },
+  {
+   "space": 29,
+   "type": "monument",
+   "id": "piramides",
+   "miles": 14500
+  },
+  {
+   "space": 30,
+   "type": "monument",
+   "id": "petra",
+   "miles": 15000
+  },
+  {
+   "space": 31,
+   "type": "monument",
+   "id": "burj",
+   "miles": 15500
+  },
+  {
+   "space": 32,
+   "type": "monument",
+   "id": "taj",
+   "miles": 16000
+  },
+  {
+   "space": 33,
+   "type": "monument",
+   "id": "everest",
+   "miles": 16500
+  },
+  {
+   "space": 34,
+   "type": "transport",
+   "id": "t_tren",
+   "miles": 17000
+  },
+  {
+   "space": 35,
+   "type": "monument",
+   "id": "muralla",
+   "miles": 17500
+  },
+  {
+   "space": 36,
+   "type": "monument",
+   "id": "torii",
+   "miles": 18000
+  },
+  {
+   "space": 37,
+   "type": "monument",
+   "id": "fuji",
+   "miles": 18500
+  },
+  {
+   "space": 38,
+   "type": "monument",
+   "id": "halong",
+   "miles": 19000
+  },
+  {
+   "space": 39,
+   "type": "monument",
+   "id": "angkor",
+   "miles": 19500
+  },
+  {
+   "space": 40,
+   "type": "transport",
+   "id": "t_tuktuk",
+   "miles": 20000
+  },
+  {
+   "space": 41,
+   "type": "monument",
+   "id": "petronas",
+   "miles": 20500
+  },
+  {
+   "space": 42,
+   "type": "monument",
+   "id": "borobudur",
+   "miles": 21000
+  },
+  {
+   "space": 43,
+   "type": "monument",
+   "id": "uluru",
+   "miles": 21500
+  },
+  {
+   "space": 44,
+   "type": "transport",
+   "id": "t_combi",
+   "miles": 22000
+  },
+  {
+   "space": 45,
+   "type": "monument",
+   "id": "opera",
+   "miles": 22500
+  },
+  {
+   "space": 46,
+   "type": "monument",
+   "id": "kiwi",
+   "miles": 23000
+  },
+  {
+   "space": 47,
+   "type": "transport",
+   "id": "t_avion",
+   "miles": 23500
+  },
+  {
+   "space": 48,
+   "type": "monument",
+   "id": "moai",
+   "miles": 24000
+  },
+  {
+   "space": 49,
+   "type": "monument",
+   "id": "perito",
+   "miles": 24500
+  }
+ ]
+}

@@ -179,7 +179,7 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
                       ? '👆 Toca el mapa donde crees que estás.'
                       : '👆 Toca el mapa donde crees que se tomó la foto.'}
                   <span className="block text-xs">
-                    {LOCATION_BRACKETS.map((b) => `≤${formatNumber(b.maxKm)} km: ${formatNumber(withDifficulty(b.points, card.difficulty))}`).join(' · ')}
+                    {LOCATION_BRACKETS.map((b) => `≤${formatNumber(b.maxKm)} km: ${formatNumber(withDifficulty(b.points, card.difficulty))} mi`).join(' · ')}
                   </span>
                 </p>
                 <button className="btn-primary shrink-0 text-lg" disabled={!guess} onClick={() => guess && resolve({ kind: 'LOCATION', card, guess })}>

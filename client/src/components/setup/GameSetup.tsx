@@ -23,8 +23,8 @@ import { useGameStore } from '../../store/gameStore';
 import { DifficultyBadge } from '../ui/DifficultyBadge';
 
 const MODES: { mode: VictoryMode; title: string; icon: string; desc: string; targets: readonly number[]; unit: string }[] = [
-  { mode: 'POINTS', title: 'Límite de Puntos', icon: '🎯', desc: 'Gana el primero en llegar a la meta.', targets: POINT_TARGETS, unit: 'pts' },
-  { mode: 'ROUNDS', title: 'Número de Rondas', icon: '🔁', desc: 'Al terminar las rondas, gana quien tenga más puntos.', targets: ROUND_TARGETS, unit: 'rondas' },
+  { mode: 'POINTS', title: 'Vuelta al mundo', icon: '🌎', desc: 'Gana el primero en recorrer las millas de la meta.', targets: POINT_TARGETS, unit: 'millas' },
+  { mode: 'ROUNDS', title: 'Número de Rondas', icon: '🔁', desc: 'Al terminar las rondas, gana quien haya recorrido más millas.', targets: ROUND_TARGETS, unit: 'rondas' },
 ];
 
 const firstFreeColor = (players: PlayerSetup[]) => PAWN_COLORS.find((c) => !players.some((p) => p.color === c))!;
@@ -202,7 +202,7 @@ export function GameSetup() {
             <div className="flex items-end justify-between gap-3">
               <h1 className="text-2xl font-bold">Viajeros</h1>
               <span className="text-sm text-passport-500 dark:text-passport-300">
-                {players.length}/{MAX_PLAYERS} · {mode === 'POINTS' ? `${formatNumber(target)} pts` : `${target} rondas`} · ⏱ {timerSeconds} s
+                {players.length}/{MAX_PLAYERS} · {mode === 'POINTS' ? `${formatNumber(target)} mi` : `${target} rondas`} · ⏱ {timerSeconds} s
               </span>
             </div>
 

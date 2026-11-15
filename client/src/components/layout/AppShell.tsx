@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </Link>
         <div className="flex items-center gap-2">
           {api.mode === 'local' && (
-            <span className="hidden rounded-full bg-brass/15 px-3 py-1 text-xs font-semibold text-brass sm:inline">
+            <span className="hidden rounded-full border-2 border-ink bg-sun px-3 py-1 text-xs font-bold text-ink sm:inline">
               Modo demo local
             </span>
           )}

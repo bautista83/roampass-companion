@@ -40,25 +40,27 @@ solo lugar.
 | `game/CardGrid` | Mazo de 6 tarjetas (2x3 en móvil, 3x2 en tablet) |
 | `game/QuizModal` | Bandera, Capitales y Ciudades, Historia, Personalidades |
 | `game/LocationCardModal` | Foto panorámica + mapa Leaflet/OpenStreetMap + distancia Haversine |
-| `game/TravelEventModal` | Eventos de viajero (± puntos sin pregunta) |
+| `game/TravelEventModal` | Eventos de viajero (± millas sin pregunta) |
 | `game/VictoryScreen` | "¡Victoria!": podio y estadísticas |
 
 ### Reglas implementadas
 
-- **LUGAR:** d ≤ 100 km → 1000 · d ≤ 500 km → 500 · d ≤ 2000 km → 200 · más → 0.
-- **BANDERA** +400 · **CIUDADES** +300 · **HISTORIA** +500 · **PERSONALIDADES** +400 · error = 0.
-- **Dificultad (mixta con bonus):** cada carta es Fácil (×1), Normal (×1,25) o Difícil (×1,5) y el
-  multiplicador se aplica a los puntos de arriba. Los eventos de viajero no se multiplican.
-- **EVENTO:** suma o resta directa (ej. Visa Denegada −300, Voucher de Vuelo +500).
+- **El puntaje son millas:** 1 casilla del tablero = 500 millas y la vuelta al mundo son 50 casillas
+  (25.000 millas). Todos los premios son casillas enteras.
+- **LUGAR:** d ≤ 100 km → 4.000 · d ≤ 500 km → 2.500 · d ≤ 2000 km → 1.000 · más → 0.
+- **BANDERA** +2.000 · **CIUDADES** +1.500 · **HISTORIA** +2.500 · **PERSONALIDADES** +2.000 · error = 0.
+- **Dificultad (mixta con bonus):** cada carta es Fácil (+0), Normal (+500) o Difícil (+1.000 millas) y el
+  bonus se suma a las millas de arriba. Los eventos de viajero no llevan bonus.
+- **EVENTO:** avanza o retrocede directo (ej. Visa Denegada −1.500, Voucher de Vuelo +2.500).
 - El marcador **nunca baja de 0**; el historial guarda el delta efectivamente aplicado.
-- **Límite de puntos (3.000/5.000/10.000):** termina en cuanto alguien llega a la meta.
+- **Vuelta al mundo (12.500 media vuelta / 25.000 vuelta completa):** termina en cuanto alguien llega a la meta.
 - **Número de rondas (10/15/20):** termina cuando el último jugador completa la ronda final.
 - Desempate: más aciertos. Si persiste, comparten posición.
 - **Ninguna carta se repite dentro de una partida.** Cada tarjeta muestra cuántas quedan; si una
   categoría se agota, queda marcada como «Agotada» y el jugador elige otra.
 - Una carta abierta no se puede cerrar sin responder, y sobrevive a un refresco del navegador.
 - **Timer por carta:** se elige en el wizard de cada partida: 10, 15, 20, 25 o 30 segundos (por
-  defecto 10). Al agotarse, la carta cuenta como error (0 pts); en LUGAR, si ya se marcó un punto, se
+  defecto 10). Al agotarse, la carta cuenta como error (0 millas); en LUGAR, si ya se marcó un punto, se
   envía ese punto. El reloj no se reinicia al refrescar. Los eventos de viajero no tienen timer.
 
 ## Puesta en marcha

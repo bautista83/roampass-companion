@@ -4,29 +4,44 @@
 /* Dark mode por clase en <html> (controlado por themeStore). */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Estilo "sticker" del tablero: pasteles planos, contorno negro grueso y sombra dura desplazada.
+ * La escala passport-* ahora es tinta/neutros: los componentes la usan para texto, bordes y fondos.
+ */
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
-  --font-stamp: 'Special Elite', 'Courier New', monospace;
+  --font-display: 'Dela Gothic One', 'Inter', system-ui, sans-serif;
+  --font-stamp: 'Dela Gothic One', 'Inter', system-ui, sans-serif;
 
-  /* Azul pasaporte */
-  --color-passport-50: #eef2fb;
-  --color-passport-100: #d9e1f4;
-  --color-passport-200: #b3c2e6;
-  --color-passport-300: #8099d1;
-  --color-passport-400: #5571b8;
-  --color-passport-500: #3a559c;
-  --color-passport-600: #2c427d;
-  --color-passport-700: #233462;
-  --color-passport-800: #1e2a4a;
-  --color-passport-900: #141c33;
-  --color-passport-950: #0b1020;
+  /* Tinta y neutros verdosos (antes azul pasaporte) */
+  --color-passport-50: #f4f8f1;
+  --color-passport-100: #e4eee0;
+  --color-passport-200: #cbd8c6;
+  --color-passport-300: #a5b1a1;
+  --color-passport-400: #7d877a;
+  --color-passport-500: #5a6357;
+  --color-passport-600: #2f342e;
+  --color-passport-700: #111111;
+  --color-passport-800: #111111;
+  --color-passport-900: #111111;
+  --color-passport-950: #141714;
 
-  /* Papel de mapa vintage y tinta de sello */
-  --color-paper: #f6eedb;
-  --color-paper-dark: #e9dcbc;
-  --color-stamp: #b42318;
-  --color-stamp-green: #157347;
-  --color-brass: #c08a2d;
+  /* Paleta del tablero */
+  --color-ink: #111111;
+  --color-paper: #eaf2e6;
+  --color-paper-dark: #dbe8d5;
+  --color-sun: #ffd43b;
+  --color-mint: #6bcf8b;
+  --color-sky: #7ec4f5;
+  --color-coral: #ff8a6b;
+  --color-lilac: #c7b3ff;
+  --color-stamp: #e5484d;
+  --color-stamp-green: #1e9e5a;
+  --color-brass: #ffd43b;
+
+  --shadow-hard-sm: 3px 3px 0 0 #111111;
+  --shadow-hard: 5px 5px 0 0 #111111;
+  --shadow-hard-lg: 8px 8px 0 0 #111111;
 }
 
 @layer base {
@@ -34,59 +49,60 @@
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    @apply min-h-dvh bg-paper font-sans text-passport-900 antialiased dark:bg-passport-950 dark:text-passport-50;
-    /* Cuadricula sutil de mapa antiguo */
-    background-image:
-      linear-gradient(to right, rgb(30 42 74 / 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(30 42 74 / 0.05) 1px, transparent 1px);
-    background-size: 48px 48px;
+    @apply min-h-dvh bg-paper font-sans text-ink antialiased dark:bg-passport-950 dark:text-passport-50;
   }
-  .dark body {
-    background-image:
-      linear-gradient(to right, rgb(238 242 251 / 0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(238 242 251 / 0.035) 1px, transparent 1px);
+  h1,
+  h2 {
+    @apply font-display tracking-tight;
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brass;
+    @apply outline-3 outline-offset-2 outline-sky;
   }
 }
 
 /* Tailwind v4: @utility permite reutilizar estas clases con @apply y variantes (md:, dark:...). */
 @utility panel {
-  @apply rounded-2xl border border-passport-800/10 bg-white/80 shadow-sm backdrop-blur dark:border-white/10 dark:bg-passport-900/80;
+  @apply rounded-3xl border-3 border-ink bg-white shadow-hard dark:border-black dark:bg-[#1f231f] dark:shadow-[5px_5px_0_0_#000];
 }
 @utility btn {
-  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border-3 border-ink px-5 font-bold shadow-hard-sm transition hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 dark:border-black dark:shadow-[3px_3px_0_0_#000];
 }
 @utility btn-primary {
-  @apply btn bg-passport-700 text-white hover:bg-passport-600 dark:bg-brass dark:text-passport-950 dark:hover:bg-brass/90;
+  @apply btn bg-ink text-white dark:bg-sun dark:text-ink;
 }
 @utility btn-ghost {
-  @apply btn border border-passport-800/15 bg-transparent hover:bg-passport-800/5 dark:border-white/15 dark:hover:bg-white/5;
+  @apply btn bg-white text-ink dark:bg-[#2a2f2a] dark:text-passport-50;
 }
 @utility btn-danger {
-  @apply btn bg-stamp text-white hover:bg-stamp/90;
+  @apply btn bg-coral text-ink;
 }
 @utility input {
-  @apply min-h-12 w-full rounded-xl border border-passport-800/20 bg-white px-4 text-base outline-none focus:border-passport-500 focus:ring-2 focus:ring-passport-300 dark:border-white/15 dark:bg-passport-950 dark:focus:ring-passport-600;
+  @apply min-h-12 w-full rounded-2xl border-3 border-ink bg-white px-4 text-base shadow-hard-sm outline-none focus:ring-3 focus:ring-sky dark:border-black dark:bg-[#141714] dark:shadow-[3px_3px_0_0_#000];
 }
 @utility label {
-  @apply mb-1 block text-xs font-semibold tracking-widest text-passport-500 uppercase dark:text-passport-300;
+  @apply mb-1 block text-xs font-extrabold tracking-widest text-passport-500 uppercase dark:text-passport-300;
+}
+/* Ficha sticker de color (como las casillas del tablero) */
+@utility sticker {
+  @apply rounded-2xl border-3 border-ink shadow-hard dark:border-black dark:shadow-[5px_5px_0_0_#000];
 }
 
-/* Sello de aduana: borde doble, tipografia de maquina de escribir y leve rotacion */
+/* Sello de aduana: borde doble, tipografia display y leve rotacion */
 .stamp {
   @apply inline-block rounded-lg border-4 border-double px-3 py-1 font-stamp tracking-wider uppercase;
   transform: rotate(-6deg);
 }
 
 /* Leaflet: los controles heredan el tema */
+.leaflet-container {
+  border-radius: 1rem;
+}
 .dark .leaflet-container {
-  background: #0b1020;
+  background: #141714;
 }
 .dark .leaflet-control-zoom a,
 .dark .leaflet-control-attribution {
-  @apply bg-passport-900 text-passport-100;
+  @apply bg-passport-950 text-passport-100;
 }
 .dark .leaflet-tile {
   filter: brightness(0.75) contrast(1.1) saturate(0.8);

@@ -1,0 +1,4 @@
+# Renders intermedios (se regeneran con los scripts); se versiona solo el render final del tablero.
+out-*/
+!out-v3board-4/
+__pycache__/

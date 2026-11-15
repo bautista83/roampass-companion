@@ -15,6 +15,10 @@ import {
   rankPlayers,
   scoreLocation,
   scoreOutcome,
+  withDifficulty,
+  LOCATION_BRACKETS,
+  MILES_PER_SPACE,
+  QUIZ_POINTS,
   timerSecondsOf,
   type Card,
   type CardOutcome,
@@ -71,37 +75,51 @@ describe('haversineKm', () => {
 
 describe('scoreLocation', () => {
   it.each([
-    [0, 1000],
-    [100, 1000],
-    [100.01, 500],
-    [500, 500],
-    [501, 200],
-    [2000, 200],
+    [0, 4000],
+    [100, 4000],
+    [100.01, 2500],
+    [500, 2500],
+    [501, 1000],
+    [2000, 1000],
     [2000.5, 0],
     [15000, 0],
-  ])('%d km → %d pts', (km, pts) => expect(scoreLocation(km)).toBe(pts));
+  ])('%d km → %d mi', (km, mi) => expect(scoreLocation(km)).toBe(mi));
 });
 
 describe('scoreOutcome', () => {
-  it('aplica los puntos por categoria de quiz', () => {
-    expect(scoreOutcome(right('FLAG')).delta).toBe(400);
-    expect(scoreOutcome(right('CITY')).delta).toBe(300);
-    expect(scoreOutcome(right('HISTORY')).delta).toBe(500);
-    expect(scoreOutcome(right('PERSONALITY')).delta).toBe(400);
+  it('aplica las millas por categoria de quiz', () => {
+    expect(scoreOutcome(right('FLAG')).delta).toBe(2000);
+    expect(scoreOutcome(right('CITY')).delta).toBe(1500);
+    expect(scoreOutcome(right('HISTORY')).delta).toBe(2500);
+    expect(scoreOutcome(right('PERSONALITY')).delta).toBe(2000);
     expect(scoreOutcome(wrong)).toEqual({ delta: 0, correct: false });
   });
-  it('aplica el bonus por dificultad (x1 / x1,25 / x1,5)', () => {
-    expect(scoreOutcome({ kind: 'QUIZ', card: quiz('CITY', 'MEDIUM'), answer: 'A' }).delta).toBe(375);
-    expect(scoreOutcome({ kind: 'QUIZ', card: quiz('HISTORY', 'HARD'), answer: 'A' }).delta).toBe(750);
+  it('aplica el bonus por dificultad (+0 / +1 / +2 casillas)', () => {
+    expect(scoreOutcome({ kind: 'QUIZ', card: quiz('CITY', 'MEDIUM'), answer: 'A' }).delta).toBe(2000);
+    expect(scoreOutcome({ kind: 'QUIZ', card: quiz('HISTORY', 'HARD'), answer: 'A' }).delta).toBe(3500);
     expect(scoreOutcome({ kind: 'QUIZ', card: quiz('HISTORY', 'HARD'), answer: 'B' }).delta).toBe(0);
-    expect(scoreOutcome({ kind: 'EVENT', card: event(-300) }).delta).toBe(-300);
+    expect(scoreOutcome({ kind: 'EVENT', card: event(-1500) }).delta).toBe(-1500);
+  });
+  it('el bonus no regala millas a un LUGAR fuera de rango', () => {
+    expect(withDifficulty(scoreLocation(5000), 'HARD')).toBe(0);
+  });
+  it('todo premio del mazo es un numero entero de casillas', () => {
+    for (const card of deck) {
+      if (card.category === 'TRAVEL_EVENT') {
+        expect(card.points).not.toBe(0);
+        expect(Math.abs(card.points) % MILES_PER_SPACE).toBe(0);
+      }
+    }
+    for (const base of [...Object.values(QUIZ_POINTS), ...LOCATION_BRACKETS.map((b) => b.points)]) {
+      for (const d of ['EASY', 'MEDIUM', 'HARD'] as const) expect(withDifficulty(base, d) % MILES_PER_SPACE).toBe(0);
+    }
   });
   it('calcula la distancia en cartas de LUGAR', () => {
     const card = deck.find((c) => c.id === 'loc-machu-picchu') as LocationCard;
     const r = scoreOutcome({ kind: 'LOCATION', card, guess: { lat: -13.5, lng: -72 } });
-    expect(r.delta).toBe(1000);
+    expect(r.delta).toBe(4000);
     const hard = deck.find((c) => c.id === 'loc-deadvlei') as LocationCard;
-    expect(scoreOutcome({ kind: 'LOCATION', card: hard, guess: hard.location }).delta).toBe(1500);
+    expect(scoreOutcome({ kind: 'LOCATION', card: hard, guess: hard.location }).delta).toBe(5000);
     expect(r.distanceKm).toBeGreaterThan(0);
   });
 });
@@ -127,16 +145,16 @@ describe('turnos y victoria', () => {
   });
 
   it('modo POINTS termina en cuanto alguien llega a la meta', () => {
-    let g = createGame({ mode: 'POINTS', target: 3000 }, PLAYERS);
-    for (let i = 0; i < 11; i++) g = applyTurn(g, i % 2 ? wrong : right()).state;
-    expect(g.players[0]!.score).toBe(3000);
+    let g = createGame({ mode: 'POINTS', target: 12_500 }, PLAYERS);
+    for (let i = 0; i < 9; i++) g = applyTurn(g, i % 2 ? wrong : right()).state;
+    expect(g.players[0]!.score).toBe(12_500);
     expect(g.status).toBe('FINISHED');
     expect(g.winnerIds).toEqual(['p1']);
   });
 
   it('el puntaje no baja de 0 y el delta registrado es el efectivo', () => {
-    const g = createGame({ mode: 'POINTS', target: 3000 }, PLAYERS);
-    const { state, result } = applyTurn(g, { kind: 'EVENT', card: event(-300) });
+    const g = createGame({ mode: 'POINTS', target: 12_500 }, PLAYERS);
+    const { state, result } = applyTurn(g, { kind: 'EVENT', card: event(-1500) });
     expect(state.players[0]!.score).toBe(0);
     expect(result.delta).toBe(0);
     expect(state.history[0]!.correct).toBeNull();

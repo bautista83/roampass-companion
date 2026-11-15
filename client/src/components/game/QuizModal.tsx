@@ -1,4 +1,4 @@
-import { CATEGORY_META, QUIZ_POINTS, flagUrl, withDifficulty, type QuizCard } from '@roampass/shared';
+import { CATEGORY_META, QUIZ_POINTS, flagUrl, formatNumber, withDifficulty, type QuizCard } from '@roampass/shared';
 import { useGameStore, type ActiveDraw } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { CardImage } from '../ui/CardImage';
@@ -20,10 +20,10 @@ export function QuizModal({ draw }: { draw: ActiveDraw }) {
   const timer = useCardTimer(draw, () => resolve({ kind: 'TIMEOUT', card }));
 
   const optionClass = (opt: string) => {
-    if (!resolved) return 'bg-white ring-1 ring-passport-800/15 hover:ring-2 hover:ring-passport-500 dark:bg-passport-950 dark:ring-white/15';
-    if (opt === card.correctAnswer) return 'bg-stamp-green text-white ring-2 ring-stamp-green';
-    if (opt === resolved.answer) return 'bg-stamp text-white ring-2 ring-stamp';
-    return 'opacity-40 ring-1 ring-passport-800/10 dark:ring-white/10';
+    if (!resolved) return 'bg-white hover:-translate-y-0.5 hover:bg-sun/40 dark:bg-[#2a2f2a]';
+    if (opt === card.correctAnswer) return 'bg-mint text-ink';
+    if (opt === resolved.answer) return 'bg-coral text-ink';
+    return 'opacity-40 bg-white dark:bg-[#2a2f2a]';
   };
 
   return (
@@ -34,8 +34,8 @@ export function QuizModal({ draw }: { draw: ActiveDraw }) {
         <span className="flex items-center gap-2">
           <span className="text-2xl">{meta.icon}</span>
           <span>{meta.label}</span>
-          <span className="rounded-full bg-black/5 px-2 py-0.5 font-stamp text-xs dark:bg-white/10">
-            +{withDifficulty(QUIZ_POINTS[card.category], card.difficulty)}
+          <span className="rounded-full border-2 border-ink bg-white px-2 py-0.5 text-xs font-bold text-ink">
+            +{formatNumber(withDifficulty(QUIZ_POINTS[card.category], card.difficulty))} mi
           </span>
           <DifficultyBadge difficulty={card.difficulty} />
           {timer.hasTimer && (
@@ -56,7 +56,7 @@ export function QuizModal({ draw }: { draw: ActiveDraw }) {
             src={image}
             alt={card.category === 'FLAG' ? 'Bandera misteriosa' : card.prompt}
             credit={card.credit}
-            className={`mx-auto w-full rounded-xl ${card.category === 'FLAG' ? 'max-w-sm bg-transparent shadow-lg' : 'max-w-md'}`}
+            className={`mx-auto w-full rounded-xl ${card.category === 'FLAG' ? 'max-w-sm border-3 border-ink bg-transparent shadow-hard' : 'max-w-md border-3 border-ink shadow-hard'}`}
             imgClassName={`mx-auto w-full ${card.category === 'FLAG' ? 'h-auto' : 'max-h-[34dvh] object-contain md:max-h-80'}`}
           />
         )}
@@ -70,9 +70,9 @@ export function QuizModal({ draw }: { draw: ActiveDraw }) {
               key={opt}
               disabled={!!resolved}
               onClick={() => resolve({ kind: 'QUIZ', card, answer: opt })}
-              className={`flex min-h-14 items-center gap-3 rounded-xl px-4 text-left text-lg font-semibold transition active:scale-[0.98] ${optionClass(opt)}`}
+              className={`sticker flex min-h-14 items-center gap-3 px-4 text-left text-lg font-bold shadow-hard-sm transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${optionClass(opt)}`}
             >
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-black/10 font-stamp text-sm dark:bg-white/10">
+              <span className="grid size-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-sun font-stamp text-sm text-ink">
                 {String.fromCharCode(65 + i)}
               </span>
               {opt}
