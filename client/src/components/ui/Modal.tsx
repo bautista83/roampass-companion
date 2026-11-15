@@ -37,7 +37,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[1000] grid place-items-center bg-passport-950/70 p-[2.5vw] backdrop-blur-sm md:p-6"
+          className="fixed inset-0 z-[1000] grid place-items-center bg-ink/55 p-[2.5vw] md:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -47,7 +47,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
           <motion.div
             role="dialog"
             aria-modal="true"
-            className={`flex h-[95dvh] w-[95vw] flex-col overflow-hidden rounded-2xl bg-paper shadow-2xl ring-1 ring-passport-800/20 md:h-auto md:max-h-[90dvh] dark:bg-passport-900 dark:ring-white/10 ${
+            className={`flex h-[95dvh] w-[95vw] flex-col overflow-hidden rounded-3xl border-3 border-ink bg-paper shadow-hard-lg md:h-auto md:max-h-[90dvh] dark:border-black dark:bg-[#1f231f] dark:shadow-[8px_8px_0_0_#000] ${
               size === 'xl' ? 'md:max-w-6xl' : 'md:max-w-2xl'
             }`}
             initial={flip ? { rotateY: 90, scale: 0.9 } : { y: 40, opacity: 0 }}
@@ -57,8 +57,8 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
             onClick={(e) => e.stopPropagation()}
           >
             {(title || onClose) && (
-              <div className="flex items-center justify-between gap-3 border-b border-passport-800/10 px-4 py-3 md:px-6 dark:border-white/10">
-                <div className="min-w-0 flex-1 font-semibold">{title}</div>
+              <div className="flex items-center justify-between gap-3 border-b-3 border-ink bg-white px-4 py-3 md:px-6 dark:border-black dark:bg-[#2a2f2a]">
+                <div className="min-w-0 flex-1 font-bold">{title}</div>
                 {onClose && (
                   <button className="btn-ghost size-12 shrink-0 px-0" onClick={onClose} aria-label="Cerrar">
                     ✕

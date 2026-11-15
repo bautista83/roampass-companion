@@ -32,7 +32,7 @@ export function Dashboard() {
   const metrics = [
     { label: 'Partidas jugadas', value: stats?.gamesPlayed, icon: '🗺️' },
     { label: 'Victorias', value: stats?.gamesWon, icon: '🏆' },
-    { label: 'Récord personal', value: stats?.bestScore, icon: '⭐', suffix: ' pts' },
+    { label: 'Récord personal', value: stats?.bestScore, icon: '⭐', suffix: ' mi' },
   ];
 
   return (

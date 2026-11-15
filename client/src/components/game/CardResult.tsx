@@ -30,7 +30,7 @@ export function CardResult({ result, playerName, children }: { result: ScoreResu
         {label}
         <span className="block text-center text-3xl md:text-4xl">
           {result.delta > 0 ? '+' : ''}
-          {formatNumber(result.delta)} pts
+          {formatNumber(result.delta)} mi
         </span>
       </motion.div>
       <p className="text-sm text-passport-500 dark:text-passport-300">

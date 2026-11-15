@@ -10,9 +10,9 @@ export const CATEGORY_META: Record<CardCategory, { label: string; icon: string; 
 };
 
 export const DIFFICULTY_META: Record<Difficulty, { label: string; short: string }> = {
-  EASY: { label: 'Fácil', short: '×1' },
-  MEDIUM: { label: 'Normal', short: '×1,25' },
-  HARD: { label: 'Difícil', short: '×1,5' },
+  EASY: { label: 'Fácil', short: '' },
+  MEDIUM: { label: 'Normal', short: '+500 mi' },
+  HARD: { label: 'Difícil', short: '+1.000 mi' },
 };
 
 export const PAWN_COLOR_META: Record<PawnColor, { label: string; hex: string }> = {

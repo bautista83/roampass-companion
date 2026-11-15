@@ -15,14 +15,15 @@ export const CARD_CATEGORIES: readonly CardCategory[] = [
   'TRAVEL_EVENT',
 ];
 
-/** Nivel de una carta. En modo mixto salen todas y las dificiles valen mas (ver DIFFICULTY_MULTIPLIER). */
+/** Nivel de una carta. En modo mixto salen todas y las dificiles valen mas (ver DIFFICULTY_BONUS). */
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 
 export const DIFFICULTIES: readonly Difficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 
 export type VictoryMode = 'POINTS' | 'ROUNDS';
 
-export const POINT_TARGETS = [3000, 5000, 10000] as const;
+/** Metas en millas: media vuelta al mundo (25 casillas) o la vuelta completa (50 casillas). */
+export const POINT_TARGETS = [12_500, 25_000] as const;
 
 /** Segundos para responder cada carta; se elige al crear cada partida (los eventos de viajero no tienen timer). */
 export const TIMER_OPTIONS = [10, 15, 20, 25, 30] as const;
@@ -31,7 +32,7 @@ export const ROUND_TARGETS = [10, 15, 20] as const;
 
 export interface VictoryCondition {
   mode: VictoryMode;
-  /** Puntos a alcanzar (modo POINTS) o rondas a jugar (modo ROUNDS). */
+  /** Millas a alcanzar (modo POINTS) o rondas a jugar (modo ROUNDS). */
   target: number;
 }
 
@@ -84,6 +85,7 @@ export interface TravelEventCard extends BaseCard {
   category: 'TRAVEL_EVENT';
   title: string;
   description: string;
+  /** Millas que avanza (+) o retrocede (-) el viajero; siempre casillas enteras (multiplo de 500). */
   points: number;
   icon: string;
 }
