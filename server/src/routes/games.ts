@@ -125,3 +125,56 @@ gamesRouter.get('/stats/me', async (req, res) => {
   ]);
   res.json({ gamesPlayed, gamesWon, bestScore: best._max.score ?? 0 });
 });
+
+/** Ultimas partidas para el panel: el admin ve las de todos; cada usuario, las que creo o jugo. */
+gamesRouter.get('/recent', async (req, res) => {
+  const limit = z.coerce.number().int().min(1).max(50).catch(12).parse(req.query.limit);
+  const user = req.user!;
+  const sessions = await prisma.gameSession.findMany({
+    where: user.role === 'ADMIN' ? {} : { OR: [{ hostId: user.id }, { players: { some: { userId: user.id } } }] },
+    orderBy: { updatedAt: 'desc' },
+    take: limit,
+    select: {
+      id: true,
+      status: true,
+      victoryMode: true,
+      target: true,
+      currentRound: true,
+      startedAt: true,
+      finishedAt: true,
+      state: true,
+      hostId: true,
+      host: { select: { username: true } },
+      players: {
+        orderBy: [{ score: 'desc' }, { turnOrder: 'asc' }],
+        select: { name: true, color: true, avatar: true, score: true, isWinner: true, user: { select: { username: true } } },
+      },
+    },
+  });
+  res.json({
+    games: sessions.map((s) => ({
+      id: s.id,
+      host: s.host.username,
+      status: s.status,
+      mode: s.victoryMode,
+      target: s.target,
+      board: (s.state as unknown as GameState).config?.board ?? 'PHYSICAL',
+      round: s.currentRound,
+      startedAt: s.startedAt.toISOString(),
+      finishedAt: s.finishedAt?.toISOString() ?? null,
+      canDelete: user.role === 'ADMIN' || s.hostId === user.id,
+      players: s.players.map(({ user: u, ...p }) => ({ ...p, username: u?.username ?? null })),
+    })),
+  });
+});
+
+/** Elimina una partida (y sus jugadores, en cascada). Solo quien la creo o un admin. */
+gamesRouter.delete('/:id', async (req, res) => {
+  const session = await prisma.gameSession.findUnique({ where: { id: req.params.id }, select: { hostId: true } });
+  if (!session) throw new HttpError(404, 'La partida no existe');
+  if (req.user!.role !== 'ADMIN' && session.hostId !== req.user!.id) {
+    throw new HttpError(403, 'Solo quien creó la partida puede eliminarla');
+  }
+  await prisma.gameSession.delete({ where: { id: req.params.id } });
+  res.status(204).end();
+});

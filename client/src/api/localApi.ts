@@ -3,7 +3,7 @@
 
 import { rankPlayers, type GameState, type SeedData } from '@roampass/shared';
 import seed from '@roampass/shared/seedData.json';
-import { ApiError, type PlayerStatsSummary, type RoamPassApi, type User } from './types';
+import { ApiError, type PlayerStatsSummary, type RecentGame, type RoamPassApi, type User } from './types';
 
 interface StoredUser extends User {
   salt: string;
@@ -207,6 +207,49 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
         if (rankPlayers(g.state.players).some((r) => r.position === 1 && r.player.id === me.id)) gamesWon++;
       }
       return { gamesPlayed: mine.length, gamesWon, bestScore };
+    },
+
+    async deleteGame(id) {
+      const db = await load();
+      const user = await currentUser(db);
+      const game = db.games[id];
+      if (!game) throw new ApiError('La partida no existe', 404);
+      if (user.role !== 'ADMIN' && game.hostId !== user.id) throw new ApiError('Solo quien creó la partida puede eliminarla', 403);
+      delete db.games[id];
+      save(db);
+    },
+
+    async getRecentGames(limit = 12): Promise<RecentGame[]> {
+      const db = await load();
+      const user = await currentUser(db);
+      const names = new Map(db.users.map((u) => [u.id, u.username]));
+      return Object.values(db.games)
+        .filter((g) => user.role === 'ADMIN' || g.hostId === user.id)
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, limit)
+        .map(({ hostId, selfPlayerId, state }) => {
+          const winners = new Set(state.winnerIds ?? []);
+          return {
+            id: state.id,
+            host: names.get(hostId) ?? '—',
+            status: state.status,
+            mode: state.config.mode,
+            target: state.config.target,
+            board: state.config.board ?? 'PHYSICAL',
+            round: state.round,
+            startedAt: state.createdAt,
+            finishedAt: state.finishedAt ?? null,
+            canDelete: user.role === 'ADMIN' || hostId === user.id,
+            players: rankPlayers(state.players).map(({ player: p }) => ({
+              name: p.name,
+              color: p.color,
+              avatar: p.avatar,
+              score: p.score,
+              isWinner: winners.has(p.id),
+              username: p.id === selfPlayerId ? (names.get(hostId) ?? null) : null,
+            })),
+          };
+        });
     },
   };
 }

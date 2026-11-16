@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { PawnToken } from '../ui/PawnToken';
 import { BOARD, PAWN_COLOR_META, boardPosition, progressToGoal, rankPlayers, type GameState, formatNumber } from '@roampass/shared';
 
 /** Marcador global en tiempo real, ordenado por posicion. */
@@ -23,9 +24,7 @@ export function Scoreboard({ game }: { game: GameState }) {
             >
               <div className="flex items-center gap-3">
                 <span className="w-5 text-center font-stamp text-passport-400">{position}</span>
-                <span className="grid size-10 shrink-0 place-items-center rounded-full text-xl" style={{ background: `${hex}26`, boxShadow: `0 0 0 3px ${hex}` }}>
-                  {player.avatar}
-                </span>
+                <PawnToken avatar={player.avatar} color={player.color} className="w-8 shrink-0" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-semibold">{player.name}</span>
                   {/* Casilla del tablero (sirve tambien para ubicar el peon en el tablero fisico) */}

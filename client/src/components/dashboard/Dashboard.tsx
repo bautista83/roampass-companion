@@ -8,17 +8,25 @@ import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
 import { UserManagement } from './UserManagement';
 import { PassportCard } from './PassportCard';
+import { RecentGames } from './RecentGames';
 
 export function Dashboard() {
   const user = useAuthStore((s) => s.user);
   const localGame = useGameStore((s) => s.game);
   const resumeGame = useGameStore((s) => s.resumeGame);
+  const clearGame = useGameStore((s) => s.clear);
   const navigate = useNavigate();
   const [stats, setStats] = useState<PlayerStatsSummary | null>(null);
   const [remoteGame, setRemoteGame] = useState<GameState | null>(null);
 
+  const loadStats = () =>
+    api
+      .getMyStats()
+      .then(setStats)
+      .catch(() => setStats({ gamesPlayed: 0, gamesWon: 0, bestScore: 0 }));
+
   useEffect(() => {
-    api.getMyStats().then(setStats).catch(() => setStats({ gamesPlayed: 0, gamesWon: 0, bestScore: 0 }));
+    void loadStats();
     api.getActiveGame().then(setRemoteGame).catch(() => setRemoteGame(null));
   }, []);
 
@@ -73,6 +81,17 @@ export function Dashboard() {
           ))}
         </div>
       </div>
+
+      <RecentGames
+        isAdmin={user?.role === 'ADMIN'}
+        onDeleted={(id) => {
+          // Si era la partida en curso, se saca el boton Continuar.
+          if (localGame?.id === id) clearGame();
+          if (remoteGame?.id === id) setRemoteGame(null);
+          // Partidas jugadas, victorias y record se recalculan sin la partida borrada.
+          void loadStats();
+        }}
+      />
 
       {user?.role === 'ADMIN' && <UserManagement />}
     </div>

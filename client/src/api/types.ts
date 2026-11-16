@@ -1,4 +1,4 @@
-import type { Card, GameState, Role, UiTheme } from '@roampass/shared';
+import type { BoardMode, Card, GameState, PawnColor, Role, UiTheme, VictoryMode } from '@roampass/shared';
 
 export interface User {
   id: string;
@@ -29,6 +29,32 @@ export interface PlayerStatsSummary {
   bestScore: number;
 }
 
+/** Resumen de una partida para la grilla de "Ultimas partidas" del panel. */
+export interface RecentGame {
+  id: string;
+  /** Usuario que creo la partida (el admin ve las de todos). */
+  host: string;
+  status: 'PLAYING' | 'FINISHED';
+  mode: VictoryMode;
+  target: number;
+  board: BoardMode;
+  round: number;
+  startedAt: string;
+  finishedAt: string | null;
+  /** Puede eliminarla: quien la creo o un admin. */
+  canDelete: boolean;
+  /** Ordenados por millas (de mayor a menor). */
+  players: {
+    name: string;
+    color: PawnColor;
+    avatar: string;
+    score: number;
+    isWinner: boolean;
+    /** Usuario registrado que jugo con este peon, si lo hay. */
+    username: string | null;
+  }[];
+}
+
 export interface UserUpdate {
   username?: string;
   password?: string;
@@ -57,6 +83,10 @@ export interface RoamPassApi {
   saveGame(state: GameState, selfPlayerId: string | null): Promise<void>;
   getActiveGame(): Promise<GameState | null>;
   getMyStats(): Promise<PlayerStatsSummary>;
+  /** Ultimas partidas: el admin ve las de todos; cada usuario, las que creo o jugo. */
+  getRecentGames(limit?: number): Promise<RecentGame[]>;
+  /** Elimina una partida (solo quien la creo o un admin). */
+  deleteGame(id: string): Promise<void>;
 }
 
 export class ApiError extends Error {

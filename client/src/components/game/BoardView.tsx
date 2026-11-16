@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { BOARD, BOARD_SPACES, MILES_PER_SPACE, PAWN_COLOR_META, formatNumber, type GamePlayer } from '@roampass/shared';
+import { BOARD, BOARD_SPACES, MILES_PER_SPACE, formatNumber, type GamePlayer } from '@roampass/shared';
 import { useThemeStore } from '../../store/themeStore';
+import { AvatarIcon, PawnToken } from '../ui/PawnToken';
 
 /** Carpeta de las fichas de casilla: en modo 80s, la version neon. */
 const useSpacesDir = () => (useThemeStore((s) => s.retro) ? '/board/spaces-retro' : '/board/spaces');
@@ -61,7 +62,6 @@ function Pawn(props: {
   const top = useTransform(my, (v) => `${(v / H) * 100}%`);
   const lift = useTransform(hop, (v) => `${v}cqw`);
   const shown = useRef(steps);
-  const hex = PAWN_COLOR_META[player.color].hex;
   // Los callbacks cambian con cada render del juego: se leen de una ref para no cortar la animacion.
   const cb = useRef({ onStart, onPass, onArrive });
   cb.current = { onStart, onPass, onArrive };
@@ -107,7 +107,7 @@ function Pawn(props: {
     <motion.div className="absolute" style={{ left, top, zIndex: isTurn ? 30 : 20 }}>
       <div
         className="transition-transform duration-300"
-        style={{ transform: `translate(-50%, -50%) translate(${offset[0]}cqw, ${offset[1]}cqw)` }}
+        style={{ transform: `translate(-50%, -90%) translate(${offset[0]}cqw, ${offset[1]}cqw)` }}
       >
         <motion.div style={{ y: lift }} className="relative">
           <AnimatePresence>
@@ -126,15 +126,13 @@ function Pawn(props: {
               </motion.span>
             )}
           </AnimatePresence>
-          <motion.span
-            className="grid aspect-square w-[3.6cqw] min-w-6 place-items-center rounded-full border-[0.3cqw] border-ink bg-white text-[max(2cqw,12px)] leading-none"
-            style={{ boxShadow: `0 0 0 0.35cqw ${hex}, 0.45cqw 0.45cqw 0 0.35cqw #111111` }}
+          <motion.div
+            className="origin-bottom"
             animate={isTurn ? { scale: [1, 1.15, 1] } : { scale: 1 }}
             transition={isTurn ? { duration: 1.2, repeat: Infinity } : undefined}
-            title={player.name}
           >
-            {player.avatar}
-          </motion.span>
+            <PawnToken avatar={player.avatar} color={player.color} title={player.name} className="block w-[4.4cqw] min-w-7" />
+          </motion.div>
         </motion.div>
       </div>
     </motion.div>
@@ -213,7 +211,8 @@ function Spotlight({ steps, player, onDone }: { steps: number; player: GamePlaye
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.35 }}
           >
-            {player.avatar} {space.name}
+            <AvatarIcon avatar={player.avatar} className="mr-[0.6cqw] inline-block size-[1.1em] align-[-0.15em]" />
+            {space.name}
           </motion.p>
         </div>
       </div>

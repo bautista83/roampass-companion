@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AvatarIcon, PawnToken } from '../ui/PawnToken';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -322,7 +323,7 @@ function PlayerRow(props: {
   return (
     <li className="rounded-2xl border border-passport-800/10 p-3 dark:border-white/10" style={{ borderLeft: `6px solid ${PAWN_COLOR_META[player.color].hex}` }}>
       <div className="flex gap-2">
-        <span className="grid size-12 shrink-0 place-items-center rounded-full bg-passport-800/5 text-2xl dark:bg-white/5">{player.avatar}</span>
+        <PawnToken avatar={player.avatar} color={player.color} className="w-10 shrink-0" />
         <input
           className="input"
           placeholder={`Jugador / equipo ${index + 1}`}
@@ -369,11 +370,11 @@ function PlayerRow(props: {
                 onClick={() => onChange({ avatar: a })}
                 aria-pressed={player.avatar === a}
                 aria-label={`Avatar ${a}`}
-                className={`size-11 rounded-lg text-xl transition ${
+                className={`grid size-11 place-items-center rounded-lg transition ${
                   player.avatar === a ? 'bg-passport-700/15 ring-2 ring-passport-700 dark:bg-brass/20 dark:ring-brass' : ''
                 }`}
               >
-                {a}
+                <AvatarIcon avatar={a} className="size-8" />
               </button>
             ))}
           </div>
