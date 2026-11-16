@@ -40,3 +40,30 @@ authRouter.post('/login', async (req, res) => {
 authRouter.get('/me', requireAuth, (req, res) => {
   res.json({ user: req.user });
 });
+
+/** Mi perfil: cada usuario cambia su estilo visual y su contraseña (con la actual). */
+const profileSchema = z
+  .object({
+    theme: z.enum(['COMIC', 'RETRO']).optional(),
+    currentPassword: z.string().optional(),
+    newPassword: credentialsSchema.shape.password.optional(),
+  })
+  .refine((d) => !d.newPassword || d.currentPassword, { message: 'Ingresá tu contraseña actual', path: ['currentPassword'] });
+
+authRouter.patch('/me', requireAuth, async (req, res) => {
+  const { theme, currentPassword, newPassword } = profileSchema.parse(req.body);
+  let passwordHash: string | undefined;
+  if (newPassword) {
+    const found = await prisma.user.findUniqueOrThrow({ where: { id: req.user!.id } });
+    if (!(await bcrypt.compare(currentPassword!, found.passwordHash))) {
+      throw new HttpError(400, 'La contraseña actual no es correcta');
+    }
+    passwordHash = await bcrypt.hash(newPassword, 10);
+  }
+  const user = await prisma.user.update({
+    where: { id: req.user!.id },
+    data: { ...(theme && { theme }), ...(passwordHash && { passwordHash }) },
+    select: publicUserSelect,
+  });
+  res.json({ user });
+});

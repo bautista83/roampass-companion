@@ -108,6 +108,21 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       return strip(await currentUser(await load()));
     },
 
+    async updateMe({ theme, currentPassword, newPassword }) {
+      const db = await load();
+      const user = await currentUser(db);
+      if (newPassword) {
+        if (!currentPassword || (await hash(currentPassword, user.salt)) !== user.passwordHash) {
+          throw new ApiError('La contraseña actual no es correcta', 400);
+        }
+        validateCredentials(user.username, newPassword);
+        user.passwordHash = await hash(newPassword, user.salt);
+      }
+      if (theme) user.theme = theme;
+      save(db);
+      return strip(user);
+    },
+
     async listUsers() {
       const db = await load();
       await requireAdmin(db);

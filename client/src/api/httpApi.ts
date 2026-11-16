@@ -24,6 +24,7 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     login: (username, password) => request<AuthSession>('/auth/login', json('POST', { username, password })),
     register: (username, password) => request<AuthSession>('/auth/register', json('POST', { username, password })),
     me: async () => (await request<{ user: User }>('/auth/me')).user,
+    updateMe: async (data) => (await request<{ user: User }>('/auth/me', json('PATCH', data))).user,
 
     listUsers: async () => (await request<{ users: User[] }>('/users')).users,
     createUser: async (data) => (await request<{ user: User }>('/users', json('POST', data))).user,

@@ -10,10 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <script>
-      // Aplica el tema antes del primer render para evitar el destello claro/80s.
+      // Aplica el estilo del perfil (Comic u 80s) antes del primer render para evitar el destello.
       try {
-        const t = JSON.parse(localStorage.getItem('roampass-theme') || '{}').state?.theme;
-        const retro = t === 'retro' || t === 'dark' || (!t || t === 'system') && matchMedia('(prefers-color-scheme: dark)').matches;
+        const retro = JSON.parse(localStorage.getItem('roampass-auth') || '{}').state?.user?.theme === 'RETRO';
         document.documentElement.classList.toggle('dark', retro);
         document.documentElement.classList.toggle('retro', retro);
       } catch {}

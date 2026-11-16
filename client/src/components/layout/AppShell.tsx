@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
 import { api } from '../../api';
-import { ThemeToggle } from './ThemeToggle';
 import { Brand } from './Brand';
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -31,11 +30,10 @@ export function AppShell({ children }: { children: ReactNode }) {
               Modo demo local
             </span>
           )}
-          <span className="hidden text-sm text-passport-500 md:inline dark:text-passport-300">
-            @{user?.username}
-            {user?.role === 'ADMIN' && ' · Admin'}
-          </span>
-          <ThemeToggle />
+          <Link to="/profile" className="btn-ghost min-h-12 px-3 text-sm" title="Mi perfil: contraseña y estilo del juego">
+            👤 <span className="hidden md:inline">@{user?.username}{user?.role === 'ADMIN' && ' · Admin'}</span>
+            <span className="md:hidden">Perfil</span>
+          </Link>
           <button className="btn-ghost min-h-12 px-3 text-sm" onClick={onLogout}>
             Salir
           </button>

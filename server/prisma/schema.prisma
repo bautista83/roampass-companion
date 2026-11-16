@@ -12,6 +12,12 @@ enum Role {
   PLAYER
 }
 
+/// Estilo visual elegido por el usuario en su perfil (COMIC es el estilo base).
+enum UiTheme {
+  COMIC
+  RETRO
+}
+
 enum VictoryMode {
   POINTS
   ROUNDS
@@ -43,6 +49,7 @@ model User {
   passwordHash String
   role         Role          @default(PLAYER)
   isActive     Boolean       @default(true)
+  theme        UiTheme       @default(COMIC)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   hostedGames  GameSession[]

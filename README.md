@@ -56,6 +56,9 @@ solo lugar.
 - **Vuelta al mundo (12.500 media vuelta / 25.000 vuelta completa):** termina en cuanto alguien llega a la meta.
 - **Número de rondas (10/15/20):** termina cuando el último jugador completa la ronda final.
 - Desempate: más aciertos. Si persiste, comparten posición.
+- **Estilo visual por usuario:** el sitio arranca en el estilo base **Cómic** (también el login). Cada
+  usuario elige en **Mi perfil** (botón con su nombre, arriba) entre Cómic y **Modo 80s** (synthwave
+  pixelado); se guarda en su perfil y se aplica al iniciar sesión. En Mi perfil también cambia su contraseña.
 - **Modo de juego** (primer paso al crear la partida):
   - **Con tablero físico:** se usa el tablero impreso (`art/worldmap/print/`) y un dado. La app muestra
     las tarjetas y el marcador indica en qué casilla va cada peón.

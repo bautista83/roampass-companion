@@ -2,6 +2,10 @@
 
 export type Role = 'ADMIN' | 'PLAYER';
 
+/** Estilo visual que cada usuario elige en su perfil. COMIC es el estilo base (login incluido). */
+export type UiTheme = 'COMIC' | 'RETRO';
+export const UI_THEMES: readonly UiTheme[] = ['COMIC', 'RETRO'];
+
 export type CardCategory = 'LOCATION' | 'FLAG' | 'CITY' | 'HISTORY' | 'PERSONALITY' | 'TRAVEL_EVENT';
 
 export type QuizCategory = 'FLAG' | 'CITY' | 'HISTORY' | 'PERSONALITY';

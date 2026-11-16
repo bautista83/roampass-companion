@@ -1,12 +1,21 @@
-import type { Card, GameState, Role } from '@roampass/shared';
+import type { Card, GameState, Role, UiTheme } from '@roampass/shared';
 
 export interface User {
   id: string;
   username: string;
   role: Role;
   isActive: boolean;
+  /** Estilo visual del perfil. Los usuarios anteriores a esta opcion no lo tienen: COMIC. */
+  theme?: UiTheme;
   createdAt: string;
   gamesHosted?: number;
+}
+
+/** Lo que cada usuario puede cambiar de su propio perfil. */
+export interface ProfileUpdate {
+  theme?: UiTheme;
+  currentPassword?: string;
+  newPassword?: string;
 }
 
 export interface AuthSession {
@@ -37,6 +46,7 @@ export interface RoamPassApi {
   login(username: string, password: string): Promise<AuthSession>;
   register(username: string, password: string): Promise<AuthSession>;
   me(): Promise<User>;
+  updateMe(data: ProfileUpdate): Promise<User>;
 
   listUsers(): Promise<User[]>;
   createUser(data: { username: string; password: string; role: Role }): Promise<User>;
