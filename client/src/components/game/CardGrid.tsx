@@ -1,47 +1,53 @@
 import { motion } from 'framer-motion';
-import {
-  CARD_CATEGORIES,
-  CATEGORY_META,
-  LOCATION_BRACKETS,
-  QUIZ_POINTS,
-  formatNumber,
-  withDifficulty,
-  type CardCategory,
-} from '@roampass/shared';
+import { CARD_CATEGORIES, CATEGORY_META, dieFaceOf, type CardCategory } from '@roampass/shared';
+import { CATEGORY_TINT, POINTS_HINT } from './categoryStyle';
+import { DieFace } from './Die';
 
-const range = (base: number) => `+${formatNumber(base)} a +${formatNumber(withDifficulty(base, 'HARD'))} mi`;
-
-const POINTS_HINT: Record<CardCategory, string> = {
-  LOCATION: `hasta +${formatNumber(withDifficulty(LOCATION_BRACKETS[0].points, 'HARD'))} mi`,
-  FLAG: range(QUIZ_POINTS.FLAG),
-  CITY: range(QUIZ_POINTS.CITY),
-  HISTORY: range(QUIZ_POINTS.HISTORY),
-  PERSONALITY: range(QUIZ_POINTS.PERSONALITY),
-  TRAVEL_EVENT: '± sorpresa',
-};
-
-/** Colores planos de las fichas del tablero; cada carta queda apenas girada como un sticker. */
-const TINT: Record<CardCategory, string> = {
-  LOCATION: 'bg-mint',
-  FLAG: 'bg-sky',
-  CITY: 'bg-lilac',
-  HISTORY: 'bg-sun',
-  PERSONALITY: 'bg-coral',
-  TRAVEL_EVENT: 'bg-white dark:bg-passport-100',
-};
+/** Cada carta queda apenas girada como un sticker. */
 const TILT = ['-rotate-1', 'rotate-1', '-rotate-[0.5deg]', 'rotate-[0.5deg]', '-rotate-1', 'rotate-1'];
 
 /**
- * Mazo de 6 tarjetas. El jugador toca la categoria de la casilla donde cayo su peon fisico.
- * Movil: 2 columnas x 3 filas. Tablet: 3 x 2.
+ * Mazo de 6 tarjetas, una por cara del dado (1 Lugar ... 6 Evento).
+ * - Tablero fisico: se tira el dado (real o el de la app) y se toca la carta del numero.
+ *   Movil: 2 columnas x 3 filas. Tablet: 3 x 2.
+ * - Tablero digital (`compact`): las cartas son la referencia del dado; las abre el dado.
  * Las cartas no se repiten en la partida: una categoria sin cartas nuevas queda "Agotada".
  */
 export function CardGrid(props: {
   disabled: boolean;
   remaining: Record<CardCategory, number>;
   onDraw: (c: CardCategory) => void;
+  compact?: boolean;
 }) {
-  const { disabled, remaining, onDraw } = props;
+  const { disabled, remaining, onDraw, compact = false } = props;
+
+  if (compact) {
+    return (
+      <ul className="grid grid-cols-3 gap-2 xl:grid-cols-6" aria-label="Cartas por número del dado">
+        {CARD_CATEGORIES.map((category, i) => {
+          const meta = CATEGORY_META[category];
+          const left = remaining[category];
+          return (
+            <li
+              key={category}
+              className={`sticker flex items-center gap-2 p-2 text-ink shadow-hard-sm ${CATEGORY_TINT[category]} ${TILT[i]} ${left === 0 ? 'opacity-50 grayscale' : ''}`}
+            >
+              <DieFace face={dieFaceOf(category)} size={30} className="shrink-0" />
+              <span className="min-w-0">
+                <span className="block truncate text-xs leading-tight font-extrabold">
+                  {meta.icon} {meta.label}
+                </span>
+                <span className="block text-[10px] font-semibold text-ink/70 tabular-nums">
+                  {left === 0 ? 'Agotada' : `Quedan ${left}`}
+                </span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
       {CARD_CATEGORIES.map((category, i) => {
@@ -59,12 +65,17 @@ export function CardGrid(props: {
             transition={{ delay: i * 0.06, type: 'spring', stiffness: 160, damping: 18 }}
             whileHover={locked ? undefined : { y: -4 }}
             whileTap={locked ? undefined : { scale: 0.95, rotateZ: -1 }}
-            className={`sticker group relative flex min-h-36 flex-col justify-between overflow-hidden p-3 text-left text-ink transition disabled:cursor-not-allowed disabled:grayscale-[0.7] disabled:opacity-60 sm:min-h-44 md:aspect-[4/5] md:min-h-0 md:p-4 ${TINT[category]} ${TILT[i % TILT.length]}`}
-            aria-label={exhausted ? `${meta.label}: agotada, no quedan cartas nuevas` : `Robar carta ${meta.label}`}
+            className={`sticker group relative flex min-h-36 flex-col justify-between overflow-hidden p-3 text-left text-ink transition disabled:cursor-not-allowed disabled:grayscale-[0.7] disabled:opacity-60 sm:min-h-44 md:aspect-[4/5] md:min-h-0 md:p-4 ${CATEGORY_TINT[category]} ${TILT[i % TILT.length]}`}
+            aria-label={
+              exhausted ? `${meta.label}: agotada, no quedan cartas nuevas` : `Robar carta ${meta.label} (dado ${dieFaceOf(category)})`
+            }
           >
             <span className="flex items-start justify-between gap-2">
-              <span className="text-4xl md:text-5xl" aria-hidden>
-                {meta.icon}
+              <span className="flex items-center gap-1.5">
+                <DieFace face={dieFaceOf(category)} size={34} className="shrink-0" />
+                <span className="text-3xl md:text-4xl" aria-hidden>
+                  {meta.icon}
+                </span>
               </span>
               <span className="rounded-full border-2 border-ink bg-white px-2 py-0.5 text-[11px] font-bold whitespace-nowrap tabular-nums">
                 {exhausted ? 'Agotada' : `Quedan ${left}`}

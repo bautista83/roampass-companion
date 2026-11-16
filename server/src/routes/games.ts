@@ -34,7 +34,11 @@ const playerSchema = z.object({
 const stateSchema = z.object({
   id: z.string().min(1).max(64),
   createdAt: z.string(),
-  config: z.object({ mode: z.enum(['POINTS', 'ROUNDS']), target: z.number().int() }),
+  config: z.object({
+    mode: z.enum(['POINTS', 'ROUNDS']),
+    target: z.number().int(),
+    board: z.enum(['PHYSICAL', 'DIGITAL']).optional(),
+  }),
   players: z.array(playerSchema).min(MIN_PLAYERS).max(MAX_PLAYERS),
   currentPlayerIndex: z.number().int().min(0),
   round: z.number().int().min(1),
@@ -42,6 +46,7 @@ const stateSchema = z.object({
   history: z.array(z.record(z.string(), z.unknown())),
   usedCardIds: z.array(z.string()),
   timerSeconds: z.number().int().optional(),
+  transportEvent: z.boolean().optional(),
   finishedAt: z.string().optional(),
   winnerIds: z.array(z.string()).optional(),
 });

@@ -56,8 +56,19 @@ solo lugar.
 - **Vuelta al mundo (12.500 media vuelta / 25.000 vuelta completa):** termina en cuanto alguien llega a la meta.
 - **Número de rondas (10/15/20):** termina cuando el último jugador completa la ronda final.
 - Desempate: más aciertos. Si persiste, comparten posición.
+- **Modo de juego** (primer paso al crear la partida):
+  - **Con tablero físico:** se usa el tablero impreso (`art/worldmap/print/`) y un dado. La app muestra
+    las tarjetas y el marcador indica en qué casilla va cada peón.
+  - **Tablero digital:** el mapa se juega en pantalla. Los avatares arrancan en el Obelisco y avanzan
+    solos, casilla por casilla, según sus millas (millas ÷ 500).
+- **Dado:** cada cara es una categoría: 1 Lugar · 2 Bandera · 3 Ciudades · 4 Historia · 5 Personalidades ·
+  6 Evento de Viajero. El dado digital está en los dos modos; en el físico también se puede tocar la carta.
+  Si sale una categoría agotada, el dado digital vuelve a tirar solo.
+- **Casillas de transporte** (barco, globo, caravana, tren, tuk-tuk, combi, avión): quien llega a una
+  tras acertar una carta juega en el mismo turno un Evento de Viajero automático. Si llega por un
+  evento, no pasa nada. Pasar por encima no cuenta, y sin eventos en el mazo la ficha queda ahí.
 - **Ninguna carta se repite dentro de una partida.** Cada tarjeta muestra cuántas quedan; si una
-  categoría se agota, queda marcada como «Agotada» y el jugador elige otra.
+  categoría se agota, queda marcada como «Agotada».
 - Una carta abierta no se puede cerrar sin responder, y sobrevive a un refresco del navegador.
 - **Timer por carta:** se elige en el wizard de cada partida: 10, 15, 20, 25 o 30 segundos (por
   defecto 10). Al agotarse, la carta cuenta como error (0 millas); en LUGAR, si ya se marcó un punto, se

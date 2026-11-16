@@ -47,7 +47,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
           <motion.div
             role="dialog"
             aria-modal="true"
-            className={`flex h-[95dvh] w-[95vw] flex-col overflow-hidden rounded-3xl border-3 border-ink bg-paper shadow-hard-lg md:h-auto md:max-h-[90dvh] dark:border-black dark:bg-[#1f231f] dark:shadow-[8px_8px_0_0_#000] ${
+            className={`rp-modal flex h-[95dvh] w-[95vw] flex-col overflow-hidden rounded-3xl border-3 border-ink bg-paper shadow-hard-lg md:h-auto md:max-h-[90dvh] dark:border-black dark:bg-[#1f231f] dark:shadow-[8px_8px_0_0_#000] ${
               size === 'xl' ? 'md:max-w-6xl' : 'md:max-w-2xl'
             }`}
             initial={flip ? { rotateY: 90, scale: 0.9 } : { y: 40, opacity: 0 }}
@@ -57,7 +57,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
             onClick={(e) => e.stopPropagation()}
           >
             {(title || onClose) && (
-              <div className="flex items-center justify-between gap-3 border-b-3 border-ink bg-white px-4 py-3 md:px-6 dark:border-black dark:bg-[#2a2f2a]">
+              <div className="rp-modal-head flex items-center justify-between gap-3 border-b-3 border-ink bg-white px-4 py-3 md:px-6 dark:border-black dark:bg-[#2a2f2a]">
                 <div className="min-w-0 flex-1 font-bold">{title}</div>
                 {onClose && (
                   <button className="btn-ghost size-12 shrink-0 px-0" onClick={onClose} aria-label="Cerrar">

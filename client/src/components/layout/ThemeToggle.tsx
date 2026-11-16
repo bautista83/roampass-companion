@@ -3,7 +3,7 @@ import { useThemeStore } from '../../store/themeStore';
 const META = {
   system: { icon: '🖥️', label: 'Tema del sistema' },
   light: { icon: '☀️', label: 'Tema claro' },
-  dark: { icon: '🌙', label: 'Tema oscuro' },
+  retro: { icon: '🕹️', label: 'Modo 80s' },
 } as const;
 
 export function ThemeToggle() {

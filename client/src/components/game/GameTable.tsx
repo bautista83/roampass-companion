@@ -1,6 +1,7 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { currentPlayer, remainingByCategory } from '@roampass/shared';
+import { AnimatePresence, motion } from 'framer-motion';
+import { BOARD, boardPosition, currentPlayer, remainingByCategory, type CardCategory, type GamePlayer } from '@roampass/shared';
 import { useGameStore } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { TurnBanner } from './TurnBanner';
@@ -9,13 +10,30 @@ import { CardGrid } from './CardGrid';
 import { QuizModal } from './QuizModal';
 import { TravelEventModal } from './TravelEventModal';
 import { VictoryScreen } from './VictoryScreen';
+import { BoardView } from './BoardView';
+import { Die } from './Die';
 
 // Leaflet pesa ~150 kB: se descarga recien al robar la primera carta de LUGAR.
 const LocationCardModal = lazy(() => import('./LocationCardModal').then((m) => ({ default: m.LocationCardModal })));
 
+const TRANSPORT_ICON: Record<string, string> = {
+  t_barco: '🚢',
+  t_globo: '🎈',
+  t_camello: '🐪',
+  t_tren: '🚂',
+  t_tuktuk: '🛺',
+  t_combi: '🚐',
+  t_avion: '✈️',
+};
+
+/** Pausa entre que la ficha queda quieta en el transporte y se abre el Evento de Viajero. */
+const TRANSPORT_DELAY_MS = 1600;
+
 /**
- * Movil: 1 columna (turno sticky → mazo 2x3 → marcador).
- * Tablet horizontal (md+): 35% marcador/turno/ronda | 65% mazo.
+ * Mesa de juego. Cada turno: dado (o carta tocada en el tablero fisico) → carta → millas.
+ * - Tablero fisico: mazo grande de 6 cartas; el peon se mueve en el tablero impreso.
+ * - Tablero digital: el mapa en pantalla con las fichas que avanzan solas; las cartas las abre el dado.
+ * Si el jugador cae en una casilla de transporte tras acertar, en el mismo turno se abre un Evento de Viajero.
  */
 export function GameTable() {
   const game = useGameStore((s) => s.game);
@@ -24,47 +42,145 @@ export function GameTable() {
   const deck = useGameStore((s) => s.deck);
   const ensureDeck = useGameStore((s) => s.ensureDeck);
   const draw = useGameStore((s) => s.draw);
+  const skipTransport = useGameStore((s) => s.skipTransport);
   const endEarly = useGameStore((s) => s.endEarly);
   const navigate = useNavigate();
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [moving, setMoving] = useState(false);
+  const [toast, setToast] = useState<{ text: string; key: number } | null>(null);
   const usedCardIds = game?.usedCardIds;
   const remaining = useMemo(() => remainingByCategory(deck, usedCardIds ?? []), [deck, usedCardIds]);
+
+  const showToast = useCallback((text: string) => setToast({ text, key: Date.now() }), []);
 
   useEffect(() => {
     void ensureDeck();
   }, [ensureDeck]);
 
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2800);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  // Casilla de transporte: con la ficha ya quieta, se abre solo el Evento de Viajero del mismo turno.
+  const transportPending = !!game && game.status === 'PLAYING' && !!game.transportEvent && !active;
+  const eventsLeft = remaining.TRAVEL_EVENT;
+  useEffect(() => {
+    if (!transportPending || moving || !game || deck.length === 0) return;
+    const space = BOARD.spaces[boardPosition(currentPlayer(game).score).space]!;
+    showToast(`${TRANSPORT_ICON[space.id] ?? '🧳'} ¡${space.name}! Te toca un Evento de Viajero`);
+    const t = setTimeout(() => {
+      if (eventsLeft > 0) draw('TRAVEL_EVENT');
+      else {
+        showToast('No quedan Eventos de Viajero: la ficha se queda en el transporte');
+        skipTransport();
+      }
+    }, TRANSPORT_DELAY_MS);
+    return () => clearTimeout(t);
+  }, [transportPending, moving, deck.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // En el tablero digital la llegada se anuncia con el lugar destacado sobre el mapa.
+  const onArrive = useCallback((_player: GamePlayer, _steps: number) => {}, []);
+
   if (!game) return <Navigate to="/" replace />;
 
+  const digital = game.config.board === 'DIGITAL';
   const finished = game.status === 'FINISHED';
-  // Mientras se ve el resultado de la ultima carta, la victoria espera a que se cierre.
-  const showVictory = finished && !active;
+  const player = currentPlayer(game);
+  // Mientras se ve el resultado de la ultima carta (o viaja la ficha), la victoria espera.
+  const showVictory = finished && !active && !moving;
+  const locked = finished || !!active || deck.length === 0 || moving || !!game.transportEvent;
+  const available = (c: CardCategory) => remaining[c] > 0;
+
+  const dieHint = game.transportEvent
+    ? 'Casilla de transporte: Evento de Viajero'
+    : digital
+      ? `Tocá el dado, ${player.name}`
+      : 'Tocá el dado o tirá el dado físico y elegí la carta';
+
+  const diePanel = (
+    <div className="panel flex items-center justify-center gap-4 p-3 md:p-4">
+      <Die disabled={locked} available={available} onRolled={draw} hint={dieHint} />
+    </div>
+  );
+
+  const buttons = (
+    <div className="flex gap-2">
+      <button className="btn-ghost flex-1 text-sm" onClick={() => navigate('/')}>
+        ⏸ Pausar
+      </button>
+      <button className="btn-ghost flex-1 text-sm text-stamp" onClick={() => setConfirmEnd(true)} disabled={finished}>
+        🏁 Terminar ahora
+      </button>
+    </div>
+  );
+
+  const syncWarning = syncError && (
+    <p className="mt-3 rounded-xl border-2 border-ink bg-sun px-3 py-2 text-xs font-semibold text-ink">
+      ⚠ Sin conexión con el servidor ({syncError}). La partida sigue guardada en este dispositivo.
+    </p>
+  );
 
   return (
-    <div className="flex flex-col gap-4 md:grid md:grid-cols-[minmax(0,35fr)_minmax(0,65fr)] md:grid-rows-[auto_auto_1fr] md:items-start md:gap-6">
-      <TurnBanner game={game} player={currentPlayer(game)} className="sticky top-0 z-20 md:static md:col-start-1 md:row-start-1" />
+    <>
+      {digital ? (
+        // Movil: turno → tablero → dado → cartas → marcador. Tablet: columna de control | tablero.
+        <div className="flex flex-col gap-4 md:grid md:grid-cols-[minmax(0,30fr)_minmax(0,70fr)] md:items-start md:gap-5">
+          <div className="contents md:flex md:flex-col md:gap-4">
+            <TurnBanner game={game} player={player} className="sticky top-0 z-40 order-1 md:static md:order-none" />
+            <div className="order-3 md:order-none">{diePanel}</div>
+            <aside className="order-5 md:order-none">
+              <Scoreboard game={game} />
+            </aside>
+            <div className="order-6 md:order-none">{buttons}</div>
+          </div>
+          <div className="contents md:flex md:flex-col md:gap-4">
+            <section className="order-2 md:order-none" aria-label="Tablero">
+              <BoardView
+                players={game.players}
+                currentPlayerId={finished ? null : player.id}
+                frozen={!!active}
+                onArrive={onArrive}
+                onMovingChange={setMoving}
+              />
+            </section>
+            <section className="order-4 md:order-none" aria-label="Cartas del dado">
+              <CardGrid compact disabled remaining={remaining} onDraw={draw} />
+              {syncWarning}
+            </section>
+          </div>
+        </div>
+      ) : (
+        // Movil: 1 columna (turno sticky → dado → mazo 2x3 → marcador). Tablet: 35% control | 65% mazo.
+        <div className="flex flex-col gap-4 md:grid md:grid-cols-[minmax(0,35fr)_minmax(0,65fr)] md:grid-rows-[auto_auto_auto_1fr] md:items-start md:gap-6">
+          <TurnBanner game={game} player={player} className="sticky top-0 z-20 md:static md:col-start-1 md:row-start-1" />
+          <div className="md:col-start-1 md:row-start-2">{diePanel}</div>
+          <section className="md:col-start-2 md:row-span-4 md:row-start-1" aria-label="Mazo de tarjetas">
+            <CardGrid disabled={locked} remaining={remaining} onDraw={draw} />
+            {syncWarning}
+          </section>
+          <aside className="md:col-start-1 md:row-start-3">
+            <Scoreboard game={game} />
+          </aside>
+          <div className="md:col-start-1 md:row-start-4">{buttons}</div>
+        </div>
+      )}
 
-      <section className="md:col-start-2 md:row-span-3 md:row-start-1" aria-label="Mazo de tarjetas">
-        <CardGrid disabled={finished || !!active || deck.length === 0} remaining={remaining} onDraw={draw} />
-        {syncError && (
-          <p className="mt-3 rounded-lg bg-brass/15 px-3 py-2 text-xs text-passport-700 dark:text-passport-100">
-            ⚠ Sin conexión con el servidor ({syncError}). La partida sigue guardada en este dispositivo.
-          </p>
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            key={toast.key}
+            role="status"
+            className="sticker fixed top-20 left-1/2 z-[900] max-w-[92vw] -translate-x-1/2 bg-sun px-4 py-2 text-center text-sm font-extrabold text-ink md:text-base"
+            initial={{ y: -30, opacity: 0, scale: 0.9 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+          >
+            {toast.text}
+          </motion.div>
         )}
-      </section>
-
-      <aside className="md:col-start-1 md:row-start-2">
-        <Scoreboard game={game} />
-      </aside>
-
-      <div className="flex gap-2 md:col-start-1 md:row-start-3">
-        <button className="btn-ghost flex-1 text-sm" onClick={() => navigate('/')}>
-          ⏸ Pausar
-        </button>
-        <button className="btn-ghost flex-1 text-sm text-stamp" onClick={() => setConfirmEnd(true)} disabled={finished}>
-          🏁 Terminar ahora
-        </button>
-      </div>
+      </AnimatePresence>
 
       {active?.card.category === 'LOCATION' && (
         <Suspense fallback={null}>
@@ -95,6 +211,6 @@ export function GameTable() {
       </Modal>
 
       {showVictory && <VictoryScreen game={game} />}
-    </div>
+    </>
   );
 }

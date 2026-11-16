@@ -493,8 +493,72 @@ def build():
               "miles": i * MILES_PER_SPACE} for i, n in enumerate(ROUTE)]
     (HERE / "board-v3.json").write_text(json.dumps({"total_miles": TOTAL_MILES, "miles_per_space": MILES_PER_SPACE,
                                                     "spaces": len(ROUTE), "track": track}, indent=1), encoding="utf-8")
+    export_for_app(svg, pos, legs, wi, span)
     print(json.dumps({"svg": str(HERE / "board-v3.svg"), "kb": round(len(svg) / 1024), "spaces": len(ROUTE),
                       "decor": len(decor), "decor_skipped": len(DECOR_PLACES) - len(decor)}))
+
+# Nombre que ve el jugador al caer en cada casilla (tablero digital).
+SPACE_NAMES = {
+    "obelisco": "Obelisco · Buenos Aires", "iguazu": "Cataratas del Iguazú", "cristo": "Cristo Redentor · Río",
+    "amazonas": "Selva amazónica", "machu": "Machu Picchu", "cuba": "La Habana · Cuba", "chichen": "Chichén Itzá",
+    "golden": "Golden Gate · San Francisco", "needle": "Space Needle · Seattle", "totem": "Tótems de Alaska",
+    "cntower": "CN Tower · Toronto", "libertad": "Estatua de la Libertad", "igloo": "Groenlandia",
+    "t_barco": "Barco por el Atlántico", "bigben": "Big Ben · Londres", "eiffel": "Torre Eiffel · París",
+    "castillo": "Neuschwanstein", "basilio": "San Basilio · Moscú", "t_globo": "Globo en Capadocia",
+    "hagia": "Santa Sofía · Estambul", "partenon": "Partenón · Atenas", "coliseo": "Coliseo · Roma",
+    "sagrada": "Sagrada Familia · Barcelona", "t_camello": "Caravana por el Sahara", "tombuctu": "Tombuctú",
+    "table": "Table Mountain · Ciudad del Cabo", "victoria": "Cataratas Victoria", "baobab": "Baobabs de Madagascar",
+    "kilimanjaro": "Kilimanjaro", "piramides": "Pirámides de Giza", "petra": "Petra", "burj": "Burj Khalifa · Dubái",
+    "taj": "Taj Mahal", "everest": "Monte Everest", "t_tren": "Transiberiano", "muralla": "Gran Muralla China",
+    "torii": "Torii de Itsukushima", "fuji": "Monte Fuji", "halong": "Bahía de Ha Long", "angkor": "Angkor Wat",
+    "t_tuktuk": "Tuk-tuk por Bangkok", "petronas": "Torres Petronas", "borobudur": "Borobudur",
+    "uluru": "Uluru", "t_combi": "Combi por Australia", "opera": "Ópera de Sídney", "kiwi": "Nueva Zelanda",
+    "t_avion": "Avión sobre el Pacífico", "moai": "Moáis · Isla de Pascua", "perito": "Glaciar Perito Moreno",
+}
+
+def export_for_app(svg, pos, legs, wi, span):
+    """Datos del tablero para la app: casillas con posicion y el camino entre ellas (coordenadas del viewBox)."""
+    root = HERE.parent.parent
+    assert set(SPACE_NAMES) == set(ROUTE), set(ROUTE) ^ set(SPACE_NAMES)
+
+    def pts(seg):
+        step = max(1, len(seg) // 8)
+        return [[round(x, 1), round(y, 1)] for x, y in seg[::step]]
+
+    data = {
+        "width": W, "height": H, "milesPerSpace": MILES_PER_SPACE,
+        # el tramo `wrapLeg` sale por el borde derecho y entra por el izquierdo: sus x van de 0 a width + wrapSpan
+        "wrapLeg": wi, "wrapSpan": round(span, 1),
+        "spaces": [{"id": n, "type": "transport" if n.startswith("t_") else "monument", "name": SPACE_NAMES[n],
+                    "x": round(x, 1), "y": round(y, 1)} for n, (x, y) in zip(ROUTE, pos)],
+        "legs": [pts(seg) for seg in legs],
+    }
+    (root / "shared" / "data" / "board.json").write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+    out = root / "client" / "public" / "board"
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "board.svg").write_text(svg, encoding="utf-8")
+    export_space_icons(out / "spaces")
+
+def export_space_icons(folder):
+    """Una ficha por casilla (igual que en el tablero) para mostrarla en grande cuando llega una ficha."""
+    folder.mkdir(parents=True, exist_ok=True)
+    style = ("".join(f".c-{n}{{fill:{PALETTE[n]}}}" for n in PALETTE) + ".c-none{fill:none}"
+             + ".st{stroke:#111111;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}"
+             + ".ln{fill:none;stroke:#111111;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}"
+             + ".ring{fill:none;stroke:#111111;stroke-width:1.6;stroke-dasharray:3 4}")
+    for k, name in enumerate(ROUTE):
+        if name.startswith("t_"):
+            body = ('<circle class="c-ink" cx="55" cy="55" r="44"/><circle class="st c-paper" cx="50" cy="50" r="44"/>'
+                    '<circle class="ring" cx="50" cy="50" r="37"/>')
+            icon = f'<g transform="translate(50 50) scale(1.75) translate(-20 -20)">{ICONS[name]}</g>'
+        else:
+            colr = "yellow" if k == 0 else br.BADGE_COLOR[GROUP[name]]
+            body = (f'<rect class="c-ink" x="9" y="9" width="88" height="88" rx="20"/>'
+                    f'<rect class="st c-{colr}" x="3" y="3" width="88" height="88" rx="20"/>')
+            icon = f'<g transform="translate(47 47) scale(1.8) translate(-20 -20)">{ICONS[name]}</g>'
+        (folder / f"{name}.svg").write_text(
+            f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">'
+            f'<style>{style}</style>{body}{icon}</svg>', encoding="utf-8")
 
 if __name__ == "__main__":
     build()

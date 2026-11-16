@@ -111,3 +111,91 @@
   background: transparent;
   border: none;
 }
+
+/*
+ * Modo 80s (synthwave pixelado, como el primer mapa): reemplaza al modo oscuro.
+ * Se activa con la clase `retro` en <html> (junto con `dark`). Los colores de la paleta se redefinen
+ * como variables; los bordes y sombras de las fichas se pisan con reglas sin capa (ganan a las utilidades).
+ */
+.retro {
+  --font-sans: 'Pixelify Sans', 'Inter', system-ui, sans-serif;
+  --font-display: 'Pixelify Sans', 'Inter', system-ui, sans-serif;
+  --font-stamp: 'Pixelify Sans', 'Inter', system-ui, sans-serif;
+
+  --color-passport-50: #fbe9ff;
+  --color-passport-100: #f3d2ff;
+  --color-passport-200: #e0b0f5;
+  --color-passport-300: #c99be6;
+  --color-passport-400: #a57ccc;
+  --color-passport-500: #c99be6;
+  --color-passport-600: #3a1060;
+  --color-passport-700: #ff2bd6;
+  --color-passport-800: #ff2bd6;
+  --color-passport-900: #12021f;
+  --color-passport-950: #12021f;
+
+  --color-ink: #0b0114;
+  --color-paper: #12021f;
+  --color-paper-dark: #1a0630;
+  --color-sun: #ffd23f;
+  --color-mint: #2de2a6;
+  --color-sky: #3ef2ff;
+  --color-coral: #ff6ec7;
+  --color-lilac: #b388ff;
+  --color-stamp: #ff3864;
+  --color-stamp-green: #2de2a6;
+  --color-brass: #ffd23f;
+}
+.retro body {
+  background-color: #12021f;
+  /* trama de puntos magenta que se apaga hacia abajo, como el cielo del mapa 80s */
+  background-image:
+    linear-gradient(to bottom, transparent 0, #12021f 70vh),
+    radial-gradient(circle, rgb(255 43 214 / 0.55) 1.4px, transparent 1.9px);
+  background-size: 100% 100%, 14px 14px;
+  background-attachment: fixed;
+}
+.retro .panel,
+.retro .sticker,
+.retro .btn,
+.retro .input,
+.retro .rp-modal {
+  border-radius: 0 !important;
+  border-color: #ff2bd6 !important;
+  box-shadow: 4px 4px 0 0 #3ef2ff !important;
+}
+.retro .panel,
+.retro .rp-modal {
+  background-color: #24093d !important;
+  box-shadow: 6px 6px 0 0 #3ef2ff !important;
+}
+.retro .rp-modal-head {
+  background-color: #1a0630 !important;
+  border-color: #ff2bd6 !important;
+}
+.retro .btn-primary {
+  background-color: #ff2bd6 !important;
+  color: #12021f !important;
+}
+.retro .btn-ghost {
+  background-color: #1a0630 !important;
+  color: #fbe9ff !important;
+}
+.retro .btn-danger {
+  background-color: #ff3864 !important;
+  color: #12021f !important;
+}
+.retro .input {
+  background-color: #12021f !important;
+  color: #fbe9ff;
+}
+.retro .stamp {
+  border-radius: 0;
+}
+.retro h1 {
+  text-shadow: 3px 3px 0 #ff2bd6;
+}
+/* Mapa pixelado: se agranda sin suavizar */
+.retro .rp-pixel {
+  image-rendering: pixelated;
+}
