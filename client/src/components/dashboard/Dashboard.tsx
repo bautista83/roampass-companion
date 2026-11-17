@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { GameState } from '@roampass/shared';
@@ -9,6 +9,8 @@ import { useGameStore } from '../../store/gameStore';
 import { UserManagement } from './UserManagement';
 import { PassportCard } from './PassportCard';
 import { RecentGames } from './RecentGames';
+import { GuidedTour } from '../tour/GuidedTour';
+import { DASHBOARD_TOUR, markTourSeen, tourSeen } from '../tour/dashboardTour';
 
 export function Dashboard() {
   const user = useAuthStore((s) => s.user);
@@ -18,6 +20,20 @@ export function Dashboard() {
   const navigate = useNavigate();
   const [stats, setStats] = useState<PlayerStatsSummary | null>(null);
   const [remoteGame, setRemoteGame] = useState<GameState | null>(null);
+  const [tourOpen, setTourOpen] = useState(false);
+
+  // La primera vez que el usuario entra al panel (en este dispositivo) el recorrido se abre solo,
+  // cuando ya se acomodaron las animaciones de entrada.
+  useEffect(() => {
+    if (!user || tourSeen(user.id)) return;
+    const t = setTimeout(() => setTourOpen(true), 900);
+    return () => clearTimeout(t);
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const closeTour = useCallback(() => {
+    setTourOpen(false);
+    if (user) markTourSeen(user.id);
+  }, [user]);
 
   const loadStats = () =>
     api
@@ -48,55 +64,74 @@ export function Dashboard() {
     <div className="space-y-6">
       {/* Pasaporte del viajero a la izquierda; acciones y estadisticas a la derecha */}
       <div className="grid gap-6 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:items-start">
-        {user && <PassportCard user={user} />}
+        {user && (
+          <div data-tour="passport">
+            <PassportCard user={user} />
+          </div>
+        )}
 
         <div className="flex flex-col gap-3 md:gap-4">
           <div className="flex flex-col gap-3 sm:flex-row md:flex-col lg:flex-row">
-            <button className="btn-primary flex-1 text-lg" onClick={() => navigate('/setup')}>
+            <button className="btn-primary flex-1 text-lg" data-tour="new-game" onClick={() => navigate('/setup')}>
               ✈️ Crear Nueva Partida
             </button>
             {inProgress && (
-              <button className="btn-ghost flex-1" onClick={continueGame}>
+              <button className="btn-ghost flex-1" data-tour="continue" onClick={continueGame}>
                 ▶ Continuar (ronda {inProgress.round})
               </button>
             )}
           </div>
-          <button className="btn-ghost w-full" onClick={() => navigate('/rules')}>
-            📖 Cómo jugar
-          </button>
-          {metrics.map((m, i) => (
-            <motion.div
-              key={m.label}
-              className="panel flex items-center gap-4 p-4"
-              initial={{ x: 16, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.1 + i * 0.08 }}
-            >
-              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-passport-800/5 text-2xl dark:bg-white/5">{m.icon}</span>
-              <div>
-                <p className="label">{m.label}</p>
-                <p className="text-2xl font-extrabold tabular-nums md:text-3xl">
-                  {m.value === undefined ? '—' : formatNumber(m.value)}
-                  {m.value !== undefined && m.suffix}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+          <div className="flex gap-3">
+            <button className="btn-ghost flex-1" data-tour="rules" onClick={() => navigate('/rules')}>
+              📖 Cómo jugar
+            </button>
+            <button className="btn-ghost shrink-0 px-4" data-tour="tour" onClick={() => setTourOpen(true)} title="Recorrido por el panel">
+              🧭 <span className="hidden sm:inline">Recorrido</span>
+            </button>
+          </div>
+          <div className="flex flex-col gap-3 md:gap-4" data-tour="stats">
+            {metrics.map((m, i) => (
+              <motion.div
+                key={m.label}
+                className="panel flex items-center gap-4 p-4"
+                initial={{ x: 16, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.1 + i * 0.08 }}
+              >
+                <span className="grid size-12 shrink-0 place-items-center rounded-full bg-passport-800/5 text-2xl dark:bg-white/5">{m.icon}</span>
+                <div>
+                  <p className="label">{m.label}</p>
+                  <p className="text-2xl font-extrabold tabular-nums md:text-3xl">
+                    {m.value === undefined ? '—' : formatNumber(m.value)}
+                    {m.value !== undefined && m.suffix}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <RecentGames
-        isAdmin={user?.role === 'ADMIN'}
-        onDeleted={(id) => {
-          // Si era la partida en curso, se saca el boton Continuar.
-          if (localGame?.id === id) clearGame();
-          if (remoteGame?.id === id) setRemoteGame(null);
-          // Partidas jugadas, victorias y record se recalculan sin la partida borrada.
-          void loadStats();
-        }}
-      />
+      <div data-tour="recent">
+        <RecentGames
+          isAdmin={user?.role === 'ADMIN'}
+          onDeleted={(id) => {
+            // Si era la partida en curso, se saca el boton Continuar.
+            if (localGame?.id === id) clearGame();
+            if (remoteGame?.id === id) setRemoteGame(null);
+            // Partidas jugadas, victorias y record se recalculan sin la partida borrada.
+            void loadStats();
+          }}
+        />
+      </div>
 
-      {user?.role === 'ADMIN' && <UserManagement />}
+      {user?.role === 'ADMIN' && (
+        <div data-tour="admin">
+          <UserManagement />
+        </div>
+      )}
+
+      {tourOpen && <GuidedTour steps={DASHBOARD_TOUR} onClose={closeTour} />}
     </div>
   );
 }

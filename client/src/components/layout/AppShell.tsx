@@ -30,7 +30,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               Modo demo local
             </span>
           )}
-          <Link to="/profile" className="btn-ghost min-h-12 px-3 text-sm" title="Mi perfil: contraseña y estilo del juego">
+          <Link to="/profile" className="btn-ghost min-h-12 px-3 text-sm" title="Mi perfil: contraseña y estilo del juego" data-tour="profile">
             👤 <span className="hidden md:inline">@{user?.username}{user?.role === 'ADMIN' && ' · Admin'}</span>
             <span className="md:hidden">Perfil</span>
           </Link>
