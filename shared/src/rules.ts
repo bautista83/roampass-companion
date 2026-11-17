@@ -81,6 +81,14 @@ const START = BOARD.spaces[0]!.name;
 const lastBracket = LOCATION_BRACKETS.at(-1)!;
 const eventFace = dieFaceOf('TRAVEL_EVENT');
 
+/** Como se juega con el tablero impreso y el dado fisico (la app hace de mazo y marcador). */
+export const RULES_PHYSICAL_BOARD: string[] = [
+  `Cada jugador pone su ficha en la salida: ${START}.`,
+  'Tirá el dado físico (o tocá el dado de la app) y tocá en la app la carta del número que salió.',
+  `Cuando sumás millas, mové tu ficha una casilla por cada ${mi(MILES_PER_SPACE)}. Si un evento te resta millas, retrocedé.`,
+  'El marcador de la app muestra en qué casilla tiene que estar cada ficha.',
+];
+
 export const RULES_SECTIONS: RulesSection[] = [
   {
     id: 'goal',
