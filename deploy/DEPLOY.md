@@ -67,6 +67,16 @@ docker compose up -d --build      # las migraciones nuevas se aplican solas al a
 docker image prune -f             # borra las imágenes viejas
 ```
 
+## Publicar en Internet con Tailscale Funnel
+
+```bash
+sudo tailscale funnel --bg 8080     # https://dev-web.<tu-tailnet>.ts.net -> Nginx :8080
+tailscale funnel status
+sudo tailscale funnel reset         # dejar de publicar
+```
+
+La API limita el login (10 intentos fallidos / 15 min por IP) y el registro (5 / hora por IP).
+
 ## Notas
 
 - Las variables `VITE_*` se compilan dentro del bundle: si cambias `VITE_GOOGLE_MAPS_API_KEY`

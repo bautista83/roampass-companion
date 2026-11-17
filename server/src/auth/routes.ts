@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { prisma } from '../db';
 import { HttpError } from '../http';
 import { publicUserSelect, requireAuth, signToken } from './middleware';
+import { loginLimiter, registerLimiter } from './rateLimit';
 
 export const credentialsSchema = z.object({
   username: z
@@ -17,7 +18,7 @@ export const credentialsSchema = z.object({
 
 export const authRouter = Router();
 
-authRouter.post('/register', async (req, res) => {
+authRouter.post('/register', registerLimiter, async (req, res) => {
   const { username, password } = credentialsSchema.parse(req.body);
   const user = await prisma.user.create({
     data: { username, passwordHash: await bcrypt.hash(password, 10), role: 'PLAYER' },
@@ -26,7 +27,7 @@ authRouter.post('/register', async (req, res) => {
   res.status(201).json({ token: signToken(user.id), user });
 });
 
-authRouter.post('/login', async (req, res) => {
+authRouter.post('/login', loginLimiter, async (req, res) => {
   const { username, password } = credentialsSchema.parse(req.body);
   const found = await prisma.user.findUnique({ where: { username } });
   if (!found || !(await bcrypt.compare(password, found.passwordHash))) {
