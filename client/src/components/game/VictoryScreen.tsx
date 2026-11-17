@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { AvatarIcon, PawnToken } from '../ui/PawnToken';
 import { motion } from 'framer-motion';
 import { CARD_CATEGORIES, CATEGORY_META, PAWN_COLOR_META, rankPlayers, type GamePlayer, type GameState, formatNumber } from '@roampass/shared';
 import { useGameStore } from '../../store/gameStore';
@@ -46,7 +47,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
         </motion.div>
         <p className="text-center text-lg">
           {winners.length > 1 ? 'Empate entre ' : 'Gana '}
-          <strong>{winners.map((w) => `${w.avatar} ${w.name}`).join(' y ')}</strong>
+          <strong>{winners.map((w) => w.name).join(' y ')}</strong>
           <span className="block text-sm text-white/60">
             {roundsPlayed} {roundsPlayed === 1 ? 'ronda' : 'rondas'} · {totalTurns} cartas jugadas ·{' '}
             {game.config.mode === 'POINTS' ? `meta ${formatNumber(game.config.target)} mi` : `${game.config.target} rondas`}
@@ -61,9 +62,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
             const hex = PAWN_COLOR_META[entry.player.color].hex;
             return (
               <motion.div key={place} className="flex flex-col items-center gap-2" initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 + i * 0.15, type: 'spring' }}>
-                <span className="grid size-14 place-items-center rounded-full text-3xl md:size-20 md:text-4xl" style={{ background: `${hex}40`, boxShadow: `0 0 0 4px ${hex}` }}>
-                  {entry.player.avatar}
-                </span>
+                <PawnToken avatar={entry.player.avatar} color={entry.player.color} className="w-12 md:w-16" />
                 <span className="max-w-full truncate text-center text-sm font-bold md:text-base">{entry.player.name}</span>
                 <span className="font-stamp text-sm tabular-nums text-brass">{formatNumber(entry.player.score)}</span>
                 <div className={`flex w-full items-start justify-center rounded-t-xl pt-2 text-3xl ${height}`} style={{ background: `linear-gradient(to bottom, ${hex}, ${hex}66)` }}>
@@ -94,7 +93,8 @@ export function VictoryScreen({ game }: { game: GameState }) {
                   <tr key={player.id} className="border-t border-white/10">
                     <td className="p-3 font-stamp">{position}</td>
                     <td className="p-3 font-semibold">
-                      {player.avatar} {player.name}
+                      <AvatarIcon avatar={player.avatar} className="mr-1.5 inline-block size-5 align-[-0.25em]" />
+                      {player.name}
                     </td>
                     <td className="p-3 text-right font-bold tabular-nums">{formatNumber(player.score)}</td>
                     <td className="p-3 text-right tabular-nums">

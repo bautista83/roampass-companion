@@ -1,0 +1,10 @@
+# Contexto de build de Docker: solo el codigo necesario, nunca secretos ni artefactos locales.
+**/node_modules
+**/dist
+.git
+.claude
+art
+.env
+.env.*
+*.log
+ARQUITECTURA.md

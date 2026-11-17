@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { api, type User } from '../api';
+import { api, type ProfileUpdate, type User } from '../api';
 
 interface AuthState {
   token: string | null;
@@ -9,6 +9,8 @@ interface AuthState {
   register: (username: string, password: string) => Promise<void>;
   /** Revalida la sesion guardada (p. ej. si un admin desactivo la cuenta). */
   refresh: () => Promise<void>;
+  /** Mi perfil: estilo visual y contraseña del usuario logueado. */
+  updateProfile: (data: ProfileUpdate) => Promise<void>;
   logout: () => void;
 }
 
@@ -29,6 +31,9 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           set({ token: null, user: null });
         }
+      },
+      async updateProfile(data) {
+        set({ user: await api.updateMe(data) });
       },
       logout() {
         set({ token: null, user: null });

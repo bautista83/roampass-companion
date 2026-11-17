@@ -1,0 +1,28 @@
+# API de RoamPass (Express + Prisma). Build context: raiz del repo.
+FROM node:24-bookworm-slim
+
+# Prisma necesita OpenSSL para hablar con PostgreSQL.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends openssl ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Monorepo con npm workspaces: hace falta el package.json de los tres paquetes para que
+# `npm ci` respete el lockfile. Del cliente solo se copia el package.json.
+COPY package.json package-lock.json tsconfig.base.json ./
+COPY shared ./shared
+COPY server ./server
+COPY client/package.json ./client/package.json
+
+# Incluye devDependencies: el servidor corre con tsx y las migraciones con la CLI de Prisma.
+# El postinstall del server ejecuta `prisma generate`.
+RUN npm ci && npm cache clean --force
+
+ENV NODE_ENV=production
+WORKDIR /app/server
+USER node
+EXPOSE 4000
+
+# Aplica las migraciones pendientes (nunca `migrate dev` en produccion) y arranca la API.
+CMD ["sh", "-c", "npx prisma migrate deploy && exec npx tsx src/index.ts"]

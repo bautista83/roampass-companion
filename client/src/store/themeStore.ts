@@ -1,34 +1,34 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import type { UiTheme } from '@roampass/shared';
+import { useAuthStore } from './authStore';
 
-export type Theme = 'light' | 'dark' | 'system';
-
-const media = window.matchMedia('(prefers-color-scheme: dark)');
-
-function apply(theme: Theme) {
-  const dark = theme === 'dark' || (theme === 'system' && media.matches);
-  document.documentElement.classList.toggle('dark', dark);
+/**
+ * Estilo visual del sitio. No se elige con un boton: es una configuracion del perfil de cada usuario
+ * (Mi perfil). Sin sesion (login) siempre se ve el estilo base, COMIC.
+ * RETRO (80s) activa las clases `retro` y `dark` en <html>; `dark` mantiene las variantes dark:.
+ */
+function apply(theme: UiTheme): boolean {
+  const retro = theme === 'RETRO';
+  document.documentElement.classList.toggle('dark', retro);
+  document.documentElement.classList.toggle('retro', retro);
+  return retro;
 }
 
 interface ThemeState {
-  theme: Theme;
-  cycle: () => void;
+  theme: UiTheme;
+  /** Modo 80s activo. */
+  retro: boolean;
 }
 
-const ORDER: Theme[] = ['system', 'light', 'dark'];
+const themeOf = () => useAuthStore.getState().user?.theme ?? 'COMIC';
 
-export const useThemeStore = create<ThemeState>()(
-  persist(
-    (set, get) => ({
-      theme: 'system',
-      cycle() {
-        const theme = ORDER[(ORDER.indexOf(get().theme) + 1) % ORDER.length]!;
-        apply(theme);
-        set({ theme });
-      },
-    }),
-    { name: 'roampass-theme', onRehydrateStorage: () => (state) => apply(state?.theme ?? 'system') },
-  ),
-);
+export const useThemeStore = create<ThemeState>()(() => {
+  const theme = themeOf();
+  return { theme, retro: apply(theme) };
+});
 
-media.addEventListener('change', () => apply(useThemeStore.getState().theme));
+// Al iniciar o cerrar sesion, o al cambiarlo en Mi perfil, se aplica el estilo del usuario.
+useAuthStore.subscribe(() => {
+  const theme = themeOf();
+  if (theme !== useThemeStore.getState().theme) useThemeStore.setState({ theme, retro: apply(theme) });
+});

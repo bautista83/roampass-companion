@@ -1,5 +1,5 @@
 import type { Card, GameState } from '@roampass/shared';
-import { ApiError, type AuthSession, type PlayerStatsSummary, type RoamPassApi, type User } from './types';
+import { ApiError, type AuthSession, type PlayerStatsSummary, type RecentGame, type RoamPassApi, type User } from './types';
 
 export function createHttpApi(baseUrl: string, getToken: () => string | null): RoamPassApi {
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -24,6 +24,7 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     login: (username, password) => request<AuthSession>('/auth/login', json('POST', { username, password })),
     register: (username, password) => request<AuthSession>('/auth/register', json('POST', { username, password })),
     me: async () => (await request<{ user: User }>('/auth/me')).user,
+    updateMe: async (data) => (await request<{ user: User }>('/auth/me', json('PATCH', data))).user,
 
     listUsers: async () => (await request<{ users: User[] }>('/users')).users,
     createUser: async (data) => (await request<{ user: User }>('/users', json('POST', data))).user,
@@ -34,5 +35,7 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     saveGame: (state, selfPlayerId) => request<void>(`/games/${state.id}`, json('PUT', { state, selfPlayerId })),
     getActiveGame: async () => (await request<{ state: GameState | null }>('/games/active')).state,
     getMyStats: () => request<PlayerStatsSummary>('/games/stats/me'),
+    deleteGame: (id) => request<void>(`/games/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    getRecentGames: async (limit = 12) => (await request<{ games: RecentGame[] }>(`/games/recent?limit=${limit}`)).games,
   };
 }

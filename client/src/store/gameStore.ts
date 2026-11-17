@@ -12,6 +12,7 @@ import {
   finish,
   generateCountryCards,
   shuffle,
+  skipTransportEvent,
   timerSecondsOf,
   type Card,
   type CardCategory,
@@ -60,6 +61,8 @@ interface GameStore {
   draw: (category: CardCategory) => void;
   resolve: (outcome: CardOutcome) => ScoreResult;
   dismissCard: () => void;
+  /** Casilla de transporte sin Eventos de Viajero en el mazo: la ficha queda ahi y pasa el turno. */
+  skipTransport: () => void;
   endEarly: () => void;
   clear: () => void;
 }
@@ -117,6 +120,8 @@ export const useGameStore = create<GameStore>()(
         draw(category) {
           const { game, deck, active } = get();
           if (!game || game.status !== 'PLAYING' || active) return;
+          // En una casilla de transporte el turno sigue con un Evento de Viajero obligatorio.
+          if (game.transportEvent && category !== 'TRAVEL_EVENT') return;
           const card = drawCard(deck, category, game.usedCardIds);
           if (!card) return; // categoria agotada: la tarjeta ya se muestra bloqueada
           const player = game.players[game.currentPlayerIndex]!;
@@ -151,6 +156,13 @@ export const useGameStore = create<GameStore>()(
 
         dismissCard() {
           if (get().active?.resolved) set({ active: null });
+        },
+
+        skipTransport() {
+          const { game } = get();
+          if (!game?.transportEvent) return;
+          set({ game: skipTransportEvent(game) });
+          sync();
         },
 
         endEarly() {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AvatarIcon, PawnToken } from '../ui/PawnToken';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -14,6 +15,7 @@ import {
   ROUND_TARGETS,
   TIMER_OPTIONS,
   validatePlayers,
+  type BoardMode,
   type PawnColor,
   type PlayerSetup,
   type VictoryMode,
@@ -27,6 +29,21 @@ const MODES: { mode: VictoryMode; title: string; icon: string; desc: string; tar
   { mode: 'ROUNDS', title: 'Número de Rondas', icon: '🔁', desc: 'Al terminar las rondas, gana quien haya recorrido más millas.', targets: ROUND_TARGETS, unit: 'rondas' },
 ];
 
+const BOARDS: { board: BoardMode; title: string; icon: string; desc: string }[] = [
+  {
+    board: 'PHYSICAL',
+    title: 'Con tablero físico',
+    icon: '🎲',
+    desc: 'Usan el tablero impreso y un dado. La app muestra las tarjetas y lleva las millas.',
+  },
+  {
+    board: 'DIGITAL',
+    title: 'Tablero digital',
+    icon: '🗺️',
+    desc: 'El tablero se juega en pantalla: dado animado y los avatares viajan solos desde Buenos Aires.',
+  },
+];
+
 const firstFreeColor = (players: PlayerSetup[]) => PAWN_COLORS.find((c) => !players.some((p) => p.color === c))!;
 
 /** Wizard: Paso 1 condición de victoria · Paso 2 jugadores (2-4). */
@@ -35,7 +52,8 @@ export function GameSetup() {
   const startGame = useGameStore((s) => s.startGame);
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const [board, setBoard] = useState<BoardMode>('DIGITAL');
   const [mode, setMode] = useState<VictoryMode>('POINTS');
   const [target, setTarget] = useState<number>(POINT_TARGETS[1]);
   const [players, setPlayers] = useState<PlayerSetup[]>([
@@ -69,7 +87,7 @@ export function GameSetup() {
     try {
       validatePlayers(players);
       setBusy(true);
-      await startGame({ mode, target }, players, selfIndex, timerSeconds);
+      await startGame({ mode, target, board }, players, selfIndex, timerSeconds);
       navigate('/play');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error inesperado');
@@ -81,23 +99,63 @@ export function GameSetup() {
   return (
     <div className="mx-auto max-w-3xl">
       <ol className="mb-5 flex items-center gap-2 text-sm font-semibold" aria-label="Pasos">
-        {['Condición de victoria', 'Jugadores'].map((label, i) => (
+        {['Modo de juego', 'Condición de victoria', 'Jugadores'].map((label, i) => (
           <li key={label} className="flex flex-1 items-center gap-2">
             <span
               className={`grid size-9 shrink-0 place-items-center rounded-full ${
-                step === i + 1 ? 'bg-passport-700 text-white dark:bg-brass dark:text-passport-950' : 'bg-passport-800/10 dark:bg-white/10'
+                step === i ? 'bg-passport-700 text-white dark:bg-brass dark:text-passport-950' : 'bg-passport-800/10 dark:bg-white/10'
               }`}
             >
               {i + 1}
             </span>
-            <span className={step === i + 1 ? '' : 'text-passport-400'}>{label}</span>
-            {i === 0 && <span className="h-px flex-1 bg-passport-800/15 dark:bg-white/15" />}
+            <span className={`hidden sm:inline ${step === i ? '' : 'text-passport-400'}`}>{label}</span>
+            {i < 2 && <span className="h-px flex-1 bg-passport-800/15 dark:bg-white/15" />}
           </li>
         ))}
       </ol>
 
       <AnimatePresence mode="wait">
-        {step === 1 ? (
+        {step === 0 ? (
+          <motion.section
+            key="s0"
+            className="panel space-y-5 p-4 md:p-6"
+            initial={{ x: 40, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -40, opacity: 0 }}
+          >
+            <h1 className="text-2xl font-bold">¿Cómo juegan?</h1>
+            <div className="grid gap-4 md:grid-cols-2" role="radiogroup" aria-label="Modo de juego">
+              {BOARDS.map((b, i) => {
+                const selected = board === b.board;
+                return (
+                  <button
+                    key={b.board}
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => setBoard(b.board)}
+                    className={`sticker flex min-h-40 flex-col items-start gap-2 p-5 text-left transition ${
+                      i === 0 ? '-rotate-1' : 'rotate-1'
+                    } ${selected ? (b.board === 'DIGITAL' ? 'bg-sky' : 'bg-sun') : 'bg-white opacity-70 hover:opacity-100 dark:bg-[#2a2f2a]'}`}
+                  >
+                    <span className="text-5xl" aria-hidden>
+                      {b.icon}
+                    </span>
+                    <span className="font-display text-xl text-ink dark:text-inherit">{b.title}</span>
+                    <span className="text-sm font-medium text-ink/75 dark:text-inherit">{b.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex justify-between gap-2">
+              <button className="btn-ghost" onClick={() => navigate('/')}>
+                Cancelar
+              </button>
+              <button className="btn-primary" onClick={() => setStep(1)}>
+                Siguiente →
+              </button>
+            </div>
+          </motion.section>
+        ) : step === 1 ? (
           <motion.section
             key="s1"
             className="panel space-y-5 p-4 md:p-6"
@@ -183,8 +241,8 @@ export function GameSetup() {
               </span>
             </div>
             <div className="flex justify-between gap-2">
-              <button className="btn-ghost" onClick={() => navigate('/')}>
-                Cancelar
+              <button className="btn-ghost" onClick={() => setStep(0)}>
+                ← Atrás
               </button>
               <button className="btn-primary" onClick={() => setStep(2)}>
                 Siguiente →
@@ -265,7 +323,7 @@ function PlayerRow(props: {
   return (
     <li className="rounded-2xl border border-passport-800/10 p-3 dark:border-white/10" style={{ borderLeft: `6px solid ${PAWN_COLOR_META[player.color].hex}` }}>
       <div className="flex gap-2">
-        <span className="grid size-12 shrink-0 place-items-center rounded-full bg-passport-800/5 text-2xl dark:bg-white/5">{player.avatar}</span>
+        <PawnToken avatar={player.avatar} color={player.color} className="w-10 shrink-0" />
         <input
           className="input"
           placeholder={`Jugador / equipo ${index + 1}`}
@@ -312,11 +370,11 @@ function PlayerRow(props: {
                 onClick={() => onChange({ avatar: a })}
                 aria-pressed={player.avatar === a}
                 aria-label={`Avatar ${a}`}
-                className={`size-11 rounded-lg text-xl transition ${
+                className={`grid size-11 place-items-center rounded-lg transition ${
                   player.avatar === a ? 'bg-passport-700/15 ring-2 ring-passport-700 dark:bg-brass/20 dark:ring-brass' : ''
                 }`}
               >
-                {a}
+                <AvatarIcon avatar={a} className="size-8" />
               </button>
             ))}
           </div>

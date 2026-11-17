@@ -135,7 +135,11 @@ describe('turnos y victoria', () => {
 
   it('modo ROUNDS termina al completar la ultima ronda', () => {
     let g = createGame({ mode: 'ROUNDS', target: 10 }, PLAYERS);
-    for (let i = 0; i < 19; i++) g = applyTurn(g, i % 2 ? wrong : right()).state;
+    for (let i = 0; i < 19; i++) {
+      g = applyTurn(g, i % 2 ? wrong : right()).state;
+      // Si cae en una casilla de transporte, juega el evento en el mismo turno.
+      if (g.transportEvent) g = applyTurn(g, { kind: 'EVENT', card: event(500) }).state;
+    }
     expect(g.status).toBe('PLAYING');
     g = applyTurn(g, wrong).state;
     expect(g.status).toBe('FINISHED');

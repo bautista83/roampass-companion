@@ -2,6 +2,10 @@
 
 export type Role = 'ADMIN' | 'PLAYER';
 
+/** Estilo visual que cada usuario elige en su perfil. COMIC es el estilo base (login incluido). */
+export type UiTheme = 'COMIC' | 'RETRO';
+export const UI_THEMES: readonly UiTheme[] = ['COMIC', 'RETRO'];
+
 export type CardCategory = 'LOCATION' | 'FLAG' | 'CITY' | 'HISTORY' | 'PERSONALITY' | 'TRAVEL_EVENT';
 
 export type QuizCategory = 'FLAG' | 'CITY' | 'HISTORY' | 'PERSONALITY';
@@ -30,8 +34,13 @@ export const TIMER_OPTIONS = [10, 15, 20, 25, 30] as const;
 export const DEFAULT_TIMER_SECONDS = 10;
 export const ROUND_TARGETS = [10, 15, 20] as const;
 
+/** PHYSICAL: tablero impreso y tarjetas en la app. DIGITAL: el tablero se juega en pantalla. */
+export type BoardMode = 'PHYSICAL' | 'DIGITAL';
+
 export interface VictoryCondition {
   mode: VictoryMode;
+  /** Partidas anteriores a esta opcion no lo tienen: se toman como PHYSICAL. */
+  board?: BoardMode;
   /** Millas a alcanzar (modo POINTS) o rondas a jugar (modo ROUNDS). */
   target: number;
 }
@@ -171,6 +180,11 @@ export interface GameState {
   usedCardIds: string[];
   /** Segundos por carta elegidos en el wizard al crear la partida. */
   timerSeconds?: number;
+  /**
+   * El jugador en turno cayo en una casilla de transporte tras acertar una carta: en el mismo turno
+   * debe jugar un Evento de Viajero antes de pasar al siguiente.
+   */
+  transportEvent?: boolean;
   finishedAt?: string;
   winnerIds?: string[];
 }

@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { PawnToken } from '../ui/PawnToken';
 import { PAWN_COLOR_META, formatNumber, timerSecondsOf, type GamePlayer, type GameState } from '@roampass/shared';
 
 /** Header del turno: sticky en movil, tarjeta fija en la columna izquierda en tablet. */
@@ -18,9 +19,11 @@ export function TurnBanner({ game, player, className = '' }: { game: GameState; 
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -30, opacity: 0 }}
           >
-            <span className="grid size-12 shrink-0 place-items-center rounded-full border-3 border-ink bg-white text-2xl" style={{ boxShadow: `0 0 0 3px ${color}` }}>
-              {finished ? '🏁' : player.avatar}
-            </span>
+            {finished ? (
+              <span className="grid size-12 shrink-0 place-items-center rounded-full border-3 border-ink bg-white text-2xl">🏁</span>
+            ) : (
+              <PawnToken avatar={player.avatar} color={player.color} className="w-10 shrink-0" />
+            )}
             <div className="min-w-0">
               <p className="text-[11px] font-extrabold tracking-widest text-ink/60 uppercase">{finished ? 'Partida terminada' : 'Turno de'}</p>
               <p className="truncate font-display text-lg md:text-xl">{finished ? '¡Fin del viaje!' : player.name}</p>

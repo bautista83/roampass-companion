@@ -2,6 +2,7 @@
 // El store del cliente solo envuelve estas funciones, asi que todo es testeable aislado.
 
 import { scoreOutcome } from './scoring';
+import { boardPosition, isTransportSpace } from './board';
 import {
   CARD_CATEGORIES,
   DEFAULT_TIMER_SECONDS,
@@ -38,6 +39,9 @@ export function validateConfig(config: VictoryCondition): void {
   const allowed: readonly number[] = config.mode === 'POINTS' ? POINT_TARGETS : ROUND_TARGETS;
   if (!allowed.includes(config.target)) {
     throw new GameRuleError(`Objetivo invalido para ${config.mode}: ${config.target}`);
+  }
+  if (config.board !== undefined && config.board !== 'PHYSICAL' && config.board !== 'DIGITAL') {
+    throw new GameRuleError(`Modo de tablero invalido: ${String(config.board)}`);
   }
 }
 
@@ -94,6 +98,8 @@ export const currentPlayer = (state: GameState): GamePlayer => state.players[sta
  * Resuelve la carta del jugador en turno y avanza al siguiente.
  * - POINTS: la partida termina en cuanto alguien alcanza el objetivo.
  * - ROUNDS: termina cuando el ultimo jugador completa la ronda objetivo.
+ * - Casilla de transporte: si el jugador llega a una tras acertar una carta (no un evento), el turno no
+ *   pasa: queda `transportEvent` y debe jugar un Evento de Viajero. Lo que mueva ese evento no encadena.
  */
 export function applyTurn(
   state: GameState,
@@ -101,6 +107,9 @@ export function applyTurn(
   now: Date = new Date(),
 ): { state: GameState; result: ScoreResult } {
   if (state.status === 'FINISHED') throw new GameRuleError('La partida ya termino');
+  if (state.transportEvent && outcome.kind !== 'EVENT') {
+    throw new GameRuleError('Primero se juega el Evento de Viajero de la casilla de transporte');
+  }
 
   const raw = scoreOutcome(outcome);
   const player = currentPlayer(state);
@@ -127,8 +136,9 @@ export function applyTurn(
     };
   });
 
+  const { transportEvent: _played, ...base } = state;
   const next: GameState = {
-    ...state,
+    ...base,
     players,
     history: [
       ...state.history,
@@ -148,12 +158,33 @@ export function applyTurn(
     usedCardIds: [...state.usedCardIds, outcome.card.id],
   };
 
+  const landedOnTransport =
+    (outcome.kind === 'QUIZ' || outcome.kind === 'LOCATION') &&
+    result.delta > 0 &&
+    isTransportSpace(boardPosition(newScore).space);
+  if (landedOnTransport && !reachedGoal(next)) {
+    return { state: { ...next, transportEvent: true }, result };
+  }
+
   return { state: advance(next, now), result };
 }
 
+/**
+ * Sin Eventos de Viajero en el mazo no se puede jugar el de la casilla de transporte:
+ * la ficha queda ahi y pasa el turno.
+ */
+export function skipTransportEvent(state: GameState, now: Date = new Date()): GameState {
+  if (!state.transportEvent) return state;
+  const { transportEvent: _skipped, ...rest } = state;
+  return advance(rest, now);
+}
+
+const reachedGoal = (state: GameState) =>
+  state.config.mode === 'POINTS' && state.players.some((p) => p.score >= state.config.target);
+
 function advance(state: GameState, now: Date): GameState {
   const { mode, target } = state.config;
-  if (mode === 'POINTS' && state.players.some((p) => p.score >= target)) {
+  if (reachedGoal(state)) {
     return finish(state, now);
   }
 

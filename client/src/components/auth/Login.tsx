@@ -5,7 +5,6 @@ import { api } from '../../api';
 import { DEMO_ADMIN } from '../../api/localApi';
 import { useAuthStore } from '../../store/authStore';
 import { Brand } from '../layout/Brand';
-import { ThemeToggle } from '../layout/ThemeToggle';
 
 type Mode = 'login' | 'register';
 
@@ -38,9 +37,6 @@ export function Login() {
 
   return (
     <div className="grid min-h-dvh place-items-center px-4 py-8">
-      <div className="fixed top-3 right-3">
-        <ThemeToggle />
-      </div>
       <motion.div
         initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
