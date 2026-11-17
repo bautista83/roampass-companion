@@ -7,6 +7,7 @@ import { Dashboard } from './components/dashboard/Dashboard';
 import { GameSetup } from './components/setup/GameSetup';
 import { GameTable } from './components/game/GameTable';
 import { Profile } from './components/profile/Profile';
+import { RulesPage } from './components/rules/RulesPage';
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -25,6 +26,7 @@ export function App() {
       <Route path="/setup" element={<RequireAuth><GameSetup /></RequireAuth>} />
       <Route path="/play" element={<RequireAuth><GameTable /></RequireAuth>} />
       <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+      <Route path="/rules" element={<RequireAuth><RulesPage /></RequireAuth>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

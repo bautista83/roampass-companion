@@ -6,3 +6,4 @@ export * from './deck';
 export * from './countries';
 export * from './engine';
 export * from './labels';
+export * from './rules';

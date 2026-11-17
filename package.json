@@ -14,6 +14,7 @@
     "build": "npm run build -w client",
     "test": "npm run test -w shared",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "streetview:check": "node shared/scripts/check-streetview.mjs"
+    "streetview:check": "node shared/scripts/check-streetview.mjs",
+    "rules:pdf": "tsx shared/scripts/build-rules-pdf.ts"
   }
 }
