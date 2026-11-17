@@ -1,5 +1,13 @@
 import type { Card, GameState } from '@roampass/shared';
-import { ApiError, type AuthSession, type PlayerStatsSummary, type RecentGame, type RoamPassApi, type User } from './types';
+import {
+  ApiError,
+  type AuthSession,
+  type PlayerStatsSummary,
+  type RecentGame,
+  type RegisterResult,
+  type RoamPassApi,
+  type User,
+} from './types';
 
 export function createHttpApi(baseUrl: string, getToken: () => string | null): RoamPassApi {
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -22,7 +30,7 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
   return {
     mode: 'remote',
     login: (username, password) => request<AuthSession>('/auth/login', json('POST', { username, password })),
-    register: (username, password) => request<AuthSession>('/auth/register', json('POST', { username, password })),
+    register: (username, password) => request<RegisterResult>('/auth/register', json('POST', { username, password })),
     me: async () => (await request<{ user: User }>('/auth/me')).user,
     updateMe: async (data) => (await request<{ user: User }>('/auth/me', json('PATCH', data))).user,
 

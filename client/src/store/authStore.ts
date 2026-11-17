@@ -6,7 +6,8 @@ interface AuthState {
   token: string | null;
   user: User | null;
   login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  /** Devuelve el aviso de "pendiente de aprobacion", o null si ya inicio sesion (modo demo). */
+  register: (username: string, password: string) => Promise<string | null>;
   /** Revalida la sesion guardada (p. ej. si un admin desactivo la cuenta). */
   refresh: () => Promise<void>;
   /** Mi perfil: estilo visual y contraseña del usuario logueado. */
@@ -23,7 +24,10 @@ export const useAuthStore = create<AuthState>()(
         set(await api.login(username, password));
       },
       async register(username, password) {
-        set(await api.register(username, password));
+        const result = await api.register(username, password);
+        if ('pending' in result) return result.message;
+        set(result);
+        return null;
       },
       async refresh() {
         try {
