@@ -12,6 +12,7 @@ import { TravelEventModal } from './TravelEventModal';
 import { VictoryScreen } from './VictoryScreen';
 import { BoardView } from './BoardView';
 import { Die } from './Die';
+import { RulesGuide } from '../rules/RulesGuide';
 
 // Leaflet pesa ~150 kB: se descarga recien al robar la primera carta de LUGAR.
 const LocationCardModal = lazy(() => import('./LocationCardModal').then((m) => ({ default: m.LocationCardModal })));
@@ -46,6 +47,7 @@ export function GameTable() {
   const endEarly = useGameStore((s) => s.endEarly);
   const navigate = useNavigate();
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [moving, setMoving] = useState(false);
   const [toast, setToast] = useState<{ text: string; key: number } | null>(null);
   const usedCardIds = game?.usedCardIds;
@@ -109,6 +111,9 @@ export function GameTable() {
     <div className="flex gap-2">
       <button className="btn-ghost flex-1 text-sm" onClick={() => navigate('/')}>
         ⏸ Pausar
+      </button>
+      <button className="btn-ghost w-14 shrink-0 px-0 text-sm" onClick={() => setShowRules(true)} aria-label="Ver las reglas del juego" title="Reglas del juego">
+        ❓
       </button>
       <button className="btn-ghost flex-1 text-sm text-stamp" onClick={() => setConfirmEnd(true)} disabled={finished}>
         🏁 Terminar ahora
@@ -189,6 +194,13 @@ export function GameTable() {
       )}
       {active && 'options' in active.card && <QuizModal draw={active} />}
       {active?.card.category === 'TRAVEL_EVENT' && <TravelEventModal draw={active} />}
+
+      {/* Reglas sin salir de la partida: no hay carta abierta, asi que ningun reloj corre mientras se leen. */}
+      <Modal open={showRules} onClose={() => setShowRules(false)} title="📖 Cómo jugar" size="xl">
+        <div className="p-4 md:p-6">
+          <RulesGuide onFinish={() => setShowRules(false)} />
+        </div>
+      </Modal>
 
       <Modal open={confirmEnd} onClose={() => setConfirmEnd(false)} title="Terminar partida">
         <div className="space-y-4 p-6">

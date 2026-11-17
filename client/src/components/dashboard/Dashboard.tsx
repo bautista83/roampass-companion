@@ -61,6 +61,9 @@ export function Dashboard() {
               </button>
             )}
           </div>
+          <button className="btn-ghost w-full" onClick={() => navigate('/rules')}>
+            📖 Cómo jugar
+          </button>
           {metrics.map((m, i) => (
             <motion.div
               key={m.label}
