@@ -23,6 +23,15 @@ export interface AuthSession {
   user: User;
 }
 
+/** Registro con backend: la cuenta queda pendiente hasta que un ADMIN la activa. */
+export interface PendingRegistration {
+  pending: true;
+  message: string;
+}
+
+/** El modo demo inicia sesion directo; el backend devuelve una solicitud pendiente. */
+export type RegisterResult = AuthSession | PendingRegistration;
+
 export interface PlayerStatsSummary {
   gamesPlayed: number;
   gamesWon: number;
@@ -70,7 +79,7 @@ export interface UserUpdate {
 export interface RoamPassApi {
   readonly mode: 'remote' | 'local';
   login(username: string, password: string): Promise<AuthSession>;
-  register(username: string, password: string): Promise<AuthSession>;
+  register(username: string, password: string): Promise<RegisterResult>;
   me(): Promise<User>;
   updateMe(data: ProfileUpdate): Promise<User>;
 

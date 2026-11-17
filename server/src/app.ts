@@ -9,6 +9,9 @@ import { gamesRouter } from './routes/games';
 
 export function createApp() {
   const app = express();
+  // Detras de proxies (Nginx de la VM, Tailscale Funnel): confiar solo en saltos locales/privados
+  // para que req.ip sea la IP real del cliente (la usan los limites de login/registro).
+  app.set('trust proxy', 'loopback, uniquelocal');
   app.use(cors({ origin: env.corsOrigin }));
   app.use(express.json({ limit: '1mb' }));
 

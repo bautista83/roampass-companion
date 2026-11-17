@@ -17,6 +17,7 @@ export function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   if (token) return <Navigate to="/" replace />;
@@ -24,9 +25,21 @@ export function Login() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setNotice(null);
     setBusy(true);
     try {
-      await (mode === 'login' ? login : register)(username.trim(), password);
+      if (mode === 'register') {
+        const pending = await register(username.trim(), password);
+        if (pending) {
+          // Cuenta creada pero inactiva: vuelve a "Iniciar sesion" con el aviso.
+          setNotice(pending);
+          setMode('login');
+          setPassword('');
+          return;
+        }
+      } else {
+        await login(username.trim(), password);
+      }
       navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error inesperado');
@@ -56,6 +69,7 @@ export function Login() {
                 onClick={() => {
                   setMode(m);
                   setError(null);
+                  setNotice(null);
                 }}
                 className={`min-h-12 rounded-xl font-bold transition ${
                   mode === m ? 'border-2 border-ink bg-sun text-ink' : 'text-passport-500 dark:text-passport-300'
@@ -96,6 +110,11 @@ export function Login() {
                 minLength={6}
               />
             </div>
+            {notice && (
+              <p role="status" className="rounded-xl border-2 border-ink bg-sun px-3 py-2 text-sm font-bold text-ink">
+                {notice}
+              </p>
+            )}
             {error && (
               <p role="alert" className="rounded-xl border-2 border-ink bg-coral px-3 py-2 text-sm font-bold text-ink">
                 {error}

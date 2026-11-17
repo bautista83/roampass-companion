@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { prisma } from '../db';
 import { HttpError } from '../http';
 import { publicUserSelect, requireAuth, signToken } from './middleware';
+import { loginLimiter, registerLimiter } from './rateLimit';
 
 export const credentialsSchema = z.object({
   username: z
@@ -17,22 +18,30 @@ export const credentialsSchema = z.object({
 
 export const authRouter = Router();
 
-authRouter.post('/register', async (req, res) => {
+/**
+ * Registro publico: la cuenta nace INACTIVA y no recibe token. Un ADMIN la aprueba desde
+ * Administracion de usuarios (Activar) y recien ahi el jugador puede iniciar sesion.
+ */
+authRouter.post('/register', registerLimiter, async (req, res) => {
   const { username, password } = credentialsSchema.parse(req.body);
-  const user = await prisma.user.create({
-    data: { username, passwordHash: await bcrypt.hash(password, 10), role: 'PLAYER' },
-    select: publicUserSelect,
+  await prisma.user.create({
+    data: { username, passwordHash: await bcrypt.hash(password, 10), role: 'PLAYER', isActive: false },
   });
-  res.status(201).json({ token: signToken(user.id), user });
+  res.status(201).json({
+    pending: true,
+    message: 'Pasaporte solicitado. Un administrador tiene que aprobarlo antes de que puedas iniciar sesión.',
+  });
 });
 
-authRouter.post('/login', async (req, res) => {
+authRouter.post('/login', loginLimiter, async (req, res) => {
   const { username, password } = credentialsSchema.parse(req.body);
   const found = await prisma.user.findUnique({ where: { username } });
   if (!found || !(await bcrypt.compare(password, found.passwordHash))) {
     throw new HttpError(401, 'Usuario o contraseña incorrectos');
   }
-  if (!found.isActive) throw new HttpError(403, 'Cuenta desactivada. Contacta a un administrador.');
+  if (!found.isActive) {
+    throw new HttpError(403, 'Tu cuenta está pendiente de aprobación o fue desactivada. Contactá a un administrador.');
+  }
   const { passwordHash: _, updatedAt: __, ...user } = found;
   res.json({ token: signToken(user.id), user });
 });
