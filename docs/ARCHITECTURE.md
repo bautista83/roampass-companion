@@ -257,6 +257,39 @@ El servidor **no recalcula** el puntaje: valida forma y configuración, guarda e
 en `GameSession.state` (JSON) y proyecta columnas planas (`status`, `score`, `isWinner`…) para
 consultas y estadísticas.
 
+### 5.4 Partidas online (multijugador)
+
+En las partidas online (`GameSession.kind = ONLINE`) **el servidor es autoritativo**: tira el dado,
+roba la carta, controla los tiempos y calcula las millas. Los clientes solo muestran la vista que
+reciben y envían acciones. Detalle en `docs/specs/online-multiplayer.md`.
+
+```mermaid
+sequenceDiagram
+  participant A as Jugador activo
+  participant S as Servidor (OnlineService)
+  participant M as shared/online.ts
+  participant B as Otros jugadores
+  A->>S: socket game:roll
+  S->>M: roll(state, mazo, usuario)
+  M-->>S: estado nuevo (carta pendiente secreta)
+  S->>S: guarda con version + programa el timer
+  S-->>A: game:state (toPublicView para A)
+  S-->>B: game:state (toPublicView para cada uno)
+```
+
+| Pieza | Dónde |
+| --- | --- |
+| Reglas online (funciones puras) | `shared/src/online.ts` |
+| Contrato del socket | `shared/src/protocol.ts` |
+| Cola por partida, guardado con versión, timers y reanudación al arrancar | `server/src/online/service.ts` |
+| REST: salas, invitaciones, búsqueda, volver, ocultar, foto de Street View | `server/src/online/routes.ts` |
+| Socket.IO (`/socket.io`, mismo JWT) | `server/src/realtime/index.ts` |
+| Cliente: socket, store y pantallas | `client/src/online/`, `client/src/store/onlineStore.ts`, `client/src/components/online/` |
+
+La vista pública (`toPublicView`) **nunca incluye la respuesta** de la carta pendiente; a los
+espectadores de una carta Street View tampoco les llegan las coordenadas (ven una foto fija).
+Una sola instancia del servidor: colas y timers viven en memoria.
+
 ---
 
 ## 6. Modelo de datos (PostgreSQL vía Prisma)
@@ -341,7 +374,7 @@ roampass-api ──(red docker dev-net)──► postgres:5432 (PostgreSQL compa
 | # | Decisión | Motivo | Consecuencia |
 | --- | --- | --- | --- |
 | 1 | Motor de juego en paquete puro compartido | Una sola fuente de reglas | Cambiar una regla = tocar `shared` + tests; cliente y servidor la heredan |
-| 2 | El cliente es autoritativo en la partida | Mesa física y de confianza; funciona sin red | El servidor no previene trampas |
+| 2 | Partidas locales: el cliente es autoritativo. Online: el servidor | Local: mesa física y de confianza, funciona sin red. Online: nadie puede alterar el puntaje ni ver respuestas | Local: el servidor no previene trampas. Online: hace falta conexión y una sola instancia del servidor (colas y timers en memoria) |
 | 3 | Snapshot JSON + columnas proyectadas | Reanudar exacto sin modelar cada evento | Hay que mantener la proyección al agregar campos consultables |
 | 4 | ID de partida generado en el cliente + `PUT` upsert | Reintentos idempotentes, offline-first | Ownership verificado contra `hostId` |
 | 5 | `RoamPassApi` con adaptador local | Probar sin backend | Cada endpoint nuevo debe implementarse en **ambos** adaptadores |

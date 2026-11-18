@@ -147,6 +147,14 @@ Si restringes la clave por dominio (recomendado: `http://localhost:5173/*` y tu 
 el script no podrá usarla porque corre fuera del navegador. En ese caso pásale otra clave sin esa
 restricción: `GOOGLE_MAPS_API_KEY=otra_clave npm run streetview:check -- --fix`.
 
+### Modo online (multijugador)
+
+Con backend, **🌐 Jugar online** crea una sala: el anfitrión invita a otros usuarios por su nombre,
+cada uno juega desde su dispositivo (de 2 a 6) y todos ven el dado, la carta y el tablero en vivo.
+El servidor tira el dado, controla los tiempos y calcula las millas; hay pausa, pase de turno,
+abandono, anfitrión que se transfiere y jugadores que se suman con la partida empezada. Las reglas
+completas están en `docs/specs/online-multiplayer.md`. No está disponible en el modo demo.
+
 ### Idiomas
 
 La interfaz está en **español latino neutro** y lista para sumar idiomas: los textos viven en

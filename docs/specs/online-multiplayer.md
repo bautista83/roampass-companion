@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **Definido** — reglas acordadas, pendiente de implementar |
+| Estado | **Implementado** — E0 a E7 en la rama `Feature.Multiplayer` (ver 14) |
 | Fecha | 2026-11-18 |
 | Afecta | `shared`, `server`, `client`, `deploy` |
 | Relacionado | [ARCHITECTURE.md](../ARCHITECTURE.md) (secciones 3.3, 5.3, 10 y 11) · [admin-panel.md](admin-panel.md) |
@@ -505,3 +505,24 @@ Los criterios de turnos, pausa, abandono y anfitrión se cubren con **tests de l
 Ninguna bloqueante. Para más adelante:
 
 - **Chat:** si se hace, es una etapa aparte después de E7.
+
+## 14. Notas de la implementación
+
+Diferencias con lo escrito arriba, decididas al implementar:
+
+| Tema | Cómo quedó |
+| --- | --- |
+| Colores de peón | **8 colores** (se sumaron rosa y turquesa). Con 6 jugadores y alguien que abandonó (conserva su color, RN-03), si no faltaría un color libre para quien entra |
+| Eventos del socket | En vez de un evento por paso (`die:rolled`, `card:drawn`…), el servidor manda **`game:state`** con la vista completa en cada cambio; la fase (`REVEALING`, `AWAITING_ANSWER`, `SHOWING_RESULT`…) y `lastResolution` dicen qué pasó. Es más simple y la reconexión no pierde eventos. `online.seq` ordena los estados |
+| Turnos salteados (RN-12) | No entran en `history` (que sigue siendo "cartas jugadas"); quedan en `online.lastResolution.skipped` y en `missedTurns` |
+| Vista durante el revelado | En `REVEALING` solo viaja la cara del dado y la categoría; la carta y las opciones llegan al terminar la pausa |
+| Idioma de las cartas online | Se muestran en el idioma por defecto (la vista pública no incluye `translations`). Cuando haya otro idioma, se puede localizar en el servidor por usuario |
+| Foto de Street View para espectadores | Usa `GOOGLE_MAPS_API_KEY` (o `VITE_GOOGLE_MAPS_API_KEY`) del servidor. Si la clave está restringida por dominio, hace falta otra sin esa restricción. Sin clave, LUGAR usa fotos y no hay Street View |
+| Cupo | Además del máximo de 6 sentados, el total con los que abandonaron queda limitado por los 8 colores |
+| Modo demo | El online no está disponible (necesita el servidor) |
+
+### Pruebas hechas
+- `shared/test/online.test.ts`: 25 tests de las funciones puras (sala, turnos, tiempos, pausa, abandono, anfitrión, sumarse tarde, vista pública).
+- Prueba de punta a punta con 3 usuarios por Socket.IO contra la API y PostgreSQL: 43 chequeos (CA-03 a CA-32).
+- Timer real del servidor (dado de 30 s) y reinicio del servidor con la partida en curso (CA-31).
+- Navegador con dos usuarios en dos pestañas: crear sala, invitar, aceptar, empezar, dado, carta en vivo (el otro la ve en solo lectura), tiempo agotado, resultado, terminar y ocultar del panel.

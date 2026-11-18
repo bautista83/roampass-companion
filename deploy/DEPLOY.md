@@ -156,6 +156,11 @@ los correos de confirmación y recuperación (3 / hora por IP).
 
 - Las variables `VITE_*` se compilan dentro del bundle: si cambias `VITE_GOOGLE_MAPS_API_KEY`
   o `VITE_TURNSTILE_SITE_KEY` hay que reconstruir (`docker compose up -d --build`).
+- **Modo online:** el Nginx de la VM tiene que enviar `/socket.io/` a la API con WebSocket (ya está en
+  `deploy/nginx/roampass.conf`; si lo instalaste antes, vuelve a copiarlo y recarga Nginx). Cloudflare
+  Tunnel pasa los WebSocket sin configuración extra. Para que los espectadores vean la foto fija de
+  Street View, la API usa `GOOGLE_MAPS_API_KEY` (o `VITE_GOOGLE_MAPS_API_KEY`); si esa clave está
+  restringida por dominio, crea otra para el servidor.
 - Las fotos de los pasaportes se guardan en PostgreSQL (tabla `UserPhoto`, ~30 KB cada una):
   entran en los backups de la base.
 - Street View: en Google Cloud, agrega `http://192.168.100.202:8080/*` y `http://dev-web:8080/*`
