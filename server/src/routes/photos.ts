@@ -9,7 +9,7 @@ export const photosRouter = Router();
 
 photosRouter.get('/:id/photo', requireAuth, async (req, res) => {
   const photo = await prisma.userPhoto.findUnique({ where: { userId: String(req.params.id) } });
-  if (!photo) throw new HttpError(404, 'Sin foto');
+  if (!photo) throw new HttpError(404, 'Sin foto', 'NOT_FOUND');
   // La URL lleva ?v=<photoUpdatedAt>: una foto nueva cambia la URL, asi que se puede cachear.
   res.set('Cache-Control', 'private, max-age=86400');
   res.type(photo.mimeType).send(Buffer.from(photo.data));

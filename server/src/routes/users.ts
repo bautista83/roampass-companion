@@ -43,7 +43,7 @@ usersRouter.patch('/:id', async (req, res) => {
   const isSelf = req.params.id === req.user!.id;
   // Evita que el ultimo admin se bloquee a si mismo fuera del panel.
   if (isSelf && (data.isActive === false || data.role === 'PLAYER')) {
-    throw new HttpError(400, 'No puedes desactivarte ni quitarte el rol ADMIN a ti mismo');
+    throw new HttpError(400, 'No puedes desactivarte ni quitarte el rol ADMIN a ti mismo', 'CANNOT_CHANGE_SELF');
   }
   const target = await prisma.user.findUniqueOrThrow({ where: { id: req.params.id }, select: { email: true, emailVerifiedAt: true } });
   // "Activar" o "Confirmar correo" tambien dan por confirmado el correo (CO-08).
@@ -61,7 +61,7 @@ usersRouter.patch('/:id', async (req, res) => {
 });
 
 usersRouter.delete('/:id', async (req, res) => {
-  if (req.params.id === req.user!.id) throw new HttpError(400, 'No puedes eliminar tu propia cuenta');
+  if (req.params.id === req.user!.id) throw new HttpError(400, 'No puedes eliminar tu propia cuenta', 'CANNOT_DELETE_SELF');
   await prisma.user.delete({ where: { id: req.params.id } });
   res.status(204).end();
 });
