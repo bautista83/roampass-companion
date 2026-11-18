@@ -35,7 +35,7 @@ solo lugar.
 | `profile/Profile` | Mi perfil: foto del pasaporte, correo, estilo visual y contraseña |
 | `dashboard/Dashboard` | Métricas (partidas, victorias, récord), crear/continuar partida |
 | `dashboard/UserManagement` | CRUD de usuarios para ADMIN: activar/desactivar, rol, renombrar, cambiar contraseña, eliminar |
-| `setup/GameSetup` | Wizard: paso 1 condición de victoria y tiempo por carta, paso 2 jugadores (2-4, color de peón, avatar) |
+| `setup/GameSetup` | Wizard: paso 1 condición de victoria y tiempo por carta, paso 2 jugadores (2-6, color de peón, avatar) |
 | `game/GameTable` | Mesa: layout responsive de 1 columna (móvil) / 35%-65% (tablet) |
 | `game/TurnBanner` | Turno y ronda actual (sticky en móvil) |
 | `game/Scoreboard` | Marcador en tiempo real con barras de progreso |

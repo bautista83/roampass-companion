@@ -20,7 +20,7 @@ import {
 } from './types';
 
 export const MIN_PLAYERS = 2;
-export const MAX_PLAYERS = 4;
+export const MAX_PLAYERS = 6;
 
 /** El marcador nunca baja de 0 (una "Visa Denegada" no deja a nadie en negativo). */
 export const MIN_SCORE = 0;

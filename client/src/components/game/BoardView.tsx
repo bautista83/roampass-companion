@@ -235,8 +235,10 @@ function stackOffsets(players: GamePlayer[], stepsById: Record<string, number>):
     ids.forEach((id, i) => {
       if (ids.length === 1) out[id] = [0, 0];
       else {
+        // Con mas fichas en la misma casilla (hasta 6 en la salida) el circulo se agranda.
+        const radius = 2.2 + Math.max(0, ids.length - 3) * 0.6;
         const a = (i / ids.length) * Math.PI * 2 - Math.PI / 2;
-        out[id] = [Math.cos(a) * 2.2, Math.sin(a) * 2.2];
+        out[id] = [Math.cos(a) * radius, Math.sin(a) * radius];
       }
     });
   }

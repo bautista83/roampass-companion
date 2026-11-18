@@ -18,6 +18,7 @@ import {
   BOARD_SPACES,
   MILES_PER_SPACE,
   DEFAULT_LOCALE,
+  MAX_PLAYERS,
   PAWN_COLORS,
   PAWN_COLOR_META,
   WORLD_TOUR_MILES,
@@ -187,7 +188,7 @@ const transports = `<div class="transports">${rules.transports.map(
   (t) => `<div class="transport"><img src="${asset(`board/spaces/${t.id}.svg`)}" alt=""/><span>${esc(t.name)}</span></div>`,
 ).join('')}</div>`;
 
-const pawns = PAWN_COLORS.slice(0, 4)
+const pawns = PAWN_COLORS.slice(0, MAX_PLAYERS)
   .map((c, i) => pawn(c, AVATARS[i]!))
   .join('');
 

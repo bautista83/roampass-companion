@@ -128,7 +128,7 @@ stateDiagram-v2
 5. `POINTS` termina apenas alguien llega a la meta; `ROUNDS` cuando el último jugador cierra la ronda objetivo.
 6. Ranking: millas ↓, luego aciertos ↓; empate total comparte posición (1, 1, 3…).
 7. Bonus de dificultad **aditivo** (+0 / +500 / +1.000) y solo si la respuesta ya da millas; los eventos no llevan bonus.
-8. 2 a 4 jugadores; timer ∈ {10, 15, 20, 25, 30} s.
+8. 2 a 6 jugadores; timer ∈ {10, 15, 20, 25, 30} s.
 
 ---
 
