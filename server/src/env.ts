@@ -8,12 +8,15 @@ function required(name: string): string {
 
 const optional = (name: string) => process.env[name]?.trim() || undefined;
 
-const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
+/** Origenes permitidos (separados por coma). El primero es la URL publica por defecto. */
+const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173').split(',').map((o) => o.trim()).filter(Boolean);
+const corsOrigin = corsOrigins[0]!;
 
 export const env = {
   port: Number(process.env.PORT ?? 4000),
   jwtSecret: required('JWT_SECRET'),
   corsOrigin,
+  corsOrigins,
   /** URL publica de la app: los enlaces de los correos apuntan aca. */
   appUrl: (optional('APP_URL') ?? corsOrigin).replace(/\/$/, ''),
   /** Sin SMTP_HOST los correos no se envian: el enlace se imprime en la consola (desarrollo). */
@@ -30,4 +33,9 @@ export const env = {
   turnstileSecret: optional('TURNSTILE_SECRET_KEY'),
   /** Detras de Cloudflare Tunnel: la IP real del cliente viene en CF-Connecting-IP. */
   trustCloudflare: process.env.TRUST_CLOUDFLARE === 'true',
+  /**
+   * Clave de Google para la foto fija de Street View que ven los espectadores en partidas online.
+   * Si la clave del cliente esta restringida por dominio, usar otra en GOOGLE_MAPS_API_KEY.
+   */
+  googleMapsKey: optional('GOOGLE_MAPS_API_KEY') ?? optional('VITE_GOOGLE_MAPS_API_KEY'),
 };

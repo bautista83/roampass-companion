@@ -24,8 +24,25 @@ enum VictoryMode {
 }
 
 enum GameStatus {
+  /// Sala de espera de una partida online.
+  LOBBY
   PLAYING
   FINISHED
+}
+
+enum GameKind {
+  /// Partida en un solo dispositivo: el cliente es autoritativo y sincroniza el snapshot.
+  LOCAL
+  /// Partida online multijugador: el servidor es autoritativo (shared/src/online.ts).
+  ONLINE
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+  EXPIRED
 }
 
 enum Difficulty {
@@ -64,6 +81,8 @@ model User {
   updatedAt    DateTime      @updatedAt
   photo        UserPhoto?
   emailTokens  EmailToken[]
+  invitesSent     GameInvite[] @relation("InviteFrom")
+  invitesReceived GameInvite[] @relation("InviteTo")
   hostedGames  GameSession[]
   players      Player[]
 }
@@ -115,9 +134,34 @@ model GameSession {
   startedAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
   finishedAt         DateTime?
+  kind               GameKind    @default(LOCAL)
+  /// Se incrementa en cada accion aplicada a una partida online (concurrencia optimista).
+  version            Int         @default(0)
   players            Player[]
+  invites            GameInvite[]
 
   @@index([hostId, status])
+  @@index([kind, status])
+}
+
+/// Invitacion a una partida online (la manda el anfitrion; vence a los 10 minutos).
+model GameInvite {
+  id           String       @id @default(cuid())
+  sessionId    String
+  session      GameSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  fromUserId   String
+  fromUser     User         @relation("InviteFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUserId     String
+  toUser       User         @relation("InviteTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  /// Millas iniciales si se suma con la partida empezada.
+  initialMiles Int          @default(0)
+  status       InviteStatus @default(PENDING)
+  createdAt    DateTime     @default(now())
+  expiresAt    DateTime
+  respondedAt  DateTime?
+
+  @@index([toUserId, status])
+  @@index([sessionId, status])
 }
 
 model Player {
@@ -134,6 +178,8 @@ model Player {
   score     Int         @default(0)
   isWinner  Boolean     @default(false)
   stats     Json?
+  /// Partida online oculta del panel de este jugador (sigue contando en sus estadisticas).
+  hiddenAt  DateTime?
 
   @@unique([sessionId, turnOrder])
   @@index([userId])

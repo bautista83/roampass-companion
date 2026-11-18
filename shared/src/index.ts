@@ -12,3 +12,4 @@ export * from './localize';
 export { sharedTexts } from './locales';
 export type { SharedTexts } from './locales';
 export * from './online';
+export * from './protocol';
