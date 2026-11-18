@@ -1,0 +1,36 @@
+{
+  "module": "Módulo Admin",
+  "title": "Gestión de usuarios",
+  "new": "+ Nuevo usuario",
+  "columns": {
+    "user": "Usuario",
+    "role": "Rol",
+    "status": "Estado",
+    "games": "Partidas",
+    "actions": "Acciones"
+  },
+  "unverified": "sin confirmar",
+  "confirmEmail": "Confirmar",
+  "confirmEmailTitle": "Confirmar el correo a mano (si el mensaje no llegó)",
+  "joined": "Alta: {{date}}",
+  "removePhoto": "Quitar foto",
+  "roleOf": "Rol de {{name}}",
+  "active": "● Activo",
+  "inactive": "○ Inactivo",
+  "activate": "Activar",
+  "deactivate": "Desactivar",
+  "gamesShort": "Partidas: ",
+  "editButton": "✏️ Editar",
+  "newTitle": "Nuevo usuario",
+  "editTitle": "Editar @{{name}}",
+  "removePhotoTitle": "Quitar foto",
+  "removePhotoBody": "¿Quitar la foto de <b>@{{name}}</b>? Su pasaporte volverá a mostrar el retrato dibujado. Puede subir otra cuando quiera.",
+  "deleteTitle": "Eliminar usuario",
+  "deleteBody": "¿Eliminar definitivamente a <b>@{{name}}</b> y sus partidas? Esta acción no se puede deshacer. Si solo quieres bloquear el acceso, desactívalo.",
+  "form": {
+    "username": "Usuario",
+    "password": "Contraseña",
+    "newPasswordOptional": "Nueva contraseña (opcional)",
+    "role": "Rol"
+  }
+}

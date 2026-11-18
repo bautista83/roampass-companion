@@ -1,39 +1,31 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   AVATARS,
   BOARD_SPACES,
-  CATEGORY_META,
   MILES_PER_SPACE,
   WORLD_TOUR_MILES,
   DEFAULT_TIMER_SECONDS,
   MAX_PLAYERS,
   PAWN_COLORS,
   POINT_TARGETS,
-  RULES_DIE,
-  RULES_DIFFICULTIES,
-  RULES_LOCATION_BRACKETS,
-  RULES_QUIZ_POINTS,
-  RULES_SECTIONS,
-  RULES_TRANSPORTS,
   ROUND_TARGETS,
-  formatNumber,
-  pointTargetLabel,
+  localizeCard,
   type Difficulty,
   type RulesSectionId,
   type SeedData,
 } from '@roampass/shared';
 import seedData from '@roampass/shared/seedData.json';
+import { useLabels, useRules } from '../../i18n/useLabels';
 import { useThemeStore } from '../../store/themeStore';
 import { DieFace } from '../game/Die';
-import { CATEGORY_TINT, POINTS_HINT } from '../game/categoryStyle';
+import { CATEGORY_TINT } from '../game/categoryStyle';
+import { usePointsHint } from '../game/usePointsHint';
 import { PawnToken } from '../ui/PawnToken';
 
 /** Mismos colores que DifficultyBadge, sin el texto del bonus (aqui va en la tabla). */
 const DIFFICULTY_TINT: Record<Difficulty, string> = { EASY: 'bg-mint', MEDIUM: 'bg-sun', HARD: 'bg-coral' };
-
-const mi = (n: number) => `${formatNumber(n)} mi`;
-const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${formatNumber(Math.abs(n))} mi`;
 
 /** Algunos Eventos de Viajero reales del mazo: uno bueno y uno malo, alternados. */
 const EVENT_EXAMPLES = (() => {
@@ -54,50 +46,52 @@ function Chip({ children, className = 'bg-white' }: { children: ReactNode; class
 
 function GoalVisual() {
   const retro = useThemeStore((s) => s.retro);
+  const { t } = useTranslation();
+  const { miles } = useLabels();
   return (
     <div className="space-y-3">
       <div className="relative overflow-hidden rounded-2xl border-3 border-ink shadow-hard-sm dark:border-black">
         <img
           src={retro ? '/board/board-retro.png' : '/board/board.svg'}
-          alt="Tablero de la vuelta al mundo"
+          alt={t('rules.boardAlt')}
           className="block w-full"
           loading="lazy"
         />
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2">
         <img src="/board/spaces/obelisco.svg" alt="" className="size-12" aria-hidden />
-        <Chip className="bg-sun">1 casilla = {mi(MILES_PER_SPACE)}</Chip>
-        <Chip>
-          🌍 {BOARD_SPACES} casillas = {mi(WORLD_TOUR_MILES)}
-        </Chip>
+        <Chip className="bg-sun">{t('rules.oneSpace', { miles: miles(MILES_PER_SPACE) })}</Chip>
+        <Chip>{t('rules.allSpaces', { count: BOARD_SPACES, miles: miles(WORLD_TOUR_MILES) })}</Chip>
       </div>
     </div>
   );
 }
 
 function SetupVisual() {
+  const { t } = useTranslation();
+  const { miles, targetLabel } = useLabels();
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="sticker bg-sky p-3 text-center text-ink">
           <p className="text-3xl">🗺️🎲</p>
-          <p className="text-sm font-extrabold">Tablero impreso</p>
-          <p className="text-xs">dado físico + app</p>
+          <p className="text-sm font-extrabold">{t('rules.printedBoard')}</p>
+          <p className="text-xs">{t('rules.printedBoardSub')}</p>
         </div>
         <div className="sticker bg-lilac p-3 text-center text-ink">
           <p className="text-3xl">📱</p>
-          <p className="text-sm font-extrabold">Tablero digital</p>
-          <p className="text-xs">todo en pantalla</p>
+          <p className="text-sm font-extrabold">{t('rules.digitalBoard')}</p>
+          <p className="text-xs">{t('rules.digitalBoardSub')}</p>
         </div>
       </div>
       <div className="flex flex-wrap justify-center gap-2">
-        {POINT_TARGETS.map((t) => (
-          <Chip key={t} className="bg-sun">
-            🏁 {mi(t)} · {pointTargetLabel(t)}
+        {POINT_TARGETS.map((target) => (
+          <Chip key={target} className="bg-sun">
+            🏁 {miles(target)} · {targetLabel(target)}
           </Chip>
         ))}
         {ROUND_TARGETS.map((r) => (
-          <Chip key={r}>🔁 {r} rondas</Chip>
+          <Chip key={r}>{t('rules.rounds', { count: r })}</Chip>
         ))}
       </div>
       <div className="flex items-end justify-center gap-3">
@@ -110,11 +104,14 @@ function SetupVisual() {
 }
 
 function TurnVisual() {
+  const { t } = useTranslation();
+  const { categories } = useLabels();
+  const { die } = useRules();
   const flow = [
-    { icon: <DieFace face={1} size={44} />, text: 'Tirás el dado' },
-    { icon: <span className="text-4xl">{CATEGORY_META.LOCATION.icon}</span>, text: 'Sale la carta' },
-    { icon: <span className="text-4xl">⏱️</span>, text: `${DEFAULT_TIMER_SECONDS} s para responder` },
-    { icon: <span className="text-4xl">✈️</span>, text: '¡Millas y avanzás!' },
+    { icon: <DieFace face={1} size={44} />, text: t('rules.flow.roll') },
+    { icon: <span className="text-4xl">{categories.LOCATION.icon}</span>, text: t('rules.flow.card') },
+    { icon: <span className="text-4xl">⏱️</span>, text: t('rules.flow.timer', { seconds: DEFAULT_TIMER_SECONDS }) },
+    { icon: <span className="text-4xl">✈️</span>, text: t('rules.flow.miles') },
   ];
   return (
     <div className="space-y-4">
@@ -129,9 +126,9 @@ function TurnVisual() {
         ))}
       </ol>
       <div>
-        <p className="label mb-2 text-center">Qué carta sale con cada número</p>
+        <p className="label mb-2 text-center">{t('rules.dieTitle')}</p>
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {RULES_DIE.map((d) => (
+          {die.map((d) => (
             <li key={d.face} className={`sticker flex items-center gap-2 p-2 text-ink shadow-hard-sm ${CATEGORY_TINT[d.category]}`}>
               <DieFace face={d.face} size={30} className="shrink-0" />
               <span className="min-w-0 text-xs leading-tight font-extrabold">
@@ -146,6 +143,10 @@ function TurnVisual() {
 }
 
 function CardsVisual() {
+  const { t } = useTranslation();
+  const { categories, num } = useLabels();
+  const { difficulties, quizPoints, locationBrackets } = useRules();
+  const pointsHint = usePointsHint();
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto">
@@ -153,9 +154,9 @@ function CardsVisual() {
           <thead>
             <tr>
               <th className="text-left">
-                <span className="label">Carta</span>
+                <span className="label">{t('rules.cardColumn')}</span>
               </th>
-              {RULES_DIFFICULTIES.map((d) => (
+              {difficulties.map((d) => (
                 <th key={d.difficulty} className="px-1 text-center">
                   <span className={`rounded-full border-2 border-ink px-1.5 py-0.5 text-[11px] font-bold text-ink sm:px-2 sm:text-xs ${DIFFICULTY_TINT[d.difficulty]}`}>
                     {d.label}
@@ -165,19 +166,19 @@ function CardsVisual() {
             </tr>
           </thead>
           <tbody>
-            {RULES_QUIZ_POINTS.map((q) => (
+            {quizPoints.map((q) => (
               <tr key={q.category}>
                 <td className={`rounded-l-xl border-y-2 border-l-2 border-ink px-1.5 py-1.5 leading-tight font-bold sm:px-2 text-ink ${CATEGORY_TINT[q.category]}`}>
                   {q.icon} {q.label}
                 </td>
-                {RULES_DIFFICULTIES.map((d, i) => (
+                {difficulties.map((d, i) => (
                   <td
                     key={d.difficulty}
                     className={`border-y-2 border-ink bg-white px-1 py-1.5 text-center sm:px-2 font-extrabold text-ink tabular-nums ${
-                      i === RULES_DIFFICULTIES.length - 1 ? 'rounded-r-xl border-r-2' : ''
+                      i === difficulties.length - 1 ? 'rounded-r-xl border-r-2' : ''
                     }`}
                   >
-                    +{formatNumber(q.byDifficulty[d.difficulty])}
+                    +{num(q.byDifficulty[d.difficulty])}
                   </td>
                 ))}
               </tr>
@@ -187,34 +188,39 @@ function CardsVisual() {
       </div>
       <div className={`sticker p-3 text-ink ${CATEGORY_TINT.LOCATION}`}>
         <p className="mb-2 font-extrabold">
-          {CATEGORY_META.LOCATION.icon} {CATEGORY_META.LOCATION.label}: ¿a qué distancia marcaste?
+          {t('rules.locationTitle', { icon: categories.LOCATION.icon, label: categories.LOCATION.label })}
         </p>
         <ul className="space-y-1.5">
-          {RULES_LOCATION_BRACKETS.map((b, i) => (
+          {locationBrackets.map((b, i) => (
             <li key={b.maxKm} className="flex items-center gap-2 text-sm">
               <span className="w-28 shrink-0 font-bold tabular-nums">
-                {i === 0 ? 'hasta' : `${formatNumber(b.fromKm)} a`} {formatNumber(b.maxKm)} km
+                {i === 0 ? t('rules.upTo') : t('rules.fromTo', { from: num(b.fromKm) })} {num(b.maxKm)} km
               </span>
               <span
                 className="h-4 rounded-full border-2 border-ink bg-sun"
-                style={{ width: `${(b.points / RULES_LOCATION_BRACKETS[0]!.points) * 60}%` }}
+                style={{ width: `${(b.points / locationBrackets[0]!.points) * 60}%` }}
                 aria-hidden
               />
-              <span className="font-extrabold whitespace-nowrap tabular-nums">+{formatNumber(b.points)}</span>
+              <span className="font-extrabold whitespace-nowrap tabular-nums">+{num(b.points)}</span>
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-xs font-semibold">Con el bonus del nivel de la carta: {POINTS_HINT.LOCATION}.</p>
+        <p className="mt-2 text-xs font-semibold">{t('rules.withBonus', { hint: pointsHint('LOCATION') })}</p>
       </div>
     </div>
   );
 }
 
 function TravelVisual() {
+  const { t } = useTranslation();
+  const { locale, miles } = useLabels();
+  const { transports } = useRules();
+  const events = useMemo(() => EVENT_EXAMPLES.map((e) => localizeCard(e, locale)), [locale]);
+  const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${miles(Math.abs(n))}`;
   return (
     <div className="space-y-4">
       <ul className="grid grid-cols-2 gap-2">
-        {EVENT_EXAMPLES.map((e) => (
+        {events.map((e) => (
           <li key={e.id} className="sticker flex items-center gap-2 bg-white p-2 text-ink shadow-hard-sm dark:bg-passport-100">
             <span className="text-2xl" aria-hidden>
               {e.icon}
@@ -229,12 +235,12 @@ function TravelVisual() {
         ))}
       </ul>
       <div>
-        <p className="label mb-2 text-center">Casillas de transporte</p>
+        <p className="label mb-2 text-center">{t('rules.transportsTitle')}</p>
         <ul className="flex flex-wrap justify-center gap-2">
-          {RULES_TRANSPORTS.map((t) => (
-            <li key={t.id} className="flex w-20 flex-col items-center gap-1 text-center">
-              <img src={`/board/spaces/${t.id}.svg`} alt="" className="size-12" loading="lazy" aria-hidden />
-              <span className="text-[11px] leading-tight font-semibold">{t.name}</span>
+          {transports.map((tr) => (
+            <li key={tr.id} className="flex w-20 flex-col items-center gap-1 text-center">
+              <img src={`/board/spaces/${tr.id}.svg`} alt="" className="size-12" loading="lazy" aria-hidden />
+              <span className="text-[11px] leading-tight font-semibold">{tr.name}</span>
             </li>
           ))}
         </ul>
@@ -274,14 +280,16 @@ const VISUALS: Record<RulesSectionId, () => ReactNode> = {
 };
 
 /**
- * Reglas del juego paso a paso. Los textos y numeros vienen de `@roampass/shared` (RULES_*), asi que
- * se actualizan solos si cambia un puntaje. Se usa en la pantalla /rules y en el "?" de la partida.
+ * Reglas del juego paso a paso. Los textos y numeros vienen de `@roampass/shared` (buildRules, en el
+ * idioma activo), asi que se actualizan solos si cambia un puntaje. Se usa en la pantalla /rules y en el "?" de la partida.
  */
 export function RulesGuide({ onFinish }: { onFinish?: () => void }) {
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
-  const total = RULES_SECTIONS.length;
-  const section = RULES_SECTIONS[step]!;
+  const { t } = useTranslation();
+  const { sections } = useRules();
+  const total = sections.length;
+  const section = sections[step]!;
   const Visual = VISUALS[section.id];
   const last = step === total - 1;
 
@@ -303,9 +311,9 @@ export function RulesGuide({ onFinish }: { onFinish?: () => void }) {
   return (
     <div className="flex flex-col gap-4">
       {/* Indice de pasos: se puede saltar a cualquiera */}
-      <nav aria-label="Pasos de las reglas">
+      <nav aria-label={t('rules.stepsAria')}>
         <ol className="flex flex-wrap justify-center gap-2">
-          {RULES_SECTIONS.map((s, i) => (
+          {sections.map((s, i) => (
             <li key={s.id}>
               <button
                 onClick={() => go(i)}
@@ -334,9 +342,7 @@ export function RulesGuide({ onFinish }: { onFinish?: () => void }) {
           aria-live="polite"
         >
           <div className="min-w-0">
-            <p className="label">
-              Paso {step + 1} de {total}
-            </p>
+            <p className="label">{t('rules.stepOf', { step: step + 1, total })}</p>
             <h2 className="mb-2 text-2xl md:text-3xl">
               {section.icon} {section.title}
             </h2>
@@ -359,17 +365,17 @@ export function RulesGuide({ onFinish }: { onFinish?: () => void }) {
 
       <div className="flex gap-2">
         <button className="btn-ghost flex-1" onClick={() => go(step - 1)} disabled={step === 0}>
-          ← Anterior
+          {t('rules.previous')}
         </button>
         {last ? (
           onFinish && (
             <button className="btn-primary flex-1" onClick={onFinish}>
-              ¡A jugar! ✈️
+              {t('rules.play')}
             </button>
           )
         ) : (
           <button className="btn-primary flex-1" onClick={() => go(step + 1)}>
-            Siguiente →
+            {t('rules.next')}
           </button>
         )}
       </div>

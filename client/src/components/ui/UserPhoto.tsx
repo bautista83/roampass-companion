@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../api';
 import { AvatarPortrait } from './AvatarPortrait';
 
@@ -44,7 +45,8 @@ export function UserPhoto({
   shape?: 'portrait' | 'square';
 }) {
   const src = usePhotoUrl(user);
+  const { t } = useTranslation();
   if (!src) return <AvatarPortrait seed={user.username} className={className} />;
   const aspect = shape === 'portrait' ? 'aspect-[100/124]' : 'aspect-square';
-  return <img src={src} alt={`Foto de ${user.username}`} className={`${aspect} object-cover ${className}`} />;
+  return <img src={src} alt={t('profile.photo.alt', { name: user.username })} className={`${aspect} object-cover ${className}`} />;
 }

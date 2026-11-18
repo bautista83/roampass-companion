@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
-import { CATEGORY_META, formatNumber, type TravelEventCard } from '@roampass/shared';
+import type { TravelEventCard } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 import { useGameStore, type ActiveDraw } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
 import { CardResult } from './CardResult';
@@ -9,7 +11,9 @@ export function TravelEventModal({ draw }: { draw: ActiveDraw }) {
   const card = draw.card as TravelEventCard;
   const resolve = useGameStore((s) => s.resolve);
   const player = useGameStore((s) => s.game?.players.find((p) => p.id === draw.playerId));
-  const meta = CATEGORY_META.TRAVEL_EVENT;
+  const { t } = useTranslation();
+  const { categories, miles } = useLabels();
+  const meta = categories.TRAVEL_EVENT;
   const good = card.points >= 0;
 
   return (
@@ -31,7 +35,7 @@ export function TravelEventModal({ draw }: { draw: ActiveDraw }) {
           <CardResult result={draw.resolved.result} playerName={player.name} />
         ) : (
           <button className={`${good ? 'btn-primary' : 'btn-danger'} w-full text-lg sm:w-auto`} onClick={() => resolve({ kind: 'EVENT', card })}>
-            {good ? `Avanzar +${formatNumber(card.points)} mi` : `Retroceder ${formatNumber(Math.abs(card.points))} mi`} · {player?.avatar} {player?.name}
+            {good ? t('game.event.forward', { miles: miles(card.points) }) : t('game.event.back', { miles: miles(Math.abs(card.points)) })} · {player?.avatar} {player?.name}
           </button>
         )}
       </div>

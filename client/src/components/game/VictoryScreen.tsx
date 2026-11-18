@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { AvatarIcon, PawnToken } from '../ui/PawnToken';
 import { motion } from 'framer-motion';
-import { CARD_CATEGORIES, CATEGORY_META, PAWN_COLOR_META, rankPlayers, type GamePlayer, type GameState, formatNumber } from '@roampass/shared';
+import { CARD_CATEGORIES, PAWN_COLOR_META, rankPlayers, type GamePlayer, type GameState } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 import { useGameStore } from '../../store/gameStore';
 
 const PODIUM = [
@@ -10,15 +12,17 @@ const PODIUM = [
   { place: 3, height: 'h-16 md:h-24', medal: '🥉' },
 ];
 
-function bestCategory(p: GamePlayer) {
+function bestCategory(p: GamePlayer, categories: ReturnType<typeof useLabels>['categories']) {
   const [cat, pts] = CARD_CATEGORIES.map((c) => [c, p.stats.pointsByCategory[c]] as const).sort((a, b) => b[1] - a[1])[0]!;
-  return pts > 0 ? `${CATEGORY_META[cat].icon} ${CATEGORY_META[cat].label}` : '—';
+  return pts > 0 ? `${categories[cat].icon} ${categories[cat].label}` : '—';
 }
 
 /** Pantalla "¡Victoria!": podio + resumen de estadisticas. Las tarjetas quedan bloqueadas. */
 export function VictoryScreen({ game }: { game: GameState }) {
   const clear = useGameStore((s) => s.clear);
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { categories, num, miles } = useLabels();
   const ranking = rankPlayers(game.players);
   const winners = ranking.filter((r) => r.position === 1).map((r) => r.player);
   // Con empates en el podio, cada escalon muestra a quien ocupe esa posicion por orden.
@@ -39,18 +43,24 @@ export function VictoryScreen({ game }: { game: GameState }) {
       animate={{ opacity: 1 }}
       role="dialog"
       aria-modal="true"
-      aria-label="Victoria"
+      aria-label={t('game.victory.aria')}
     >
       <div className="mx-auto flex min-h-full max-w-4xl flex-col items-center gap-6 px-4 py-8 text-white">
         <motion.div initial={{ scale: 0.5, rotate: -15, opacity: 0 }} animate={{ scale: 1, rotate: -4, opacity: 1 }} transition={{ type: 'spring', stiffness: 180, damping: 12 }} className="stamp border-brass text-center text-5xl text-brass md:text-7xl">
-          ¡Victoria!
+          {t('game.victory.title')}
         </motion.div>
         <p className="text-center text-lg">
-          {winners.length > 1 ? 'Empate entre ' : 'Gana '}
-          <strong>{winners.map((w) => w.name).join(' y ')}</strong>
+          {winners.length > 1 ? t('game.victory.tie') : t('game.victory.wins')}
+          <strong>{winners.map((w) => w.name).join(` ${t('common.and')} `)}</strong>
           <span className="block text-sm text-white/60">
-            {roundsPlayed} {roundsPlayed === 1 ? 'ronda' : 'rondas'} · {totalTurns} cartas jugadas ·{' '}
-            {game.config.mode === 'POINTS' ? `meta ${formatNumber(game.config.target)} mi` : `${game.config.target} rondas`}
+            {t('game.victory.summary', {
+              rounds: t('common.rounds', { count: roundsPlayed }),
+              cards: totalTurns,
+              goal:
+                game.config.mode === 'POINTS'
+                  ? t('game.victory.goalMiles', { miles: miles(game.config.target) })
+                  : t('game.victory.goalRounds', { count: game.config.target }),
+            })}
           </span>
         </p>
 
@@ -64,7 +74,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
               <motion.div key={place} className="flex flex-col items-center gap-2" initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 + i * 0.15, type: 'spring' }}>
                 <PawnToken avatar={entry.player.avatar} color={entry.player.color} className="w-12 md:w-16" />
                 <span className="max-w-full truncate text-center text-sm font-bold md:text-base">{entry.player.name}</span>
-                <span className="font-stamp text-sm tabular-nums text-brass">{formatNumber(entry.player.score)}</span>
+                <span className="font-stamp text-sm tabular-nums text-brass">{num(entry.player.score)}</span>
                 <div className={`flex w-full items-start justify-center rounded-t-xl pt-2 text-3xl ${height}`} style={{ background: `linear-gradient(to bottom, ${hex}, ${hex}66)` }}>
                   {entry.position === 1 ? '🥇' : medal}
                 </div>
@@ -79,11 +89,11 @@ export function VictoryScreen({ game }: { game: GameState }) {
             <thead className="text-xs tracking-wider text-white/60 uppercase">
               <tr>
                 <th className="p-3">#</th>
-                <th className="p-3">Viajero</th>
-                <th className="p-3 text-right">Millas</th>
-                <th className="p-3 text-right">Aciertos</th>
-                <th className="p-3 text-right">Mejor distancia</th>
-                <th className="p-3">Fuerte en</th>
+                <th className="p-3">{t('game.victory.columns.traveler')}</th>
+                <th className="p-3 text-right">{t('game.victory.columns.miles')}</th>
+                <th className="p-3 text-right">{t('game.victory.columns.correct')}</th>
+                <th className="p-3 text-right">{t('game.victory.columns.bestDistance')}</th>
+                <th className="p-3">{t('game.victory.columns.strongIn')}</th>
               </tr>
             </thead>
             <tbody>
@@ -96,15 +106,15 @@ export function VictoryScreen({ game }: { game: GameState }) {
                       <AvatarIcon avatar={player.avatar} className="mr-1.5 inline-block size-5 align-[-0.25em]" />
                       {player.name}
                     </td>
-                    <td className="p-3 text-right font-bold tabular-nums">{formatNumber(player.score)}</td>
+                    <td className="p-3 text-right font-bold tabular-nums">{num(player.score)}</td>
                     <td className="p-3 text-right tabular-nums">
                       {player.stats.correct}/{answered}
                       {answered > 0 && <span className="text-white/50"> ({Math.round((player.stats.correct / answered) * 100)}%)</span>}
                     </td>
                     <td className="p-3 text-right tabular-nums">
-                      {player.stats.bestDistanceKm === null ? '—' : `${formatNumber(Math.round(player.stats.bestDistanceKm))} km`}
+                      {player.stats.bestDistanceKm === null ? '—' : `${num(Math.round(player.stats.bestDistanceKm))} km`}
                     </td>
-                    <td className="p-3">{bestCategory(player)}</td>
+                    <td className="p-3">{bestCategory(player, categories)}</td>
                   </tr>
                 );
               })}
@@ -114,10 +124,10 @@ export function VictoryScreen({ game }: { game: GameState }) {
 
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           <button className="btn bg-brass text-passport-950 hover:bg-brass/90" onClick={() => leave('/setup')}>
-            🔁 Nueva partida
+            {t('game.victory.newGame')}
           </button>
           <button className="btn border border-white/25 hover:bg-white/10" onClick={() => leave('/')}>
-            Ir al Dashboard
+            {t('game.victory.toDashboard')}
           </button>
         </div>
       </div>

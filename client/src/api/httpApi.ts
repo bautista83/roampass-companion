@@ -12,17 +12,22 @@ import {
 export function createHttpApi(baseUrl: string, getToken: () => string | null): RoamPassApi {
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const token = getToken();
-    const res = await fetch(`${baseUrl}${path}`, {
-      ...init,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...init.headers,
-      },
-    });
+    let res: Response;
+    try {
+      res = await fetch(`${baseUrl}${path}`, {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+          ...init.headers,
+        },
+      });
+    } catch {
+      throw new ApiError('Sin conexión con el servidor', 0, 'NETWORK');
+    }
     if (res.status === 204) return undefined as T;
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new ApiError(body.error ?? `Error ${res.status}`, res.status, body.code);
+    if (!res.ok) throw new ApiError(body.error ?? `Error ${res.status}`, res.status, body.code, body.params);
     return body as T;
   }
   const json = (method: string, data: unknown): RequestInit => ({ method, body: JSON.stringify(data) });

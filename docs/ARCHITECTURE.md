@@ -160,7 +160,28 @@ components/  (presentación)  →  store/ (estado + casos de uso)  →  api/ (pu
 (Street View si hay `VITE_GOOGLE_MAPS_API_KEY`, si no fotos; nunca se mezclan) → + cartas de
 banderas/capitales generadas localmente desde `countries.json`.
 
-### 4.3 Integraciones externas (solo desde el navegador)
+### 4.3 Idiomas (i18n)
+
+La app está lista para varios idiomas; hoy solo existe el **español latino neutro** (`es`).
+
+| Qué | Dónde |
+| --- | --- |
+| Idiomas soportados | `shared/src/i18n.ts` (`SUPPORTED_LOCALES`, `resolveLocale`) |
+| Textos de la interfaz | `client/src/i18n/locales/<idioma>/*.json`, un archivo por área (`i18next` + `react-i18next`). Las claves están tipadas: una clave que no existe no compila |
+| Etiquetas, reglas y preguntas generadas | `shared/src/locales/<idioma>.ts` (las usan la app, el PDF de reglas y el generador de países) |
+| Errores de la API | El servidor manda `{ error, code }`; el cliente muestra `errors.<code>` del diccionario (si falta, el mensaje del servidor). Los `GameRuleError` del motor también traen código |
+| Correos | `server/src/mail/templates.ts` (`MAIL_TEXTS`), en el idioma del perfil (`User.locale`) |
+| Cartas | `translations` opcional por carta (columna `CardQuestion.translations`); `localizeCard` usa el español si falta la traducción. Los nombres de países salen de `Intl.DisplayNames` |
+| Idioma del usuario | `User.locale`. Antes de iniciar sesión, el del navegador. El selector de Mi perfil aparece cuando hay más de un idioma |
+
+**Para sumar un idioma**:
+1. Agrega el código en `SUPPORTED_LOCALES`.
+2. Copia `client/src/i18n/locales/es` y tradúcela; regístrala en `RESOURCES`.
+3. Crea `shared/src/locales/<idioma>.ts` y agrega su entrada en `MAIL_TEXTS`.
+4. Genera el PDF: `npm run rules:pdf -- --lang=<idioma>`.
+5. Traduce el contenido: `translations` de cada carta y `capitalTranslations` en `countries.json`. Esta es la parte costosa.
+
+### 4.4 Integraciones externas (solo desde el navegador)
 
 - **FlagCDN** — imágenes de banderas.
 - **Leaflet + OpenStreetMap** — mapa para marcar la respuesta en cartas LUGAR.

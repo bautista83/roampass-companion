@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../api';
 import { useAuthStore } from '../../store/authStore';
 import { AuthCard, Notice, errorMessage } from './AuthCard';
@@ -15,12 +16,13 @@ export function VerifyEmail() {
   });
   // El enlace es de un solo uso: en desarrollo React monta dos veces el efecto.
   const started = useRef(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (started.current) return;
     started.current = true;
     if (!token) {
-      setState({ kind: 'error', text: 'Falta el código del enlace. Ábrelo de nuevo desde el correo.' });
+      setState({ kind: 'error', text: t('auth.verify.missingToken') });
       return;
     }
     api
@@ -29,20 +31,20 @@ export function VerifyEmail() {
         setState({ kind: 'ok', changed: purpose === 'CHANGE_EMAIL' });
         if (loggedIn) void refresh();
       })
-      .catch((err) => setState({ kind: 'error', text: errorMessage(err) }));
-  }, [token, loggedIn, refresh]);
+      .catch((err) => setState({ kind: 'error', text: errorMessage(err, t('common.unexpectedError')) }));
+  }, [token, loggedIn, refresh, t]);
 
   return (
     <AuthCard>
-      <h1 className="mb-4 text-center text-2xl">Confirmar correo</h1>
-      {state.kind === 'loading' && <Notice kind="info">Validando tu enlace…</Notice>}
+      <h1 className="mb-4 text-center text-2xl">{t('auth.verify.title')}</h1>
+      {state.kind === 'loading' && <Notice kind="info">{t('auth.verify.loading')}</Notice>}
       {state.kind === 'ok' && (
         <div className="space-y-4">
           <Notice kind="ok">
-            {state.changed ? '¡Listo! Tu correo nuevo quedó confirmado.' : '¡Listo! Tu pasaporte está activo. Ya puedes iniciar sesión.'}
+            {state.changed ? t('auth.verify.okChange') : t('auth.verify.okRegister')}
           </Notice>
           <Link to={loggedIn ? '/profile' : '/login'} className="btn-primary w-full">
-            {loggedIn ? 'Ir a mi perfil' : 'Iniciar sesión ✈️'}
+            {loggedIn ? t('auth.verify.toProfile') : t('auth.verify.toLogin')}
           </Link>
         </div>
       )}
@@ -50,10 +52,10 @@ export function VerifyEmail() {
         <div className="space-y-4">
           <Notice kind="error">{state.text}</Notice>
           <p className="text-sm text-passport-500 dark:text-passport-300">
-            Si tu cuenta todavía no está confirmada, intenta iniciar sesión: ahí puedes pedir otro correo.
+            {t('auth.verify.errorHelp')}
           </p>
           <Link to="/login" className="btn-ghost w-full">
-            Ir a iniciar sesión
+            {t('auth.verify.goLogin')}
           </Link>
         </div>
       )}
@@ -66,6 +68,7 @@ export function ForgotPassword() {
   const [identifier, setIdentifier] = useState('');
   const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const { t } = useTranslation();
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -75,7 +78,7 @@ export function ForgotPassword() {
       const { message } = await api.forgotPassword(identifier.trim());
       setResult({ ok: true, text: message });
     } catch (err) {
-      setResult({ ok: false, text: errorMessage(err) });
+      setResult({ ok: false, text: errorMessage(err, t('common.unexpectedError')) });
     } finally {
       setBusy(false);
     }
@@ -83,14 +86,14 @@ export function ForgotPassword() {
 
   return (
     <AuthCard>
-      <h1 className="mb-2 text-center text-2xl">¿Olvidaste tu contraseña?</h1>
+      <h1 className="mb-2 text-center text-2xl">{t('auth.forgot.title')}</h1>
       <p className="mb-4 text-center text-sm text-passport-500 dark:text-passport-300">
-        Escribe tu usuario o tu correo y te enviaremos un enlace para elegir una nueva.
+        {t('auth.forgot.intro')}
       </p>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
           <label className="label" htmlFor="forgot-identifier">
-            Usuario o correo
+            {t('auth.fields.identifier')}
           </label>
           <input
             id="forgot-identifier"
@@ -104,12 +107,12 @@ export function ForgotPassword() {
         </div>
         {result && <Notice kind={result.ok ? 'ok' : 'error'}>{result.text}</Notice>}
         <button className="btn-primary w-full" disabled={busy}>
-          {busy ? 'Enviando…' : 'Enviar enlace'}
+          {busy ? t('auth.forgot.busy') : t('auth.forgot.submit')}
         </button>
       </form>
       <p className="mt-4 text-center text-sm">
         <Link to="/login" className="font-bold underline">
-          Volver a iniciar sesión
+          {t('auth.forgot.back')}
         </Link>
       </p>
     </AuthCard>
@@ -124,20 +127,21 @@ export function ResetPassword() {
   const [confirm, setConfirm] = useState('');
   const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const { t } = useTranslation();
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setResult(null);
     if (password !== confirm) {
-      setResult({ ok: false, text: 'Las contraseñas no coinciden.' });
+      setResult({ ok: false, text: t('auth.reset.mismatch') });
       return;
     }
     setBusy(true);
     try {
       await api.resetPassword(token, password);
-      setResult({ ok: true, text: 'Contraseña actualizada. Ya puedes iniciar sesión con la nueva.' });
+      setResult({ ok: true, text: t('auth.reset.done') });
     } catch (err) {
-      setResult({ ok: false, text: errorMessage(err) });
+      setResult({ ok: false, text: errorMessage(err, t('common.unexpectedError')) });
     } finally {
       setBusy(false);
     }
@@ -145,20 +149,20 @@ export function ResetPassword() {
 
   return (
     <AuthCard>
-      <h1 className="mb-4 text-center text-2xl">Nueva contraseña</h1>
+      <h1 className="mb-4 text-center text-2xl">{t('auth.reset.title')}</h1>
       {result?.ok ? (
         <div className="space-y-4">
           <Notice kind="ok">{result.text}</Notice>
           <Link to="/login" className="btn-primary w-full">
-            Iniciar sesión ✈️
+            {t('auth.verify.toLogin')}
           </Link>
         </div>
       ) : (
         <form onSubmit={onSubmit} className="space-y-4">
-          {!token && <Notice kind="error">Falta el código del enlace. Ábrelo de nuevo desde el correo.</Notice>}
+          {!token && <Notice kind="error">{t('auth.verify.missingToken')}</Notice>}
           <div>
             <label className="label" htmlFor="reset-password">
-              Contraseña nueva
+              {t('auth.fields.newPassword')}
             </label>
             <input
               id="reset-password"
@@ -173,7 +177,7 @@ export function ResetPassword() {
           </div>
           <div>
             <label className="label" htmlFor="reset-confirm">
-              Repítela
+              {t('auth.fields.repeatPassword')}
             </label>
             <input
               id="reset-confirm"
@@ -188,11 +192,11 @@ export function ResetPassword() {
           </div>
           {result && <Notice kind="error">{result.text}</Notice>}
           <button className="btn-primary w-full" disabled={busy || !token}>
-            {busy ? 'Guardando…' : 'Guardar contraseña'}
+            {busy ? t('common.actions.saving') : t('auth.reset.submit')}
           </button>
           <p className="text-center text-sm">
             <Link to="/forgot-password" className="font-bold underline">
-              Pedir otro enlace
+              {t('auth.reset.requestAnother')}
             </Link>
           </p>
         </form>

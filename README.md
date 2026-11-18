@@ -147,6 +147,13 @@ Si restringes la clave por dominio (recomendado: `http://localhost:5173/*` y tu 
 el script no podrá usarla porque corre fuera del navegador. En ese caso pásale otra clave sin esa
 restricción: `GOOGLE_MAPS_API_KEY=otra_clave npm run streetview:check -- --fix`.
 
+### Idiomas
+
+La interfaz está en **español latino neutro** y lista para sumar idiomas: los textos viven en
+`client/src/i18n/locales/es/` (interfaz), `shared/src/locales/es.ts` (reglas y etiquetas) y
+`server/src/mail/templates.ts` (correos). Los pasos para agregar un idioma están en
+`docs/ARCHITECTURE.md` (sección 4.3).
+
 ### Scripts útiles
 
 ```bash
@@ -154,6 +161,7 @@ npm test                  # tests del motor (Vitest)
 npm run typecheck         # TypeScript en los 3 paquetes
 npm run build             # build de producción del cliente
 npm run streetview:check  # valida las coordenadas de Street View (requiere API key)
+npm run rules:pdf         # regenera el PDF de reglas (-- --lang=xx para otro idioma)
 ```
 
 ## API (`/api`)

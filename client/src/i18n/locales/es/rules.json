@@ -1,0 +1,32 @@
+{
+  "page": {
+    "title": "📖 Cómo jugar",
+    "back": "← Volver al panel"
+  },
+  "boardAlt": "Tablero de la vuelta al mundo",
+  "oneSpace": "1 casilla = {{miles}}",
+  "allSpaces": "🌍 {{count}} casillas = {{miles}}",
+  "printedBoard": "Tablero impreso",
+  "printedBoardSub": "dado físico + app",
+  "digitalBoard": "Tablero digital",
+  "digitalBoardSub": "todo en pantalla",
+  "rounds": "🔁 {{count}} rondas",
+  "flow": {
+    "roll": "Tiras el dado",
+    "card": "Sale la carta",
+    "timer": "{{seconds}} s para responder",
+    "miles": "¡Millas y avanzas!"
+  },
+  "dieTitle": "Qué carta sale con cada número",
+  "cardColumn": "Carta",
+  "locationTitle": "{{icon}} {{label}}: ¿a qué distancia marcaste?",
+  "upTo": "hasta",
+  "fromTo": "{{from}} a",
+  "withBonus": "Con el bonus del nivel de la carta: {{hint}}.",
+  "transportsTitle": "Casillas de transporte",
+  "stepsAria": "Pasos de las reglas",
+  "stepOf": "Paso {{step}} de {{total}}",
+  "previous": "← Anterior",
+  "next": "Siguiente →",
+  "play": "¡A jugar! ✈️"
+}

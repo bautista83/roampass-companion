@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "name": "RoamPass",
+    "subtitle": "Viaja, adivina y explora"
+  },
+  "actions": {
+    "back": "← Volver",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "delete": "Eliminar",
+    "deleting": "Eliminando…",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "continue": "Continuar",
+    "next": "Siguiente",
+    "previous": "Anterior"
+  },
+  "unexpectedError": "Error inesperado",
+  "you": "(tú)",
+  "and": "y",
+  "milesSuffix": " mi",
+  "seconds": "{{count}} s",
+  "rounds_one": "{{count}} ronda",
+  "rounds_other": "{{count}} rondas"
+}

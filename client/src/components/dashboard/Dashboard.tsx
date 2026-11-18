@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { GameState } from '@roampass/shared';
-import { formatNumber } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 import { api, type PlayerStatsSummary } from '../../api';
 import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
@@ -10,7 +11,7 @@ import { UserManagement } from './UserManagement';
 import { PassportCard } from './PassportCard';
 import { RecentGames } from './RecentGames';
 import { GuidedTour } from '../tour/GuidedTour';
-import { DASHBOARD_TOUR, markTourSeen, tourSeen } from '../tour/dashboardTour';
+import { dashboardTour, markTourSeen, tourSeen } from '../tour/dashboardTour';
 
 export function Dashboard() {
   const user = useAuthStore((s) => s.user);
@@ -18,6 +19,8 @@ export function Dashboard() {
   const resumeGame = useGameStore((s) => s.resumeGame);
   const clearGame = useGameStore((s) => s.clear);
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { num } = useLabels();
   const [stats, setStats] = useState<PlayerStatsSummary | null>(null);
   const [remoteGame, setRemoteGame] = useState<GameState | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
@@ -55,9 +58,9 @@ export function Dashboard() {
   }
 
   const metrics = [
-    { label: 'Partidas jugadas', value: stats?.gamesPlayed, icon: '🗺️' },
-    { label: 'Victorias', value: stats?.gamesWon, icon: '🏆' },
-    { label: 'Récord personal', value: stats?.bestScore, icon: '⭐', suffix: ' mi' },
+    { label: t('dashboard.metrics.played'), value: stats?.gamesPlayed, icon: '🗺️' },
+    { label: t('dashboard.metrics.won'), value: stats?.gamesWon, icon: '🏆' },
+    { label: t('dashboard.metrics.best'), value: stats?.bestScore, icon: '⭐', suffix: t('common.milesSuffix') },
   ];
 
   return (
@@ -73,20 +76,20 @@ export function Dashboard() {
         <div className="flex flex-col gap-3 md:gap-4">
           <div className="flex flex-col gap-3 sm:flex-row md:flex-col lg:flex-row">
             <button className="btn-primary flex-1 text-lg" data-tour="new-game" onClick={() => navigate('/setup')}>
-              ✈️ Crear Nueva Partida
+              {t('dashboard.newGame')}
             </button>
             {inProgress && (
               <button className="btn-ghost flex-1" data-tour="continue" onClick={continueGame}>
-                ▶ Continuar (ronda {inProgress.round})
+                {t('dashboard.continue', { round: inProgress.round })}
               </button>
             )}
           </div>
           <div className="flex gap-3">
             <button className="btn-ghost flex-1" data-tour="rules" onClick={() => navigate('/rules')}>
-              📖 Cómo jugar
+              {t('dashboard.howToPlay')}
             </button>
-            <button className="btn-ghost shrink-0 px-4" data-tour="tour" onClick={() => setTourOpen(true)} title="Recorrido por el panel">
-              🧭 <span className="hidden sm:inline">Recorrido</span>
+            <button className="btn-ghost shrink-0 px-4" data-tour="tour" onClick={() => setTourOpen(true)} title={t('dashboard.tourTitle')}>
+              🧭 <span className="hidden sm:inline">{t('dashboard.tour')}</span>
             </button>
           </div>
           <div className="flex flex-col gap-3 md:gap-4" data-tour="stats">
@@ -102,7 +105,7 @@ export function Dashboard() {
                 <div>
                   <p className="label">{m.label}</p>
                   <p className="text-2xl font-extrabold tabular-nums md:text-3xl">
-                    {m.value === undefined ? '—' : formatNumber(m.value)}
+                    {m.value === undefined ? '—' : num(m.value)}
                     {m.value !== undefined && m.suffix}
                   </p>
                 </div>
@@ -131,7 +134,7 @@ export function Dashboard() {
         </div>
       )}
 
-      {tourOpen && <GuidedTour steps={DASHBOARD_TOUR} onClose={closeTour} />}
+      {tourOpen && <GuidedTour steps={dashboardTour(t)} onClose={closeTour} />}
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import type { ScoreResult } from '@roampass/shared';
-import { formatNumber } from '@roampass/shared';
+import { Trans, useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 import { useGameStore } from '../../store/gameStore';
 
 /** Sello de aduana con el resultado de la carta + boton para pasar el turno. */
@@ -9,15 +10,17 @@ export function CardResult({ result, playerName, children }: { result: ScoreResu
   const dismiss = useGameStore((s) => s.dismissCard);
   const finished = useGameStore((s) => s.game?.status === 'FINISHED');
   const positive = result.delta > 0;
+  const { t } = useTranslation();
+  const { miles } = useLabels();
   const label = result.timedOut
-    ? '¡Tiempo!'
+    ? t('game.result.timeout')
     : result.correct === null
       ? positive
-        ? 'Bonus'
-        : 'Penalización'
+        ? t('game.result.bonus')
+        : t('game.result.penalty')
       : result.correct
-        ? 'Aprobado'
-        : 'Denegado';
+        ? t('game.result.approved')
+        : t('game.result.denied');
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-4 text-center">
@@ -30,15 +33,15 @@ export function CardResult({ result, playerName, children }: { result: ScoreResu
         {label}
         <span className="block text-center text-3xl md:text-4xl">
           {result.delta > 0 ? '+' : ''}
-          {formatNumber(result.delta)} mi
+          {miles(result.delta)}
         </span>
       </motion.div>
       <p className="text-sm text-passport-500 dark:text-passport-300">
-        para <strong className="text-passport-900 dark:text-white">{playerName}</strong>
+        <Trans i18nKey="game.result.for" values={{ name: playerName }} components={{ b: <strong className="text-passport-900 dark:text-white" /> }} />
       </p>
       {children}
       <button className="btn-primary w-full text-lg sm:w-auto" onClick={dismiss} autoFocus>
-        {finished ? '🏆 Ver resultados' : 'Siguiente turno →'}
+        {finished ? t('game.result.seeResults') : t('game.result.nextTurn')}
       </button>
     </motion.div>
   );

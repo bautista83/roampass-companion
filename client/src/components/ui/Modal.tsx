@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface ModalProps {
   open: boolean;
@@ -17,6 +18,7 @@ interface ModalProps {
  * Movil: ocupa el 95% de la pantalla. Tablet/escritorio: tarjeta centrada.
  */
 export function Modal({ open, onClose, title, children, size = 'md', flip = false }: ModalProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     if (!open || !onClose) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -60,7 +62,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
               <div className="rp-modal-head flex items-center justify-between gap-3 border-b-3 border-ink bg-white px-4 py-3 md:px-6 dark:border-black dark:bg-[#2a2f2a]">
                 <div className="min-w-0 flex-1 font-bold">{title}</div>
                 {onClose && (
-                  <button className="btn-ghost size-12 shrink-0 px-0" onClick={onClose} aria-label="Cerrar">
+                  <button className="btn-ghost size-12 shrink-0 px-0" onClick={onClose} aria-label={t('game.modalClose')}>
                     ✕
                   </button>
                 )}

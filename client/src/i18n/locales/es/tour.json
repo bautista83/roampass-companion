@@ -1,0 +1,46 @@
+{
+  "aria": "Recorrido por el panel",
+  "stepOf": "{{step}} de {{total}}",
+  "skip": "Saltar",
+  "previousAria": "Paso anterior",
+  "done": "¡Listo!",
+  "next": "Siguiente →",
+  "steps": {
+    "passport": {
+      "title": "🛂 Tu pasaporte",
+      "text": "Es tu tarjeta de viajero: tu usuario, tu foto, tu rol y si tu cuenta está vigente."
+    },
+    "new-game": {
+      "title": "✈️ Crear Nueva Partida",
+      "text": "Desde aquí arranca todo: eliges el tablero, la meta, el tiempo por carta y los jugadores."
+    },
+    "continue": {
+      "title": "▶ Continuar",
+      "text": "Si dejaste una partida a medias, la retomas justo donde quedó."
+    },
+    "rules": {
+      "title": "📖 Cómo jugar",
+      "text": "Las reglas paso a paso. Durante la partida también las tienes en el botón ❓."
+    },
+    "stats": {
+      "title": "🏆 Tus números",
+      "text": "Partidas jugadas, victorias y tu récord de millas. Se actualizan solos al terminar cada partida."
+    },
+    "recent": {
+      "title": "🗺️ Últimas partidas",
+      "text": "Las partidas recientes de todos los viajeros, con quién ganó cada una."
+    },
+    "admin": {
+      "title": "🛠️ Administración de usuarios",
+      "text": "Solo para administradores: activa o desactiva cuentas, confirma correos y cambia roles o contraseñas."
+    },
+    "profile": {
+      "title": "👤 Mi perfil",
+      "text": "Sube tu foto, cambia tu correo, tu contraseña y el estilo del juego: Cómic o Modo 80s."
+    },
+    "tour": {
+      "title": "🧭 ¿Lo quieres ver de nuevo?",
+      "text": "Este botón repite el recorrido cuando quieras. ¡Buen viaje!"
+    }
+  }
+}

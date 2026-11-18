@@ -2,11 +2,12 @@ import express, { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import type { User } from '@prisma/client';
+import { SUPPORTED_LOCALES } from '@roampass/shared';
 import { prisma } from '../db';
 import { env } from '../env';
 import { HttpError } from '../http';
 import { sendLinkMail } from '../mail/mailer';
-import { mailTexts } from '../mail/templates';
+import { mailContent } from '../mail/templates';
 import { MAX_PHOTO_UPLOAD, deletePhoto, savePhoto } from '../photos';
 import { verifyCaptcha } from './captcha';
 import { consumeEmailToken, createEmailToken, purgeUnverifiedAccounts } from './emailTokens';
@@ -20,6 +21,7 @@ const usernameSchema = z
   .max(24)
   .regex(/^[a-zA-Z0-9_.-]+$/, 'Solo letras, números, punto, guion y guion bajo');
 const passwordSchema = z.string().min(6).max(128);
+const localeSchema = z.enum(SUPPORTED_LOCALES);
 /** Correo en minusculas (CO-01). */
 export const emailSchema = z.string().trim().toLowerCase().pipe(z.email('Correo no válido').max(254));
 
@@ -30,6 +32,8 @@ const registerSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   captchaToken: z.string().max(4096).optional(),
+  /** Idioma de la app al registrarse (para los correos). */
+  locale: localeSchema.optional(),
 });
 
 /** Usuario o correo. Los usuarios no pueden tener "@", asi que no hay ambiguedad. */
@@ -56,9 +60,11 @@ async function trySend(send: () => Promise<void>) {
   }
 }
 
-async function sendVerification(user: Pick<User, 'id' | 'username'>, email: string) {
+async function sendVerification(user: Pick<User, 'id' | 'username' | 'locale'>, email: string) {
   const token = await createEmailToken(user.id, 'VERIFY_EMAIL', email);
-  return trySend(() => sendLinkMail(email, mailTexts.verifyEmail(user.username), link('/verify-email', token)));
+  return trySend(() =>
+    sendLinkMail(email, mailContent('verifyEmail', user.username, user.locale), link('/verify-email', token)),
+  );
 }
 
 /** Respuesta para pedidos que no deben revelar si la cuenta existe (CO-04). */
@@ -73,7 +79,7 @@ export const authRouter = Router();
  * llega por correo (ya no hace falta que un ADMIN la apruebe).
  */
 authRouter.post('/register', registerLimiter, async (req, res) => {
-  const { username, email, password, captchaToken } = registerSchema.parse(req.body);
+  const { username, email, password, captchaToken, locale } = registerSchema.parse(req.body);
   await verifyCaptcha(captchaToken, clientIp(req));
   await purgeUnverifiedAccounts(); // libera usuarios y correos de registros viejos sin confirmar
   if (await prisma.user.findUnique({ where: { username } })) {
@@ -83,7 +89,14 @@ authRouter.post('/register', registerLimiter, async (req, res) => {
     throw new HttpError(409, 'Ese correo ya está registrado', 'EMAIL_TAKEN');
   }
   const user = await prisma.user.create({
-    data: { username, email, passwordHash: await bcrypt.hash(password, 10), role: 'PLAYER', isActive: true },
+    data: {
+      username,
+      email,
+      passwordHash: await bcrypt.hash(password, 10),
+      role: 'PLAYER',
+      isActive: true,
+      ...(locale && { locale }),
+    },
   });
   const sent = await sendVerification(user, email);
   res.status(201).json({
@@ -147,7 +160,9 @@ authRouter.post('/forgot-password', emailLimiter, async (req, res) => {
   if (user?.email && user.isActive) {
     const email = user.email;
     const token = await createEmailToken(user.id, 'RESET_PASSWORD', email);
-    await trySend(() => sendLinkMail(email, mailTexts.resetPassword(user.username), link('/reset-password', token)));
+    await trySend(() =>
+      sendLinkMail(email, mailContent('resetPassword', user.username, user.locale), link('/reset-password', token)),
+    );
   }
   res.json(GENERIC_MAIL_RESPONSE);
 });
@@ -175,6 +190,7 @@ authRouter.get('/me', requireAuth, (req, res) => {
 const profileSchema = z
   .object({
     theme: z.enum(['COMIC', 'RETRO']).optional(),
+    locale: localeSchema.optional(),
     currentPassword: z.string().max(128).optional(),
     newPassword: passwordSchema.optional(),
     email: emailSchema.optional(),
@@ -185,7 +201,7 @@ const profileSchema = z
   });
 
 authRouter.patch('/me', requireAuth, async (req, res) => {
-  const { theme, currentPassword, newPassword, email } = profileSchema.parse(req.body);
+  const { theme, locale, currentPassword, newPassword, email } = profileSchema.parse(req.body);
   const found = await prisma.user.findUniqueOrThrow({ where: { id: req.user!.id } });
   const changingEmail = email !== undefined && email !== found.email;
   if ((newPassword || changingEmail) && !(await bcrypt.compare(currentPassword!, found.passwordHash))) {
@@ -199,6 +215,7 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
     where: { id: found.id },
     data: {
       ...(theme && { theme }),
+      ...(locale && { locale }),
       ...(newPassword && { passwordHash: await bcrypt.hash(newPassword, 10) }),
       // El correo nuevo queda pendiente hasta abrir el enlace; mientras, vale el anterior.
       ...(changingEmail && { pendingEmail: email }),
@@ -207,7 +224,9 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
   });
   if (changingEmail) {
     const token = await createEmailToken(found.id, 'CHANGE_EMAIL', email);
-    await trySend(() => sendLinkMail(email, mailTexts.changeEmail(found.username), link('/verify-email', token)));
+    await trySend(() =>
+      sendLinkMail(email, mailContent('changeEmail', found.username, locale ?? found.locale), link('/verify-email', token)),
+    );
   }
   res.json({ user });
 });

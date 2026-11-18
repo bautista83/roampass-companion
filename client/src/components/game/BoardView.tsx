@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { BOARD, BOARD_SPACES, MILES_PER_SPACE, formatNumber, type GamePlayer } from '@roampass/shared';
+import { BOARD, BOARD_SPACES, MILES_PER_SPACE, type GamePlayer } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 import { useThemeStore } from '../../store/themeStore';
 import { AvatarIcon, PawnToken } from '../ui/PawnToken';
 
@@ -52,6 +54,7 @@ function Pawn(props: {
   onArrive: (id: string, steps: number) => void;
 }) {
   const { player, steps, offset, isTurn, frozen, onStart, onPass, onArrive } = props;
+  const { miles } = useLabels();
   /** Millas recorridas en este movimiento (globito sobre la ficha); null cuando esta quieta. */
   const [traveled, setTraveled] = useState<number | null>(null);
   const [x0, y0] = spaceXY(steps);
@@ -121,7 +124,7 @@ function Pawn(props: {
               >
                 <motion.span key={traveled} className="inline-block" initial={{ scale: 1.35 }} animate={{ scale: 1 }}>
                   {traveled >= 0 ? '✈️ +' : '↩️ −'}
-                  {formatNumber(Math.abs(traveled))} mi
+                  {miles(Math.abs(traveled))}
                 </motion.span>
               </motion.span>
             )}
@@ -256,6 +259,7 @@ export function BoardView(props: {
   const [zoom, setZoom] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
   const scroller = useRef<HTMLDivElement>(null);
   const retro = useThemeStore((s) => s.retro);
+  const { t } = useTranslation();
   const [spot, setSpot] = useState<{ player: GamePlayer; steps: number; key: number } | null>(null);
   // La ficha cuenta como "en movimiento" hasta que termina de mostrarse el lugar al que llego.
   const [passing, setPassing] = useState<{ steps: number; key: number }[]>([]);
@@ -324,7 +328,7 @@ export function BoardView(props: {
         <div className="@container relative aspect-[16/10]" style={{ width: zoom ? '230%' : '100%' }}>
           <img
             src={retro ? '/board/board-retro.png' : '/board/board.svg'}
-            alt="Tablero de la vuelta al mundo"
+            alt={t('game.board.alt')}
             className="rp-pixel absolute inset-0 size-full select-none"
             draggable={false}
           />
@@ -355,7 +359,7 @@ export function BoardView(props: {
         onClick={() => setZoom((z) => !z)}
         aria-pressed={zoom}
       >
-        {zoom ? '🗺️ Ver todo' : '🔍 Acercar'}
+        {zoom ? t('game.board.showAll') : t('game.board.zoomIn')}
       </button>
     </div>
   );

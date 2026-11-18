@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { api, type User } from '../../api';
 import { useAuthStore } from '../../store/authStore';
 
-const message = (e: unknown) => (e instanceof Error ? e.message : 'Error inesperado');
 
 /**
  * Correo de la cuenta: agregarlo (cuentas viejas no lo tienen) o cambiarlo. Pide la contraseña
@@ -14,6 +14,8 @@ export function EmailSection({ user }: { user: User }) {
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const { t } = useTranslation();
+  const message = (e: unknown) => (e instanceof Error ? e.message : t('common.unexpectedError'));
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -25,10 +27,7 @@ export function EmailSection({ user }: { user: User }) {
       setPassword('');
       setStatus({
         ok: true,
-        text:
-          api.mode === 'local'
-            ? 'Correo guardado ✓'
-            : `Te enviamos un enlace a ${email.trim().toLowerCase()}. Ábrelo para confirmar el cambio.`,
+        text: api.mode === 'local' ? t('profile.email.savedDemo') : t('profile.email.sent', { email: email.trim().toLowerCase() }),
       });
     } catch (err) {
       setStatus({ ok: false, text: message(err) });
@@ -44,27 +43,25 @@ export function EmailSection({ user }: { user: User }) {
     <form className="panel space-y-4 p-4 md:p-6" onSubmit={onSubmit} aria-labelledby="correo">
       <div>
         <h2 id="correo" className="text-xl">
-          Correo
+          {t('profile.email.title')}
         </h2>
         <p className="text-sm text-passport-500 dark:text-passport-300">
           {user.email ? (
-            <>
-              Tu correo es <strong>{user.email}</strong>.
-            </>
+            <Trans i18nKey="profile.email.current" values={{ email: user.email }} components={{ b: <strong /> }} />
           ) : (
-            'Todavía no tienes un correo. Agrégalo para poder recuperar tu contraseña.'
+            t('profile.email.none')
           )}
         </p>
         {user.pendingEmail && (
           <p className="mt-1 text-sm font-bold text-brass">
-            ⏳ Pendiente de confirmar: {user.pendingEmail}. Abre el enlace que te enviamos.
+            {t('profile.email.pending', { email: user.pendingEmail })}
           </p>
         )}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="new-email">
-            {user.email ? 'Correo nuevo' : 'Correo'}
+            {user.email ? t('profile.email.newLabel') : t('profile.email.label')}
           </label>
           <input
             id="new-email"
@@ -79,7 +76,7 @@ export function EmailSection({ user }: { user: User }) {
         </div>
         <div>
           <label className="label" htmlFor="email-password">
-            Contraseña actual
+            {t('profile.email.password')}
           </label>
           <input
             id="email-password"
@@ -98,7 +95,7 @@ export function EmailSection({ user }: { user: User }) {
         </p>
       )}
       <button className="btn-primary w-full sm:w-auto" disabled={busy}>
-        {busy ? 'Guardando…' : user.email ? 'Cambiar correo' : 'Agregar correo'}
+        {busy ? t('common.actions.saving') : user.email ? t('profile.email.change') : t('profile.email.add')}
       </button>
     </form>
   );

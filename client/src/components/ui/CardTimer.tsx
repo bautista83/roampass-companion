@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const RADIUS = 18;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
@@ -11,6 +12,7 @@ const URGENT_SECONDS = 3;
  */
 export function CardTimer(props: { remainingMs: number; totalSeconds: number; stopped: boolean; timedOut: boolean }) {
   const { remainingMs, totalSeconds, stopped, timedOut } = props;
+  const { t } = useTranslation();
   const seconds = Math.ceil(remainingMs / 1000);
   const fraction = Math.min(1, remainingMs / (totalSeconds * 1000));
   const urgent = !stopped && seconds <= URGENT_SECONDS;
@@ -20,7 +22,7 @@ export function CardTimer(props: { remainingMs: number; totalSeconds: number; st
     <motion.div
       role="timer"
       aria-live={urgent ? 'assertive' : 'off'}
-      aria-label={timedOut ? 'Tiempo agotado' : stopped ? 'Respondida a tiempo' : `Quedan ${seconds} segundos`}
+      aria-label={timedOut ? t('game.timer.timedOut') : stopped ? t('game.timer.answered') : t('game.timer.left', { count: seconds })}
       className="relative grid size-12 shrink-0 place-items-center"
       animate={urgent ? { scale: [1, 1.12, 1] } : { scale: 1 }}
       transition={urgent ? { duration: 0.6, repeat: Infinity } : { duration: 0.2 }}

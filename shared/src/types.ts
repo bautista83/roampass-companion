@@ -1,3 +1,5 @@
+import type { Locale } from './i18n';
+
 // Tipos de dominio compartidos entre cliente y servidor.
 
 export type Role = 'ADMIN' | 'PLAYER';
@@ -57,9 +59,27 @@ export interface ImageCredit {
   source: string;
 }
 
+/**
+ * Textos de una carta en otro idioma. El texto base (prompt, options...) esta en el idioma por
+ * defecto; lo que falte en la traduccion se muestra en ese idioma. Las opciones traducidas van en
+ * el mismo orden que las originales (la respuesta correcta se busca por posicion).
+ */
+export interface CardTranslation {
+  prompt?: string;
+  options?: string[];
+  funFact?: string;
+  /** LOCATION: nombre del lugar. */
+  answerLabel?: string;
+  /** TRAVEL_EVENT */
+  title?: string;
+  description?: string;
+}
+
 interface BaseCard {
   id: string;
   category: CardCategory;
+  /** Traducciones opcionales (ver localizeCard). */
+  translations?: Partial<Record<Locale, CardTranslation>>;
 }
 
 export interface LocationCard extends BaseCard {
@@ -107,6 +127,8 @@ export interface Country {
   name: string;
   /** null si tiene varias capitales oficiales o la pregunta seria trivial. */
   capital: string | null;
+  /** Capital en otros idiomas (si falta, se usa `capital`). */
+  capitalTranslations?: Partial<Record<Locale, string>>;
   region: string;
   /** Posicion en el ranking de popularidad (0 = mas conocido). Define el nivel. */
   fame: number;

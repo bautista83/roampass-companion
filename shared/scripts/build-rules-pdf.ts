@@ -2,7 +2,8 @@
 // Los textos y numeros salen de shared/src/rules.ts (las constantes del motor): si cambia un puntaje,
 // se vuelve a correr este script y el PDF queda al dia.
 //
-//   npm run rules:pdf
+//   npm run rules:pdf                 (español, el idioma por defecto)
+//   npm run rules:pdf -- --lang=en    (otro idioma: reglas-roampass-A4.en.pdf)
 //
 // Arma un HTML y lo imprime con Chrome o Edge en modo headless (no agrega dependencias).
 // Si el navegador no se encuentra solo, indicar la ruta en CHROME_PATH.
@@ -16,29 +17,68 @@ import {
   AVATARS,
   BOARD_SPACES,
   MILES_PER_SPACE,
+  DEFAULT_LOCALE,
   PAWN_COLORS,
   PAWN_COLOR_META,
-  RULES_DIE,
-  RULES_DIFFICULTIES,
-  RULES_LOCATION_BRACKETS,
-  RULES_PHYSICAL_BOARD,
-  RULES_QUIZ_POINTS,
-  RULES_SECTIONS,
-  RULES_TRANSPORTS,
   WORLD_TOUR_MILES,
+  buildRules,
+  formatMiles,
   formatNumber,
+  localizeCard,
+  resolveLocale,
+  type Locale,
   type RulesSectionId,
   type SeedData,
 } from '../src/index';
 import { CATEGORY_HEX } from '../../client/src/components/game/categoryStyle';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const OUTPUT = join(root, 'art/worldmap/print/reglas-roampass-A4.pdf');
+const locale: Locale = resolveLocale(process.argv.find((a) => a.startsWith('--lang='))?.slice(7));
+const OUTPUT = join(root, `art/worldmap/print/reglas-roampass-A4${locale === DEFAULT_LOCALE ? '' : `.${locale}`}.pdf`);
+
+/** Textos propios del PDF (el resto sale de las reglas compartidas, shared/src/locales). */
+interface PdfTexts {
+  title: string;
+  subtitle: string;
+  worldTour: string;
+  spaces: string;
+  oneSpace: string;
+  fullTour: string;
+  physicalBoard: string;
+  card: string;
+  locationTitle: string;
+  upTo: string;
+  fromTo: (from: string) => string;
+  bonusNote: string;
+  page: (n: number, total: number) => string;
+  footerNote: string;
+}
+const PDF_TEXTS: Record<Locale, PdfTexts> = {
+  es: {
+    title: 'Reglas del juego',
+    subtitle: 'Viaja, adivina y explora',
+    worldTour: 'La vuelta al mundo',
+    spaces: 'casillas',
+    oneSpace: '1 casilla',
+    fullTour: 'vuelta completa',
+    physicalBoard: 'Con el tablero impreso',
+    card: 'Carta',
+    locationTitle: 'Lugar: ¿a qué distancia marcaste?',
+    upTo: 'hasta',
+    fromTo: (from) => `${from} a`,
+    bonusNote: 'Más el bonus del nivel de la carta.',
+    page: (n, total) => `Página ${n} de ${total}`,
+    footerNote: 'Los puntajes de este reglamento salen del código del juego (npm run rules:pdf).',
+  },
+};
+const T = PDF_TEXTS[locale];
+const rules = buildRules(locale);
 const asset = (path: string) => pathToFileURL(join(root, 'client/public', path)).href;
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const mi = (n: number) => `${formatNumber(n)} mi`;
-const section = (id: RulesSectionId) => RULES_SECTIONS.find((s) => s.id === id)!;
+const mi = (n: number) => formatMiles(n, locale);
+const num = (n: number) => formatNumber(n, locale);
+const section = (id: RulesSectionId) => rules.sections.find((s) => s.id === id)!;
 
 // ── Piezas dibujadas igual que en la app ─────────────────────────────────────
 
@@ -53,7 +93,7 @@ const PIPS: Record<number, [number, number][]> = {
 };
 
 function dieFace(face: number, size = 34) {
-  const category = RULES_DIE[face - 1]!.category;
+  const category = rules.die[face - 1]!.category;
   const pips = PIPS[face]!.map(([cx, cy]) => `<circle cx="${cx}" cy="${cy}" r="${face === 1 ? 11 : 9}" fill="#111"/>`).join('');
   return `<svg viewBox="0 0 108 108" width="${size}" height="${size}"><rect x="10" y="10" width="94" height="94" rx="22" fill="#111"/><rect x="3" y="3" width="94" height="94" rx="22" fill="${CATEGORY_HEX[category]}" stroke="#111" stroke-width="5"/>${pips}</svg>`;
 }
@@ -70,7 +110,7 @@ const bullets = (items: string[], numbered = false) =>
 
 function block(id: RulesSectionId, numbered = false, extra = '') {
   const s = section(id);
-  const n = RULES_SECTIONS.indexOf(s) + 1;
+  const n = rules.sections.indexOf(s) + 1;
   return `<section class="block">
     <h2><span class="num">${n}</span>${s.icon} ${esc(s.title)}</h2>
     <p class="summary">${esc(s.summary)}</p>
@@ -82,7 +122,7 @@ function block(id: RulesSectionId, numbered = false, extra = '') {
 /** Bloque con un dibujo al costado del texto (ahorra alto). */
 function blockWithSide(id: RulesSectionId, side: string) {
   const s = section(id);
-  const n = RULES_SECTIONS.indexOf(s) + 1;
+  const n = rules.sections.indexOf(s) + 1;
   return `<section class="block side">
     <div>
       <h2><span class="num">${n}</span>${s.icon} ${esc(s.title)}</h2>
@@ -95,7 +135,9 @@ function blockWithSide(id: RulesSectionId, side: string) {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const events = (readJson('shared/data/seedData.json') as SeedData).cards.flatMap((c) => (c.category === 'TRAVEL_EVENT' ? [c] : []));
+const events = (readJson('shared/data/seedData.json') as SeedData).cards.flatMap((c) =>
+  c.category === 'TRAVEL_EVENT' ? [localizeCard(c, locale)] : [],
+);
 const eventExamples = [
   ...events.filter((e) => e.points > 0).slice(0, 1),
   ...events.filter((e) => e.points < 0).slice(0, 1),
@@ -105,33 +147,33 @@ function readJson(rel: string): unknown {
   return JSON.parse(readFileSync(join(root, rel), 'utf8'));
 }
 
-const dieTable = `<div class="die-grid">${RULES_DIE.map(
+const dieTable = `<div class="die-grid">${rules.die.map(
   (d) => `<div class="die-cell" style="background:${CATEGORY_HEX[d.category]}">${dieFace(d.face, 30)}<span>${d.icon} ${esc(d.label)}</span></div>`,
 ).join('')}</div>`;
 
 const physicalBox = `<div class="box physical">
-  <h3>🗺️ Con el tablero impreso</h3>
-  <div class="two-cols">${bullets(RULES_PHYSICAL_BOARD)}</div>
+  <h3>🗺️ ${esc(T.physicalBoard)}</h3>
+  <div class="two-cols">${bullets(rules.physicalBoard)}</div>
 </div>`;
 
 const quizTable = `<table class="miles">
-  <thead><tr><th>Carta</th>${RULES_DIFFICULTIES.map((d) => `<th><span class="pill diff-${d.difficulty}">${esc(d.label)}</span></th>`).join('')}</tr></thead>
-  <tbody>${RULES_QUIZ_POINTS.map(
+  <thead><tr><th>${esc(T.card)}</th>${rules.difficulties.map((d) => `<th><span class="pill diff-${d.difficulty}">${esc(d.label)}</span></th>`).join('')}</tr></thead>
+  <tbody>${rules.quizPoints.map(
     (q) =>
-      `<tr><td class="cat" style="background:${CATEGORY_HEX[q.category]}">${q.icon} ${esc(q.label)}</td>${RULES_DIFFICULTIES.map(
-        (d) => `<td>+${formatNumber(q.byDifficulty[d.difficulty])}</td>`,
+      `<tr><td class="cat" style="background:${CATEGORY_HEX[q.category]}">${q.icon} ${esc(q.label)}</td>${rules.difficulties.map(
+        (d) => `<td>+${num(q.byDifficulty[d.difficulty])}</td>`,
       ).join('')}</tr>`,
   ).join('')}</tbody>
 </table>`;
 
-const maxBracket = RULES_LOCATION_BRACKETS[0]!.points;
+const maxBracket = rules.locationBrackets[0]!.points;
 const locationBox = `<div class="box location" style="background:${CATEGORY_HEX.LOCATION}">
-  <h3>📍 Lugar: ¿a qué distancia marcaste?</h3>
-  ${RULES_LOCATION_BRACKETS.map(
+  <h3>📍 ${esc(T.locationTitle)}</h3>
+  ${rules.locationBrackets.map(
     (b, i) =>
-      `<div class="bracket"><span class="km">${i === 0 ? 'hasta' : `${formatNumber(b.fromKm)} a`} ${formatNumber(b.maxKm)} km</span><span class="bar" style="width:${(b.points / maxBracket) * 46}%"></span><b>+${formatNumber(b.points)}</b></div>`,
+      `<div class="bracket"><span class="km">${i === 0 ? esc(T.upTo) : esc(T.fromTo(num(b.fromKm)))} ${num(b.maxKm)} km</span><span class="bar" style="width:${(b.points / maxBracket) * 46}%"></span><b>+${num(b.points)}</b></div>`,
   ).join('')}
-  <p class="small">Más el bonus del nivel de la carta.</p>
+  <p class="small">${esc(T.bonusNote)}</p>
 </div>`;
 
 const eventsBox = `<div class="events">${eventExamples
@@ -141,7 +183,7 @@ const eventsBox = `<div class="events">${eventExamples
   )
   .join('')}</div>`;
 
-const transports = `<div class="transports">${RULES_TRANSPORTS.map(
+const transports = `<div class="transports">${rules.transports.map(
   (t) => `<div class="transport"><img src="${asset(`board/spaces/${t.id}.svg`)}" alt=""/><span>${esc(t.name)}</span></div>`,
 ).join('')}</div>`;
 
@@ -150,8 +192,8 @@ const pawns = PAWN_COLORS.slice(0, 4)
   .join('');
 
 const html = `<!doctype html>
-<html lang="es"><head><meta charset="utf-8"/>
-<title>RoamPass · Reglas del juego</title>
+<html lang="${locale}"><head><meta charset="utf-8"/>
+<title>RoamPass · ${esc(T.title)}</title>
 <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
   @page { size: A4; margin: 0; }
@@ -227,20 +269,20 @@ const html = `<!doctype html>
   <div class="page">
     <header>
       <img src="${asset('logo.svg')}" alt=""/>
-      <div><h1>RoamPass</h1><p>Reglas del juego · Viaja, adivina y explora</p></div>
-      <div class="meta">La vuelta al mundo<br/><span class="chip">${BOARD_SPACES} casillas = ${mi(WORLD_TOUR_MILES)}</span></div>
+      <div><h1>RoamPass</h1><p>${esc(T.title)} · ${esc(T.subtitle)}</p></div>
+      <div class="meta">${esc(T.worldTour)}<br/><span class="chip">${BOARD_SPACES} ${esc(T.spaces)} = ${mi(WORLD_TOUR_MILES)}</span></div>
     </header>
     ${block(
       'goal',
       false,
-      `<div class="chips"><span class="chip sun">1 casilla = ${mi(MILES_PER_SPACE)}</span><span class="chip">🌍 ${mi(WORLD_TOUR_MILES)} = vuelta completa</span><span class="pawns">${pawns}</span></div>`,
+      `<div class="chips"><span class="chip sun">${esc(T.oneSpace)} = ${mi(MILES_PER_SPACE)}</span><span class="chip">🌍 ${mi(WORLD_TOUR_MILES)} = ${esc(T.fullTour)}</span><span class="pawns">${pawns}</span></div>`,
     )}
     <div class="grid" style="margin-top:4.5mm">
       <div>${block('setup')}</div>
       <div>${block('turn', true, dieTable)}</div>
     </div>
     ${physicalBox}
-    <footer><span>RoamPass · Reglas del juego</span><span>Página 1 de 2</span></footer>
+    <footer><span>RoamPass · ${esc(T.title)}</span><span>${esc(T.page(1, 2))}</span></footer>
   </div>
 
   <div class="page">
@@ -256,7 +298,7 @@ const html = `<!doctype html>
         .map(([place, color, avatar, h]) => `<div>${pawn(color as (typeof PAWN_COLORS)[number], avatar as string, 22)}<span class="step" style="height:${h}mm">${place}</span></div>`)
         .join('')}</div>`,
     )}
-    <footer><span>Los puntajes de este reglamento salen del código del juego (npm run rules:pdf).</span><span>Página 2 de 2</span></footer>
+    <footer><span>${esc(T.footerNote)}</span><span>${esc(T.page(2, 2))}</span></footer>
   </div>
 </body></html>`;
 
@@ -277,7 +319,7 @@ function findBrowser(): string {
     '/usr/bin/microsoft-edge',
   ];
   const found = candidates.find((p) => p && existsSync(p));
-  if (!found) throw new Error('No se encontró Chrome ni Edge. Indicá la ruta con CHROME_PATH=/ruta/al/navegador');
+  if (!found) throw new Error('No se encontró Chrome ni Edge. Indica la ruta con CHROME_PATH=/ruta/al/navegador');
   return found;
 }
 

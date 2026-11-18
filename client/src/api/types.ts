@@ -1,4 +1,5 @@
-import type { BoardMode, Card, GameState, PawnColor, Role, UiTheme, VictoryMode } from '@roampass/shared';
+import type { BoardMode, Card, GameState, Locale, PawnColor, Role, UiTheme, VictoryMode } from '@roampass/shared';
+import { translateError } from '../i18n';
 
 export interface User {
   id: string;
@@ -7,6 +8,8 @@ export interface User {
   isActive: boolean;
   /** Estilo visual del perfil. Los usuarios anteriores a esta opcion no lo tienen: COMIC. */
   theme?: UiTheme;
+  /** Idioma de la app y de los correos. */
+  locale?: Locale;
   /** Fecha de la foto del pasaporte (cambia con cada foto nueva). null/undefined = sin foto. */
   photoUpdatedAt?: string | null;
   /** Correo (minusculas). null en cuentas anteriores al registro con correo o creadas por el admin. */
@@ -22,6 +25,7 @@ export interface User {
 /** Lo que cada usuario puede cambiar de su propio perfil. */
 export interface ProfileUpdate {
   theme?: UiTheme;
+  locale?: Locale;
   /** Obligatoria para cambiar la contraseña o el correo. */
   currentPassword?: string;
   newPassword?: string;
@@ -35,6 +39,8 @@ export interface RegisterData {
   password: string;
   /** Token de Turnstile (solo si el captcha esta activo). */
   captchaToken?: string;
+  /** Idioma de la app al registrarse (para los correos). */
+  locale?: Locale;
 }
 
 export interface AuthSession {
@@ -134,13 +140,15 @@ export interface RoamPassApi {
   getPhotoUrl(userId: string, version: string): Promise<string | null>;
 }
 
+/** Error de la API. El mensaje ya viene traducido por su codigo (errors.<CODE>) si el diccionario lo tiene. */
 export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status: number,
     /** Codigo estable del servidor (p. ej. EMAIL_NOT_VERIFIED) para reaccionar o traducir. */
     public readonly code?: string,
+    public readonly params?: Record<string, unknown>,
   ) {
-    super(message);
+    super(translateError(code, message, params));
   }
 }

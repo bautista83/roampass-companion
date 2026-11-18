@@ -50,6 +50,8 @@ model User {
   role         Role          @default(PLAYER)
   isActive     Boolean       @default(true)
   theme        UiTheme       @default(COMIC)
+  /// Idioma de la interfaz y de los correos (ver shared/src/i18n.ts).
+  locale       String        @default("es")
   /// Correo en minusculas. null en cuentas anteriores al registro con correo o creadas por el admin.
   email           String?   @unique
   /// null = correo sin confirmar: no puede iniciar sesion (salvo que no tenga correo).
@@ -162,6 +164,8 @@ model CardQuestion {
   answerLabel   String?
   funFact       String?
   credit        Json?
+  /// Traducciones opcionales: { "en": { prompt, options, funFact, ... } } (ver CardTranslation).
+  translations  Json?
   isActive      Boolean      @default(true)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
