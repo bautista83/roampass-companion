@@ -154,8 +154,8 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
             <button
               className="grid size-7 place-items-center rounded-full border-2 border-ink bg-white text-sm font-extrabold text-ink transition hover:scale-110 hover:bg-coral dark:border-black"
               onClick={() => setConfirming(true)}
-              aria-label={t('dashboard.recent.deleteGame')}
-              title={t('dashboard.recent.deleteGame')}
+              aria-label={hideOnly ? t('dashboard.recent.hideGame') : t('dashboard.recent.deleteGame')}
+              title={hideOnly ? t('dashboard.recent.hideGame') : t('dashboard.recent.deleteGame')}
             >
               ✕
             </button>

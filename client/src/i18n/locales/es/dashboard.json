@@ -60,6 +60,7 @@
     "boardPhysical": "🧩 Tablero físico",
     "boardOnline": "🌐 Online",
     "hide": "Ocultar",
+    "hideGame": "Ocultar partida de mi panel",
     "hideTitle": "¿Ocultar esta partida de tu panel?",
     "hideBody": "Deja de aparecerte a ti; sigue contando en tus estadísticas.",
     "hideInProgress": "Está en curso: al ocultarla abandonas la partida.",
