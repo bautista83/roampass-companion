@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import {
-  CATEGORY_META,
   LOCATION_BRACKETS,
-  formatNumber,
   isStreetViewCard,
   normalizeLng,
   withDifficulty,
@@ -18,6 +17,7 @@ import { DifficultyBadge } from '../ui/DifficultyBadge';
 import { CardTimer } from '../ui/CardTimer';
 import { useCardTimer } from '../../hooks/useCountdown';
 import { CardResult } from './CardResult';
+import { useLabels } from '../../i18n/useLabels';
 
 // divIcon evita el problema clasico de rutas de imagenes de Leaflet con bundlers.
 const pin = (emoji: string, bg: string) =>
@@ -59,6 +59,7 @@ const STREET_VIEW_CAMERA = { heading: 210, pitch: 10, fov: 35 };
 
 /** Vista 360° interactiva con la Maps Embed API (gratis e ilimitada; requiere API key). */
 function StreetViewFrame({ location }: { location: LatLng }) {
+  const { t } = useTranslation();
   const params = new URLSearchParams({
     key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
     location: `${location.lat},${location.lng}`,
@@ -68,7 +69,7 @@ function StreetViewFrame({ location }: { location: LatLng }) {
   });
   return (
     <iframe
-      title="Vista de calle del lugar misterioso"
+      title={t('game.location.streetViewTitle')}
       src={`https://www.google.com/maps/embed/v1/streetview?${params}`}
       className="min-h-0 w-full flex-1 border-0"
       // Necesario para que funcione una clave restringida por dominio (HTTP referrer).
@@ -78,7 +79,6 @@ function StreetViewFrame({ location }: { location: LatLng }) {
   );
 }
 
-const formatKm = (km: number) => `${km < 10 ? km.toFixed(1) : formatNumber(Math.round(km))} km`;
 
 /** LUGAR: foto panoramica + mapa Leaflet/OpenStreetMap; puntua por distancia Haversine. */
 export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
@@ -88,7 +88,10 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
   const resolved = draw.resolved;
   const [guess, setGuess] = useState<LatLng | null>(null);
   const shownGuess = resolved?.guess ?? guess;
-  const meta = CATEGORY_META.LOCATION;
+  const { t } = useTranslation();
+  const { categories, num, miles } = useLabels();
+  const meta = categories.LOCATION;
+  const formatKm = (km: number) => `${num(km < 10 ? Math.round(km * 10) / 10 : Math.round(km))} km`;
   const streetView = isStreetViewCard(card);
   // Al vencer el tiempo: si ya marco un punto se envia tal cual; si no, cuenta como error.
   const timer = useCardTimer(draw, () =>
@@ -120,14 +123,14 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
         {streetView ? (
           <div className="flex h-[42dvh] shrink-0 flex-col md:h-full">
             <StreetViewFrame location={card.location} />
-            <p className="hidden px-4 py-2 text-xs text-passport-500 md:block dark:text-passport-300">🧭 Arrastra para mirar alrededor y usa las flechas para avanzar por la calle.</p>
+            <p className="hidden px-4 py-2 text-xs text-passport-500 md:block dark:text-passport-300">{t('game.location.streetViewHelp')}</p>
           </div>
         ) : (
           // Foto panoramica: se desplaza horizontalmente para "mirar alrededor"
           <div className="flex h-[30dvh] shrink-0 flex-col md:h-full">
             <CardImage
               src={card.imageUrl!}
-              alt="Lugar misterioso"
+              alt={t('game.location.photoAlt')}
               credit={card.credit}
               className="min-h-0 flex-1 overflow-x-auto"
               imgClassName="h-full w-auto max-w-none md:h-full md:w-full md:object-cover"
@@ -162,11 +165,13 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
                   📍 <strong>{card.answerLabel}</strong>
                   <br />
                   {resolved.result.distanceKm === undefined ? (
-                    'No marcaste ningún punto a tiempo.'
+                    t('game.location.noGuess')
                   ) : (
-                    <>
-                      Distancia: <strong className="tabular-nums">{formatKm(resolved.result.distanceKm)}</strong>
-                    </>
+                    <Trans
+                      i18nKey="game.location.distance"
+                      values={{ km: formatKm(resolved.result.distanceKm) }}
+                      components={{ b: <strong className="tabular-nums" /> }}
+                    />
                   )}
                 </p>
               </CardResult>
@@ -174,16 +179,16 @@ export function LocationCardModal({ draw }: { draw: ActiveDraw }) {
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-passport-500 dark:text-passport-300">
                   {guess
-                    ? '¿Seguro? Puedes tocar otro punto para moverlo.'
+                    ? t('game.location.sure')
                     : streetView
-                      ? '👆 Toca el mapa donde crees que estás.'
-                      : '👆 Toca el mapa donde crees que se tomó la foto.'}
+                      ? t('game.location.tapStreetView')
+                      : t('game.location.tapPhoto')}
                   <span className="block text-xs">
-                    {LOCATION_BRACKETS.map((b) => `≤${formatNumber(b.maxKm)} km: ${formatNumber(withDifficulty(b.points, card.difficulty))} mi`).join(' · ')}
+                    {LOCATION_BRACKETS.map((b) => t('game.location.bracket', { km: num(b.maxKm), miles: miles(withDifficulty(b.points, card.difficulty)) })).join(' · ')}
                   </span>
                 </p>
                 <button className="btn-primary shrink-0 text-lg" disabled={!guess} onClick={() => guess && resolve({ kind: 'LOCATION', card, guess })}>
-                  Confirmar ubicación
+                  {t('game.location.confirm')}
                 </button>
               </div>
             )}

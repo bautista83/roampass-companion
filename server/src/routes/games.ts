@@ -63,12 +63,12 @@ gamesRouter.use(requireAuth);
 /** Upsert idempotente: el cliente llama tras cada turno y al terminar la partida. */
 gamesRouter.put('/:id', async (req, res) => {
   const { state, selfPlayerId } = syncSchema.parse(req.body);
-  if (state.id !== req.params.id) throw new HttpError(400, 'El id no coincide');
+  if (state.id !== req.params.id) throw new HttpError(400, 'El id no coincide', 'VALIDATION_ERROR');
   validateConfig(state.config);
   if (state.timerSeconds !== undefined) validateTimer(state.timerSeconds);
 
   const existing = await prisma.gameSession.findUnique({ where: { id: state.id }, select: { hostId: true } });
-  if (existing && existing.hostId !== req.user!.id) throw new HttpError(403, 'La partida pertenece a otro usuario');
+  if (existing && existing.hostId !== req.user!.id) throw new HttpError(403, 'La partida pertenece a otro usuario', 'GAME_FORBIDDEN');
 
   const winners = new Set(state.winnerIds ?? []);
   const players = state.players.map((p, i) => ({
@@ -171,9 +171,9 @@ gamesRouter.get('/recent', async (req, res) => {
 /** Elimina una partida (y sus jugadores, en cascada). Solo quien la creo o un admin. */
 gamesRouter.delete('/:id', async (req, res) => {
   const session = await prisma.gameSession.findUnique({ where: { id: req.params.id }, select: { hostId: true } });
-  if (!session) throw new HttpError(404, 'La partida no existe');
+  if (!session) throw new HttpError(404, 'La partida no existe', 'GAME_NOT_FOUND');
   if (req.user!.role !== 'ADMIN' && session.hostId !== req.user!.id) {
-    throw new HttpError(403, 'Solo quien creó la partida puede eliminarla');
+    throw new HttpError(403, 'Solo quien creó la partida puede eliminarla', 'GAME_FORBIDDEN');
   }
   await prisma.gameSession.delete({ where: { id: req.params.id } });
   res.status(204).end();

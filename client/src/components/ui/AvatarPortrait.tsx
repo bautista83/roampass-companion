@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 /**
  * Retrato dibujado para la foto del pasaporte, en el estilo del tablero (borde negro, colores planos).
  * Es "aleatorio" pero estable: sale siempre igual para el mismo `seed` (el usuario).
@@ -27,6 +29,7 @@ function rng(seed: string) {
 const pick = <T,>(r: () => number, list: readonly T[]) => list[Math.floor(r() * list.length)]!;
 
 export function AvatarPortrait({ seed, className = '' }: { seed: string; className?: string }) {
+  const { t } = useTranslation();
   const r = rng(seed.toLowerCase());
   const skin = pick(r, SKIN);
   const hair = pick(r, HAIR);
@@ -41,7 +44,7 @@ export function AvatarPortrait({ seed, className = '' }: { seed: string; classNa
   const ink = { stroke: '#111111', strokeWidth: 2.6, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const };
 
   return (
-    <svg viewBox="0 0 100 124" className={className} role="img" aria-label="Foto del pasaporte">
+    <svg viewBox="0 0 100 124" className={className} role="img" aria-label={t('game.portrait')}>
       <rect x="0" y="0" width="100" height="124" fill={backdrop} />
       {/* trama de seguridad de la foto */}
       {[18, 38, 58, 78, 98].map((y) => (

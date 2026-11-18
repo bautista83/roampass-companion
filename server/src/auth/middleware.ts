@@ -7,7 +7,17 @@ import { HttpError } from '../http';
 
 export type PublicUser = Pick<
   User,
-  'id' | 'username' | 'role' | 'isActive' | 'theme' | 'photoUpdatedAt' | 'email' | 'emailVerifiedAt' | 'pendingEmail' | 'createdAt'
+  | 'id'
+  | 'username'
+  | 'role'
+  | 'isActive'
+  | 'theme'
+  | 'locale'
+  | 'photoUpdatedAt'
+  | 'email'
+  | 'emailVerifiedAt'
+  | 'pendingEmail'
+  | 'createdAt'
 >;
 
 export const publicUserSelect = {
@@ -16,6 +26,7 @@ export const publicUserSelect = {
   role: true,
   isActive: true,
   theme: true,
+  locale: true,
   photoUpdatedAt: true,
   email: true,
   emailVerifiedAt: true,

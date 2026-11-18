@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **Definido** — en implementación |
+| Estado | **Implementado** — PR 1 (foto + correo) y PR 2 (multi idioma) |
 | Fecha | 2026-11-18 |
 | Afecta | `shared`, `server`, `client`, `deploy` |
 | Entrega | PR 1: foto + correo + despliegue · PR 2: multi idioma |
@@ -165,7 +165,7 @@ Errores: `{ error: string, code?: string }`. Códigos nuevos: `EMAIL_NOT_VERIFIE
 | Errores de la API | El cliente muestra la traducción del `code`; si no la tiene, el mensaje del servidor |
 | Correos | Plantillas por idioma en el servidor; el idioma sale del perfil del usuario |
 | Idioma del usuario | Campo `locale` en el perfil (`es` por defecto). Antes de iniciar sesión, el idioma del navegador |
-| Selector | Oculto mientras haya un solo idioma |
+| Selector | Oculto mientras haya un solo idioma (`LanguageSection` en Mi perfil) |
 | Cartas | Formato listo: traducciones opcionales por carta (`translations: { en: {...} }`) con el español como respaldo |
 | Países | En otros idiomas, el nombre sale de `Intl.DisplayNames`; las capitales, de las traducciones |
 | Fechas y números | Con el idioma activo (`Intl`) |

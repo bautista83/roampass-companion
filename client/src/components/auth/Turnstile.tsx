@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /** Clave publica del captcha de Cloudflare. Sin ella el captcha esta apagado. */
 export const TURNSTILE_SITE_KEY: string | undefined = import.meta.env.VITE_TURNSTILE_SITE_KEY || undefined;
@@ -38,6 +39,8 @@ export function Turnstile({ onToken, resetKey = 0 }: { onToken: (token: string |
   const ref = useRef<HTMLDivElement>(null);
   const onTokenRef = useRef(onToken);
   onTokenRef.current = onToken;
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
 
   useEffect(() => {
     if (!TURNSTILE_SITE_KEY || !ref.current) return;
@@ -49,7 +52,7 @@ export function Turnstile({ onToken, resetKey = 0 }: { onToken: (token: string |
         if (cancelled) return;
         widgetId = ts.render(el, {
           sitekey: TURNSTILE_SITE_KEY,
-          language: 'es',
+          language,
           callback: (token: string) => onTokenRef.current(token),
           'expired-callback': () => onTokenRef.current(null),
           'error-callback': () => onTokenRef.current(null),
@@ -61,8 +64,8 @@ export function Turnstile({ onToken, resetKey = 0 }: { onToken: (token: string |
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
       onTokenRef.current(null);
     };
-  }, [resetKey]);
+  }, [resetKey, language]);
 
   if (!TURNSTILE_SITE_KEY) return null;
-  return <div ref={ref} className="flex min-h-[65px] justify-center" />;
+  return <div ref={ref} className="flex min-h-[65px] justify-center" aria-label={t('auth.captcha')} />;
 }

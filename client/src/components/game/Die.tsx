@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { CATEGORY_META, DIE_FACES, rollDie, type CardCategory } from '@roampass/shared';
-import { CATEGORY_HEX, CATEGORY_TINT, POINTS_HINT } from './categoryStyle';
+import { DIE_FACES, rollDie, type CardCategory } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
+import { CATEGORY_HEX, CATEGORY_TINT } from './categoryStyle';
+import { usePointsHint } from './usePointsHint';
 
 const PIPS: Record<number, [number, number][]> = {
   1: [[50, 50]],
@@ -47,7 +50,10 @@ const FACE_TURN: Record<number, [number, number]> = { 1: [0, 0], 2: [0, -90], 3:
 
 /** Carta que salio, en grande, antes de abrir la pregunta (y su reloj). */
 function RevealCard({ face, category, onDone }: { face: number; category: CardCategory; onDone: () => void }) {
-  const meta = CATEGORY_META[category];
+  const { t } = useTranslation();
+  const { categories } = useLabels();
+  const pointsHint = usePointsHint();
+  const meta = categories[category];
   useEffect(() => {
     const t = setTimeout(onDone, 2600);
     return () => clearTimeout(t);
@@ -71,7 +77,7 @@ function RevealCard({ face, category, onDone }: { face: number; category: CardCa
           animate={{ y: 0, opacity: 1, rotate: -3 }}
           transition={{ delay: 0.15, type: 'spring', stiffness: 260, damping: 14 }}
         >
-          ¡Salió el {face}!
+          {t('game.die.rolled', { face })}
         </motion.p>
         <motion.div
           className={`sticker flex w-72 flex-col items-center gap-3 p-6 text-center text-ink shadow-hard-lg md:w-80 ${CATEGORY_TINT[category]}`}
@@ -90,9 +96,9 @@ function RevealCard({ face, category, onDone }: { face: number; category: CardCa
           </motion.span>
           <span className="font-display text-3xl leading-tight">{meta.label}</span>
           <span className="text-sm font-semibold text-ink/75">{meta.hint}</span>
-          <span className="rounded-full border-2 border-ink bg-white px-3 py-1 text-sm font-bold">{POINTS_HINT[category]}</span>
+          <span className="rounded-full border-2 border-ink bg-white px-3 py-1 text-sm font-bold">{pointsHint(category)}</span>
         </motion.div>
-        <p className="text-sm font-bold text-white">Tocá para empezar</p>
+        <p className="text-sm font-bold text-white">{t('game.die.tapToStart')}</p>
       </div>
     </motion.div>,
     document.body,
@@ -115,6 +121,8 @@ export function Die(props: {
   const [rolling, setRolling] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [reveal, setReveal] = useState<{ face: number; category: CardCategory } | null>(null);
+  const { t } = useTranslation();
+  const { categories } = useLabels();
   const rx = useMotionValue(-18);
   const ry = useMotionValue(24);
   const toss = useMotionValue(0);
@@ -138,18 +146,18 @@ export function Die(props: {
     if (disabled || rolling) return;
     const result = rollDie(available);
     if (!result) {
-      setNote('No quedan cartas en ninguna categoría');
+      setNote(t('game.die.noCards'));
       return;
     }
     setRolling(true);
-    setNote('¡Rodando!');
+    setNote(t('game.die.rolling'));
     for (const again of result.rerolls) {
       await spinTo(again, 2, 1.3);
-      setNote(`${CATEGORY_META[DIE_FACES[again - 1]!].label} agotada: ¡otra vez!`);
+      setNote(t('game.die.exhaustedAgain', { label: categories[DIE_FACES[again - 1]!].label }));
       await sleep(700);
     }
     await spinTo(result.face, 3, 1.6);
-    setNote(`${result.face} · ${CATEGORY_META[result.category].icon} ${CATEGORY_META[result.category].label}`);
+    setNote(t('game.die.result', { face: result.face, icon: categories[result.category].icon, label: categories[result.category].label }));
     await sleep(350);
     setReveal(result);
   }
@@ -168,7 +176,7 @@ export function Die(props: {
         type="button"
         onClick={roll}
         disabled={disabled || rolling}
-        aria-label="Tirar el dado"
+        aria-label={t('game.die.rollAria')}
         className="group relative grid place-items-center rounded-3xl pt-6 pb-3 transition disabled:cursor-not-allowed"
         style={{ perspective: 600, width: SIZE + 40, height: SIZE + 46 }}
       >

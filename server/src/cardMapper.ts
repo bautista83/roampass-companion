@@ -1,10 +1,16 @@
 // Conversion entre el modelo de dominio `Card` (@roampass/shared) y la fila `CardQuestion`.
 
 import type { CardQuestion, Prisma } from '@prisma/client';
-import type { Card, ImageCredit, QuizCategory } from '@roampass/shared';
+import type { Card, CardTranslation, ImageCredit, Locale, QuizCategory } from '@roampass/shared';
+
+type Translations = Partial<Record<Locale, CardTranslation>>;
 
 export function cardToRow(card: Card): Prisma.CardQuestionCreateInput {
-  const base = { id: card.id, category: card.category };
+  const base = {
+    id: card.id,
+    category: card.category,
+    translations: (card.translations ?? undefined) as Prisma.InputJsonObject | undefined,
+  };
   switch (card.category) {
     case 'LOCATION':
       return {
@@ -36,6 +42,8 @@ export function cardToRow(card: Card): Prisma.CardQuestionCreateInput {
 
 export function rowToCard(row: CardQuestion): Card {
   const credit = (row.credit ?? undefined) as ImageCredit | undefined;
+  const translations = (row.translations ?? undefined) as Translations | undefined;
+  const extra = translations ? { translations } : {};
   switch (row.category) {
     case 'LOCATION':
       return {
@@ -47,6 +55,7 @@ export function rowToCard(row: CardQuestion): Card {
         location: { lat: row.latitude ?? 0, lng: row.longitude ?? 0 },
         answerLabel: row.answerLabel ?? '',
         credit,
+        ...extra,
       };
     case 'TRAVEL_EVENT':
       return {
@@ -56,6 +65,7 @@ export function rowToCard(row: CardQuestion): Card {
         description: row.description ?? '',
         icon: row.icon ?? '✈️',
         points: row.points ?? 0,
+        ...extra,
       };
     default:
       return {
@@ -69,6 +79,7 @@ export function rowToCard(row: CardQuestion): Card {
         correctAnswer: row.correctAnswer ?? '',
         funFact: row.funFact ?? undefined,
         credit,
+        ...extra,
       };
   }
 }

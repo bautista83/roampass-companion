@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { AvatarIcon, PawnToken } from '../ui/PawnToken';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   AVATARS,
+  BOARD,
   DEFAULT_TIMER_SECONDS,
   DIFFICULTIES,
-  formatNumber,
   MAX_PLAYERS,
   MIN_PLAYERS,
   PAWN_COLOR_META,
@@ -22,42 +23,37 @@ import {
 } from '@roampass/shared';
 import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
+import { errorText } from '../../i18n';
+import { useLabels } from '../../i18n/useLabels';
 import { DifficultyBadge } from '../ui/DifficultyBadge';
 
-const MODES: { mode: VictoryMode; title: string; icon: string; desc: string; targets: readonly number[]; unit: string }[] = [
-  { mode: 'POINTS', title: 'Vuelta al mundo', icon: '🌎', desc: 'Gana el primero en recorrer las millas de la meta.', targets: POINT_TARGETS, unit: 'millas' },
-  { mode: 'ROUNDS', title: 'Número de Rondas', icon: '🔁', desc: 'Al terminar las rondas, gana quien haya recorrido más millas.', targets: ROUND_TARGETS, unit: 'rondas' },
+// Textos en setup.victory.<mode> y setup.board.<board>.
+const MODES: { mode: VictoryMode; icon: string; targets: readonly number[] }[] = [
+  { mode: 'POINTS', icon: '🌎', targets: POINT_TARGETS },
+  { mode: 'ROUNDS', icon: '🔁', targets: ROUND_TARGETS },
 ];
 
-const BOARDS: { board: BoardMode; title: string; icon: string; desc: string }[] = [
-  {
-    board: 'PHYSICAL',
-    title: 'Con tablero físico',
-    icon: '🎲',
-    desc: 'Usan el tablero impreso y un dado. La app muestra las tarjetas y lleva las millas.',
-  },
-  {
-    board: 'DIGITAL',
-    title: 'Tablero digital',
-    icon: '🗺️',
-    desc: 'El tablero se juega en pantalla: dado animado y los avatares viajan solos desde Buenos Aires.',
-  },
+const BOARDS: { board: BoardMode; icon: string }[] = [
+  { board: 'PHYSICAL', icon: '🎲' },
+  { board: 'DIGITAL', icon: '🗺️' },
 ];
 
 const firstFreeColor = (players: PlayerSetup[]) => PAWN_COLORS.find((c) => !players.some((p) => p.color === c))!;
 
-/** Wizard: Paso 1 condición de victoria · Paso 2 jugadores (2-4). */
+/** Wizard: Paso 1 tablero · Paso 2 condición de victoria · Paso 3 jugadores. */
 export function GameSetup() {
   const user = useAuthStore((s) => s.user);
   const startGame = useGameStore((s) => s.startGame);
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { num, miles } = useLabels();
 
   const [step, setStep] = useState<0 | 1 | 2>(0);
   const [board, setBoard] = useState<BoardMode>('DIGITAL');
   const [mode, setMode] = useState<VictoryMode>('POINTS');
   const [target, setTarget] = useState<number>(POINT_TARGETS[1]);
   const [players, setPlayers] = useState<PlayerSetup[]>([
-    { name: user?.username ?? 'Jugador 1', color: 'red', avatar: AVATARS[0] },
+    { name: user?.username ?? t('setup.players.defaultName'), color: 'red', avatar: AVATARS[0] },
     { name: '', color: 'blue', avatar: AVATARS[1] },
   ]);
   /** Índice del peón que controla el usuario logueado (cuenta para su récord). */
@@ -90,7 +86,7 @@ export function GameSetup() {
       await startGame({ mode, target, board }, players, selfIndex, timerSeconds);
       navigate('/play');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error inesperado');
+      setError(errorText(e));
     } finally {
       setBusy(false);
     }
@@ -98,8 +94,8 @@ export function GameSetup() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <ol className="mb-5 flex items-center gap-2 text-sm font-semibold" aria-label="Pasos">
-        {['Modo de juego', 'Condición de victoria', 'Jugadores'].map((label, i) => (
+      <ol className="mb-5 flex items-center gap-2 text-sm font-semibold" aria-label={t('setup.steps.aria')}>
+        {[t('setup.steps.board'), t('setup.steps.victory'), t('setup.steps.players')].map((label, i) => (
           <li key={label} className="flex flex-1 items-center gap-2">
             <span
               className={`grid size-9 shrink-0 place-items-center rounded-full ${
@@ -123,8 +119,8 @@ export function GameSetup() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
           >
-            <h1 className="text-2xl font-bold">¿Cómo juegan?</h1>
-            <div className="grid gap-4 md:grid-cols-2" role="radiogroup" aria-label="Modo de juego">
+            <h1 className="text-2xl font-bold">{t('setup.board.title')}</h1>
+            <div className="grid gap-4 md:grid-cols-2" role="radiogroup" aria-label={t('setup.steps.board')}>
               {BOARDS.map((b, i) => {
                 const selected = board === b.board;
                 return (
@@ -140,18 +136,20 @@ export function GameSetup() {
                     <span className="text-5xl" aria-hidden>
                       {b.icon}
                     </span>
-                    <span className="font-display text-xl text-ink dark:text-inherit">{b.title}</span>
-                    <span className="text-sm font-medium text-ink/75 dark:text-inherit">{b.desc}</span>
+                    <span className="font-display text-xl text-ink dark:text-inherit">{t(`setup.board.${b.board}.title`)}</span>
+                    <span className="text-sm font-medium text-ink/75 dark:text-inherit">
+                      {t(`setup.board.${b.board}.desc`, { start: BOARD.spaces[0]!.name })}
+                    </span>
                   </button>
                 );
               })}
             </div>
             <div className="flex justify-between gap-2">
               <button className="btn-ghost" onClick={() => navigate('/')}>
-                Cancelar
+                {t('common.actions.cancel')}
               </button>
               <button className="btn-primary" onClick={() => setStep(1)}>
-                Siguiente →
+                {t('setup.nav.next')}
               </button>
             </div>
           </motion.section>
@@ -163,7 +161,7 @@ export function GameSetup() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
           >
-            <h1 className="text-2xl font-bold">¿Cómo se gana este viaje?</h1>
+            <h1 className="text-2xl font-bold">{t('setup.victory.title')}</h1>
             <div className="grid gap-3 md:grid-cols-2">
               {MODES.map((m) => {
                 const selected = mode === m.mode;
@@ -177,25 +175,25 @@ export function GameSetup() {
                     <button className="flex w-full min-h-12 items-start gap-3 text-left" onClick={() => chooseMode(m.mode)} aria-pressed={selected}>
                       <span className="text-3xl">{m.icon}</span>
                       <span>
-                        <span className="block text-lg font-bold">{m.title}</span>
-                        <span className="text-sm text-passport-500 dark:text-passport-300">{m.desc}</span>
+                        <span className="block text-lg font-bold">{t(`setup.victory.${m.mode}.title`)}</span>
+                        <span className="text-sm text-passport-500 dark:text-passport-300">{t(`setup.victory.${m.mode}.desc`)}</span>
                       </span>
                     </button>
                     <div className="mt-3 grid grid-cols-3 gap-2">
-                      {m.targets.map((t) => (
+                      {m.targets.map((value) => (
                         <button
-                          key={t}
+                          key={value}
                           disabled={!selected}
-                          onClick={() => setTarget(t)}
-                          aria-pressed={selected && target === t}
+                          onClick={() => setTarget(value)}
+                          aria-pressed={selected && target === value}
                           className={`min-h-12 rounded-xl text-sm font-bold tabular-nums transition disabled:opacity-40 ${
-                            selected && target === t
+                            selected && target === value
                               ? 'bg-passport-700 text-white dark:bg-brass dark:text-passport-950'
                               : 'bg-white ring-1 ring-passport-800/15 dark:bg-passport-950 dark:ring-white/15'
                           }`}
                         >
-                          {formatNumber(t)}
-                          <span className="block text-[10px] font-medium opacity-70">{m.unit}</span>
+                          {num(value)}
+                          <span className="block text-[10px] font-medium opacity-70">{t(`setup.victory.${m.mode}.unit`)}</span>
                         </button>
                       ))}
                     </div>
@@ -206,12 +204,12 @@ export function GameSetup() {
             <div className="rounded-2xl border-2 border-passport-800/10 p-4 dark:border-white/10">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-lg font-bold">⏱ Tiempo por carta</p>
+                  <p className="text-lg font-bold">{t('setup.victory.timerTitle')}</p>
                   <p className="text-sm text-passport-500 dark:text-passport-300">
-                    Si se agota, la carta cuenta como error. Los eventos de viajero no tienen tiempo.
+                    {t('setup.victory.timerDesc')}
                   </p>
                 </div>
-                <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label="Segundos por carta">
+                <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label={t('setup.victory.timerAria')}>
                   {TIMER_OPTIONS.map((value) => (
                     <button
                       key={value}
@@ -225,27 +223,27 @@ export function GameSetup() {
                       }`}
                     >
                       {value}
-                      <span className="text-xs font-medium opacity-70"> s</span>
+                      <span className="text-xs font-medium opacity-70">{t('setup.victory.secondsUnit')}</span>
                     </button>
                   ))}
                 </div>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-passport-800/20 p-3 text-sm dark:border-white/15">
-              <span>Las cartas vienen en 3 niveles y las difíciles dan bonus:</span>
+              <span>{t('setup.victory.levels')}</span>
               {DIFFICULTIES.map((d) => (
                 <DifficultyBadge key={d} difficulty={d} />
               ))}
               <span className="w-full text-xs text-passport-500 dark:text-passport-300">
-                Ninguna carta se repite en la partida: si una categoría se agota, se marca como «Agotada».
+                {t('setup.victory.noRepeat')}
               </span>
             </div>
             <div className="flex justify-between gap-2">
               <button className="btn-ghost" onClick={() => setStep(0)}>
-                ← Atrás
+                {t('setup.nav.back')}
               </button>
               <button className="btn-primary" onClick={() => setStep(2)}>
-                Siguiente →
+                {t('setup.nav.next')}
               </button>
             </div>
           </motion.section>
@@ -258,9 +256,14 @@ export function GameSetup() {
             exit={{ x: -40, opacity: 0 }}
           >
             <div className="flex items-end justify-between gap-3">
-              <h1 className="text-2xl font-bold">Viajeros</h1>
+              <h1 className="text-2xl font-bold">{t('setup.players.title')}</h1>
               <span className="text-sm text-passport-500 dark:text-passport-300">
-                {players.length}/{MAX_PLAYERS} · {mode === 'POINTS' ? `${formatNumber(target)} mi` : `${target} rondas`} · ⏱ {timerSeconds} s
+                {t('setup.players.summary', {
+                  count: players.length,
+                  max: MAX_PLAYERS,
+                  goal: mode === 'POINTS' ? miles(target) : t('setup.players.goalRounds', { count: target }),
+                  seconds: timerSeconds,
+                })}
               </span>
             </div>
 
@@ -283,7 +286,7 @@ export function GameSetup() {
 
             {players.length < MAX_PLAYERS && (
               <button className="btn-ghost w-full border-dashed" onClick={addPlayer}>
-                + Agregar jugador/equipo
+                {t('setup.players.add')}
               </button>
             )}
 
@@ -295,10 +298,10 @@ export function GameSetup() {
 
             <div className="flex justify-between gap-2">
               <button className="btn-ghost" onClick={() => setStep(1)}>
-                ← Atrás
+                {t('setup.nav.back')}
               </button>
               <button className="btn-primary text-lg" onClick={start} disabled={busy}>
-                {busy ? 'Barajando mazo…' : '🛫 Comenzar partida'}
+                {busy ? t('setup.nav.starting') : t('setup.nav.start')}
               </button>
             </div>
           </motion.section>
@@ -320,20 +323,22 @@ function PlayerRow(props: {
   onToggleSelf: () => void;
 }) {
   const { index, player, takenColors, isSelf, canRemove, selfLabel, onChange, onRemove, onToggleSelf } = props;
+  const { t } = useTranslation();
+  const { pawnColors } = useLabels();
   return (
     <li className="rounded-2xl border border-passport-800/10 p-3 dark:border-white/10" style={{ borderLeft: `6px solid ${PAWN_COLOR_META[player.color].hex}` }}>
       <div className="flex gap-2">
         <PawnToken avatar={player.avatar} color={player.color} className="w-10 shrink-0" />
         <input
           className="input"
-          placeholder={`Jugador / equipo ${index + 1}`}
+          placeholder={t('setup.players.placeholder', { n: index + 1 })}
           value={player.name}
           maxLength={30}
-          aria-label={`Nombre del jugador ${index + 1}`}
+          aria-label={t('setup.players.nameAria', { n: index + 1 })}
           onChange={(e) => onChange({ name: e.target.value })}
         />
         {canRemove && (
-          <button className="btn-ghost size-12 shrink-0 px-0" onClick={onRemove} aria-label={`Quitar jugador ${index + 1}`}>
+          <button className="btn-ghost size-12 shrink-0 px-0" onClick={onRemove} aria-label={t('setup.players.removeAria', { n: index + 1 })}>
             ✕
           </button>
         )}
@@ -341,7 +346,7 @@ function PlayerRow(props: {
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <fieldset>
-          <legend className="label">Peón 3D</legend>
+          <legend className="label">{t('setup.players.pawn')}</legend>
           <div className="flex flex-wrap gap-1.5">
             {PAWN_COLORS.map((c) => {
               const taken = takenColors.includes(c);
@@ -350,7 +355,7 @@ function PlayerRow(props: {
                   key={c}
                   disabled={taken}
                   onClick={() => onChange({ color: c })}
-                  aria-label={`Color ${PAWN_COLOR_META[c].label}${taken ? ' (ocupado)' : ''}`}
+                  aria-label={`${t('setup.players.colorAria', { color: pawnColors[c].label })}${taken ? t('setup.players.colorTaken') : ''}`}
                   aria-pressed={player.color === c}
                   className={`size-11 rounded-full ring-offset-2 ring-offset-paper transition disabled:opacity-20 dark:ring-offset-passport-900 ${
                     player.color === c ? 'ring-4 ring-passport-700 dark:ring-brass' : ''
@@ -362,14 +367,14 @@ function PlayerRow(props: {
           </div>
         </fieldset>
         <fieldset>
-          <legend className="label">Avatar</legend>
+          <legend className="label">{t('setup.players.avatar')}</legend>
           <div className="flex flex-wrap gap-1">
             {AVATARS.map((a) => (
               <button
                 key={a}
                 onClick={() => onChange({ avatar: a })}
                 aria-pressed={player.avatar === a}
-                aria-label={`Avatar ${a}`}
+                aria-label={t('setup.players.avatarAria', { avatar: a })}
                 className={`grid size-11 place-items-center rounded-lg transition ${
                   player.avatar === a ? 'bg-passport-700/15 ring-2 ring-passport-700 dark:bg-brass/20 dark:ring-brass' : ''
                 }`}
@@ -383,7 +388,7 @@ function PlayerRow(props: {
 
       <label className="mt-2 flex min-h-12 cursor-pointer items-center gap-2 text-sm">
         <input type="checkbox" className="size-5 accent-passport-700" checked={isSelf} onChange={onToggleSelf} />
-        Este peón soy yo (@{selfLabel}) — cuenta para mi récord
+        {t('setup.players.isSelf', { name: selfLabel })}
       </label>
     </li>
   );

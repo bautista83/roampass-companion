@@ -25,7 +25,28 @@ export const MAX_PLAYERS = 4;
 /** El marcador nunca baja de 0 (una "Visa Denegada" no deja a nadie en negativo). */
 export const MIN_SCORE = 0;
 
-export class GameRuleError extends Error {}
+/** Codigos estables de los errores de reglas (el cliente los traduce: errors.rules.<code>). */
+export type GameRuleCode =
+  | 'INVALID_TARGET'
+  | 'INVALID_BOARD'
+  | 'PLAYER_COUNT'
+  | 'PLAYER_NAME_REQUIRED'
+  | 'PLAYER_NAME_DUPLICATE'
+  | 'PLAYER_COLOR_DUPLICATE'
+  | 'INVALID_TIMER'
+  | 'GAME_FINISHED'
+  | 'TRANSPORT_EVENT_PENDING';
+
+export class GameRuleError extends Error {
+  constructor(
+    message: string,
+    public readonly code?: GameRuleCode,
+    /** Valores para el texto traducido (p. ej. { min, max }). */
+    public readonly params?: Record<string, string | number>,
+  ) {
+    super(message);
+  }
+}
 
 const emptyStats = (): PlayerStats => ({
   cardsPlayed: 0,
@@ -38,22 +59,25 @@ const emptyStats = (): PlayerStats => ({
 export function validateConfig(config: VictoryCondition): void {
   const allowed: readonly number[] = config.mode === 'POINTS' ? POINT_TARGETS : ROUND_TARGETS;
   if (!allowed.includes(config.target)) {
-    throw new GameRuleError(`Objetivo invalido para ${config.mode}: ${config.target}`);
+    throw new GameRuleError(`Objetivo invalido para ${config.mode}: ${config.target}`, 'INVALID_TARGET');
   }
   if (config.board !== undefined && config.board !== 'PHYSICAL' && config.board !== 'DIGITAL') {
-    throw new GameRuleError(`Modo de tablero invalido: ${String(config.board)}`);
+    throw new GameRuleError(`Modo de tablero invalido: ${String(config.board)}`, 'INVALID_BOARD');
   }
 }
 
 export function validatePlayers(players: readonly PlayerSetup[]): void {
   if (players.length < MIN_PLAYERS || players.length > MAX_PLAYERS) {
-    throw new GameRuleError(`Se requieren entre ${MIN_PLAYERS} y ${MAX_PLAYERS} jugadores`);
+    throw new GameRuleError(`Se requieren entre ${MIN_PLAYERS} y ${MAX_PLAYERS} jugadores`, 'PLAYER_COUNT', {
+      min: MIN_PLAYERS,
+      max: MAX_PLAYERS,
+    });
   }
   const names = players.map((p) => p.name.trim().toLowerCase());
-  if (names.some((n) => n.length === 0)) throw new GameRuleError('Todos los jugadores necesitan nombre');
-  if (new Set(names).size !== names.length) throw new GameRuleError('Los nombres deben ser unicos');
+  if (names.some((n) => n.length === 0)) throw new GameRuleError('Todos los jugadores necesitan nombre', 'PLAYER_NAME_REQUIRED');
+  if (new Set(names).size !== names.length) throw new GameRuleError('Los nombres deben ser unicos', 'PLAYER_NAME_DUPLICATE');
   if (new Set(players.map((p) => p.color)).size !== players.length) {
-    throw new GameRuleError('Cada peon debe tener un color distinto');
+    throw new GameRuleError('Cada peon debe tener un color distinto', 'PLAYER_COLOR_DUPLICATE');
   }
 }
 
@@ -85,7 +109,7 @@ export function createGame(
 
 export function validateTimer(seconds: number): void {
   if (!(TIMER_OPTIONS as readonly number[]).includes(seconds)) {
-    throw new GameRuleError(`Tiempo por carta invalido: ${seconds}. Opciones: ${TIMER_OPTIONS.join(', ')}`);
+    throw new GameRuleError(`Tiempo por carta invalido: ${seconds}. Opciones: ${TIMER_OPTIONS.join(', ')}`, 'INVALID_TIMER');
   }
 }
 
@@ -106,9 +130,9 @@ export function applyTurn(
   outcome: CardOutcome,
   now: Date = new Date(),
 ): { state: GameState; result: ScoreResult } {
-  if (state.status === 'FINISHED') throw new GameRuleError('La partida ya termino');
+  if (state.status === 'FINISHED') throw new GameRuleError('La partida ya termino', 'GAME_FINISHED');
   if (state.transportEvent && outcome.kind !== 'EVENT') {
-    throw new GameRuleError('Primero se juega el Evento de Viajero de la casilla de transporte');
+    throw new GameRuleError('Primero se juega el Evento de Viajero de la casilla de transporte', 'TRANSPORT_EVENT_PENDING');
   }
 
   const raw = scoreOutcome(outcome);

@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { formatNumber } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
 import { api, type RecentGame } from '../../api';
+import { useLabels } from '../../i18n/useLabels';
 import { PawnToken } from '../ui/PawnToken';
 
-const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString('es', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-
-const goalOf = (g: RecentGame) => (g.mode === 'POINTS' ? `Meta ${formatNumber(g.target)} mi` : `${g.target} rondas`);
+const DATE_FORMAT: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' };
 
 const TILT = ['-rotate-1', 'rotate-1', 'rotate-0', '-rotate-[0.5deg]'];
 
@@ -15,6 +13,7 @@ const TILT = ['-rotate-1', 'rotate-1', 'rotate-0', '-rotate-[0.5deg]'];
 export function RecentGames({ isAdmin, onDeleted }: { isAdmin: boolean; onDeleted?: (id: string) => void }) {
   const [games, setGames] = useState<RecentGame[] | null>(null);
   const [error, setError] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     api
@@ -33,20 +32,20 @@ export function RecentGames({ isAdmin, onDeleted }: { isAdmin: boolean; onDelete
     <section className="space-y-3" aria-labelledby="ultimas-partidas">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="ultimas-partidas" className="text-2xl">
-          🗺️ Últimas partidas
+          {t('dashboard.recent.title')}
         </h2>
         <p className="text-sm text-passport-500 dark:text-passport-300">
-          {isAdmin ? 'Todas las partidas de todos los viajeros' : 'Las partidas que creaste o jugaste'}
+          {isAdmin ? t('dashboard.recent.subtitleAdmin') : t('dashboard.recent.subtitlePlayer')}
         </p>
       </div>
 
-      {error && <p className="panel p-4 text-sm">No se pudieron cargar las partidas.</p>}
-      {!error && games === null && <p className="panel p-4 text-sm text-passport-500">Cargando partidas…</p>}
+      {error && <p className="panel p-4 text-sm">{t('dashboard.recent.loadError')}</p>}
+      {!error && games === null && <p className="panel p-4 text-sm text-passport-500">{t('dashboard.recent.loading')}</p>}
       {games?.length === 0 && (
         <div className="panel p-6 text-center">
           <p className="text-3xl">🧳</p>
-          <p className="font-bold">Todavía no hay partidas.</p>
-          <p className="text-sm text-passport-500 dark:text-passport-300">Cuando terminen su primer viaje, acá van a ver quién ganó.</p>
+          <p className="font-bold">{t('dashboard.recent.emptyTitle')}</p>
+          <p className="text-sm text-passport-500 dark:text-passport-300">{t('dashboard.recent.emptyBody')}</p>
         </div>
       )}
 
@@ -78,6 +77,9 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
+  const { num, miles, dateTime } = useLabels();
+  const goal = g.mode === 'POINTS' ? t('dashboard.recent.goalMiles', { miles: miles(g.target) }) : t('dashboard.recent.goalRounds', { count: g.target });
 
   async function confirmDelete() {
     setBusy(true);
@@ -85,7 +87,7 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
     try {
       await onDelete();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No se pudo eliminar');
+      setError(e instanceof Error ? e.message : t('dashboard.recent.deleteError'));
       setBusy(false);
     }
   }
@@ -101,23 +103,24 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             role="alertdialog"
-            aria-label="Confirmar eliminación"
+            aria-label={t('dashboard.recent.confirmAria')}
           >
             <div className="space-y-3">
               <p className="text-3xl" aria-hidden>
                 🗑️
               </p>
-              <p className="font-display text-lg leading-tight">¿Eliminar esta partida?</p>
+              <p className="font-display text-lg leading-tight">{t('dashboard.recent.confirmTitle')}</p>
               <p className="text-sm text-passport-500 dark:text-passport-300">
-                {g.status === 'PLAYING' ? 'Está en curso: no se va a poder continuar. ' : ''}No se puede deshacer.
+                {g.status === 'PLAYING' ? t('dashboard.recent.confirmInProgress') : ''}
+                {t('dashboard.recent.confirmIrreversible')}
               </p>
               {error && <p className="text-sm font-bold text-stamp">{error}</p>}
               <div className="flex justify-center gap-2">
                 <button className="btn-ghost min-h-10 px-4" onClick={() => setConfirming(false)} disabled={busy}>
-                  Cancelar
+                  {t('common.actions.cancel')}
                 </button>
                 <button className="btn-danger min-h-10 px-4" onClick={confirmDelete} disabled={busy} autoFocus>
-                  {busy ? 'Eliminando…' : 'Eliminar'}
+                  {busy ? t('common.actions.deleting') : t('common.actions.delete')}
                 </button>
               </div>
             </div>
@@ -127,7 +130,7 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
 
       <header className="flex items-center justify-between gap-2 border-b-3 border-ink bg-sky/40 px-4 py-2 dark:border-black dark:bg-white/5">
         <span className="text-xs font-extrabold tracking-widest uppercase">
-          {g.board === 'DIGITAL' ? '🎲 Tablero digital' : '🧩 Tablero físico'}
+          {g.board === 'DIGITAL' ? t('dashboard.recent.boardDigital') : t('dashboard.recent.boardPhysical')}
         </span>
         <span className="flex items-center gap-2">
           <span
@@ -135,14 +138,14 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
               finished ? 'bg-mint text-ink' : 'bg-sun text-ink'
             }`}
           >
-            {finished ? 'Terminada' : `En curso · ronda ${g.round}`}
+            {finished ? t('dashboard.recent.finished') : t('dashboard.recent.inProgress', { round: g.round })}
           </span>
           {g.canDelete && (
             <button
               className="grid size-7 place-items-center rounded-full border-2 border-ink bg-white text-sm font-extrabold text-ink transition hover:scale-110 hover:bg-coral dark:border-black"
               onClick={() => setConfirming(true)}
-              aria-label="Eliminar partida"
-              title="Eliminar partida"
+              aria-label={t('dashboard.recent.deleteGame')}
+              title={t('dashboard.recent.deleteGame')}
             >
               ✕
             </button>
@@ -161,13 +164,13 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
               </span>
             </div>
             <div className="min-w-0">
-              <p className="label mb-0">{winners.length > 1 ? 'Empate' : 'Ganó'}</p>
-              <p className="truncate font-display text-lg leading-tight">{winners.map((w) => w.name).join(' y ')}</p>
-              <p className="text-sm font-bold tabular-nums">{formatNumber(winners[0]!.score)} mi</p>
+              <p className="label mb-0">{winners.length > 1 ? t('dashboard.recent.tie') : t('dashboard.recent.won')}</p>
+              <p className="truncate font-display text-lg leading-tight">{winners.map((w) => w.name).join(` ${t('common.and')} `)}</p>
+              <p className="text-sm font-bold tabular-nums">{miles(winners[0]!.score)}</p>
             </div>
           </div>
         ) : (
-          <p className="text-sm font-semibold text-passport-500 dark:text-passport-300">⏳ Todavía viajando…</p>
+          <p className="text-sm font-semibold text-passport-500 dark:text-passport-300">{t('dashboard.recent.stillTraveling')}</p>
         )}
 
         {/* Todos los jugadores */}
@@ -180,16 +183,16 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
                 {p.name}
                 {p.username && <span className="ml-1 text-xs text-passport-400">@{p.username}</span>}
               </span>
-              <span className="font-bold tabular-nums">{formatNumber(p.score)}</span>
+              <span className="font-bold tabular-nums">{num(p.score)}</span>
             </li>
           ))}
         </ol>
 
         <footer className="mt-auto flex flex-wrap justify-between gap-x-3 gap-y-1 border-t-2 border-dashed border-passport-200 pt-2 text-xs text-passport-500 dark:border-white/10 dark:text-passport-300">
           <span>
-            📅 {fmtDate(g.finishedAt ?? g.startedAt)} · {goalOf(g)}
+            📅 {dateTime(g.finishedAt ?? g.startedAt, DATE_FORMAT)} · {goal}
           </span>
-          {isAdmin && <span className="font-bold">Creada por @{g.host}</span>}
+          {isAdmin && <span className="font-bold">{t('dashboard.recent.createdBy', { host: g.host })}</span>}
         </footer>
       </div>
     </article>

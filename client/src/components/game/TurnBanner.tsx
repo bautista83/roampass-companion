@@ -1,10 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { PawnToken } from '../ui/PawnToken';
-import { PAWN_COLOR_META, formatNumber, timerSecondsOf, type GamePlayer, type GameState } from '@roampass/shared';
+import { PAWN_COLOR_META, timerSecondsOf, type GamePlayer, type GameState } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 
 /** Header del turno: sticky en movil, tarjeta fija en la columna izquierda en tablet. */
 export function TurnBanner({ game, player, className = '' }: { game: GameState; player: GamePlayer; className?: string }) {
   const { mode, target } = game.config;
+  const { t } = useTranslation();
+  const { miles } = useLabels();
   const color = PAWN_COLOR_META[player.color].hex;
   const finished = game.status === 'FINISHED';
 
@@ -25,19 +29,19 @@ export function TurnBanner({ game, player, className = '' }: { game: GameState; 
               <PawnToken avatar={player.avatar} color={player.color} className="w-10 shrink-0" />
             )}
             <div className="min-w-0">
-              <p className="text-[11px] font-extrabold tracking-widest text-ink/60 uppercase">{finished ? 'Partida terminada' : 'Turno de'}</p>
-              <p className="truncate font-display text-lg md:text-xl">{finished ? '¡Fin del viaje!' : player.name}</p>
+              <p className="text-[11px] font-extrabold tracking-widest text-ink/60 uppercase">{finished ? t('game.turn.finished') : t('game.turn.turnOf')}</p>
+              <p className="truncate font-display text-lg md:text-xl">{finished ? t('game.turn.endOfTrip') : player.name}</p>
             </div>
           </motion.div>
         </AnimatePresence>
         <div className="shrink-0 text-right">
-          <p className="text-[11px] font-extrabold tracking-widest text-ink/60 uppercase">Ronda</p>
+          <p className="text-[11px] font-extrabold tracking-widest text-ink/60 uppercase">{t('game.turn.round')}</p>
           <p className="font-stamp text-xl tabular-nums">
             {game.round}
             {mode === 'ROUNDS' && <span className="text-sm text-ink/60">/{target}</span>}
           </p>
-          {mode === 'POINTS' && <p className="text-[11px] font-semibold text-ink/70">Meta {formatNumber(target)} mi</p>}
-          <p className="text-[11px] font-semibold text-ink/70">⏱ {timerSecondsOf(game)} s por carta</p>
+          {mode === 'POINTS' && <p className="text-[11px] font-semibold text-ink/70">{t('game.turn.goal', { miles: miles(target) })}</p>}
+          <p className="text-[11px] font-semibold text-ink/70">{t('game.turn.perCard', { seconds: timerSecondsOf(game) })}</p>
         </div>
       </div>
     </div>

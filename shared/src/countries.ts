@@ -6,6 +6,9 @@
 // Un pais famoso con trampas sube un nivel: Italia (Irlanda/Mexico) o Brasil (Rio/Sao Paulo) no son faciles.
 
 import { seededRng, shuffle, type Rng } from './deck';
+import { DEFAULT_LOCALE, type Locale } from './i18n';
+import { countryName } from './localize';
+import { sharedTexts } from './locales';
 import type { Card, Country, CountryData, Difficulty, QuizCard } from './types';
 
 /** Corte del ranking de popularidad (194 paises): ~1/3 por nivel. */
@@ -29,8 +32,19 @@ function pickDistractors(answer: string, groups: string[][], rng: Rng): string[]
   return picked;
 }
 
-export function generateCountryCards(data: CountryData, existing: readonly Card[] = []): QuizCard[] {
+/**
+ * `locale`: idioma de las preguntas. Los nombres de los paises salen de Intl (el navegador los trae
+ * en cada idioma); las capitales, de `capitalTranslations` si las hay (si no, en español).
+ */
+export function generateCountryCards(
+  data: CountryData,
+  existing: readonly Card[] = [],
+  locale: Locale = DEFAULT_LOCALE,
+): QuizCard[] {
   const { countries, regions, similarFlags, decoyCities } = data;
+  const texts = sharedTexts(locale).countryCards;
+  const nameOf = (c: Country) => countryName(c.code, locale, c.name);
+  const capitalOf = (c: Country) => c.capitalTranslations?.[locale] ?? c.capital;
   const continentOf = (c: Country) => regions[c.region];
   const byCode = new Map(countries.map((c) => [c.code, c]));
 
@@ -38,8 +52,11 @@ export function generateCountryCards(data: CountryData, existing: readonly Card[
   const handFlags = new Set(existing.flatMap((c) => (c.category === 'FLAG' && 'countryCode' in c && c.countryCode ? [c.countryCode] : [])));
   const handCapitals = new Set(existing.flatMap((c) => (c.category === 'CITY' && 'countryCode' in c && c.countryCode ? [c.countryCode] : [])));
 
-  const names = (list: Country[]) => list.map((c) => c.name);
-  const capitals = (list: Country[]) => list.flatMap((c) => (c.capital ? [c.capital] : []));
+  const names = (list: Country[]) => list.map(nameOf);
+  const capitals = (list: Country[]) => list.flatMap((c) => {
+    const capital = capitalOf(c);
+    return capital ? [capital] : [];
+  });
   const sameRegion = (c: Country) => countries.filter((o) => o.code !== c.code && o.region === c.region);
   const sameContinent = (c: Country) => countries.filter((o) => o.code !== c.code && continentOf(o) === continentOf(c));
   const famousNearby = (c: Country) => sameContinent(c).filter((o) => difficultyOfCountry(o) === 'EASY');
@@ -49,6 +66,8 @@ export function generateCountryCards(data: CountryData, existing: readonly Card[
   const cards: QuizCard[] = [];
   for (const c of countries) {
     const difficulty = difficultyOfCountry(c);
+    const name = nameOf(c);
+    const capital = capitalOf(c);
 
     if (!handFlags.has(c.code)) {
       const id = `gen-flag-${c.code}`;
@@ -64,14 +83,14 @@ export function generateCountryCards(data: CountryData, existing: readonly Card[
         id,
         category: 'FLAG',
         difficulty: flagDifficulty,
-        prompt: '¿A qué país pertenece esta bandera?',
+        prompt: texts.flagPrompt,
         countryCode: c.code,
-        options: [c.name, ...pickDistractors(c.name, groups, seededRng(id))],
-        correctAnswer: c.name,
+        options: [name, ...pickDistractors(name, groups, seededRng(id))],
+        correctAnswer: name,
       });
     }
 
-    if (c.capital && !handCapitals.has(c.code)) {
+    if (capital && !handCapitals.has(c.code)) {
       const id = `gen-capital-${c.code}`;
       const rng = seededRng(id);
       const decoys = decoyCities[c.code] ?? [];
@@ -82,10 +101,10 @@ export function generateCountryCards(data: CountryData, existing: readonly Card[
           id,
           category: 'CITY',
           difficulty: capDifficulty,
-          prompt: `${c.capital} es la capital de… ¿qué país?`,
+          prompt: texts.countryOfCapital(capital),
           countryCode: c.code,
-          options: [c.name, ...pickDistractors(c.name, [names(sameRegion(c)), names(sameContinent(c))], rng)],
-          correctAnswer: c.name,
+          options: [name, ...pickDistractors(name, [names(sameRegion(c)), names(sameContinent(c))], rng)],
+          correctAnswer: name,
         });
       } else {
         const groups =
@@ -98,15 +117,12 @@ export function generateCountryCards(data: CountryData, existing: readonly Card[
           id,
           category: 'CITY',
           difficulty: capDifficulty,
-          prompt: `¿Cuál es la capital de ${c.name}?`,
+          prompt: texts.capitalOfCountry(name),
           countryCode: c.code,
-          options: [c.capital, ...pickDistractors(c.capital, groups, rng)],
-          correctAnswer: c.capital,
+          options: [capital, ...pickDistractors(capital, groups, rng)],
+          correctAnswer: capital,
           ...(decoys.length > 0 && {
-            funFact:
-              decoys.length === 1
-                ? `Ojo: ${decoys[0]} no es la capital.`
-                : `Ojo: ni ${decoys.join(', ni ')} son la capital.`,
+            funFact: decoys.length === 1 ? texts.decoyOne(decoys[0]!) : texts.decoyMany(decoys),
           }),
         });
       }

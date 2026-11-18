@@ -32,4 +32,5 @@ export function Notice({ kind, children }: { kind: 'ok' | 'info' | 'error'; chil
   );
 }
 
-export const errorMessage = (err: unknown) => (err instanceof Error ? err.message : 'Error inesperado');
+/** Mensaje de un error (los de la API ya vienen traducidos por su codigo). */
+export const errorMessage = (err: unknown, fallback: string) => (err instanceof Error ? err.message : fallback);

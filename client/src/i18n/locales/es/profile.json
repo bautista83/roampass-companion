@@ -1,0 +1,63 @@
+{
+  "title": "Mi perfil",
+  "styles": {
+    "title": "Estilo del juego",
+    "intro": "Se guarda en tu perfil: cada vez que entres, el juego completo se ve así.",
+    "saved": "Estilo guardado en tu perfil ✓",
+    "COMIC": {
+      "title": "Cómic",
+      "desc": "El estilo base: pasteles, bordes negros y fichas tipo sticker."
+    },
+    "RETRO": {
+      "title": "Modo 80s",
+      "desc": "Neón synthwave, letras pixeladas y tablero pixelado."
+    }
+  },
+  "password": {
+    "title": "Contraseña",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "repeat": "Repítela",
+    "mismatch": "La contraseña nueva no coincide con la confirmación",
+    "updated": "Contraseña actualizada ✓",
+    "submit": "Cambiar contraseña"
+  },
+  "photo": {
+    "title": "Foto del pasaporte",
+    "intro": "Sácate una foto o elige una imagen. La recortamos y la achicamos para que quede bien.",
+    "previewAlt": "Vista previa de tu nueva foto",
+    "save": "Guardar foto",
+    "take": "📸 Sacar foto",
+    "choose": "🖼️ Elegir imagen",
+    "remove": "Quitar foto",
+    "saved": "Foto guardada ✓",
+    "removed": "Foto quitada ✓",
+    "saveError": "No se pudo guardar la foto.",
+    "alt": "Foto de {{name}}",
+    "tooLarge": "La imagen supera los 10 MB.",
+    "unreadable": "No se pudo leer la imagen. Prueba con una foto JPG o PNG.",
+    "unsupported": "Tu navegador no permite procesar imágenes.",
+    "processFailed": "No se pudo procesar la imagen."
+  },
+  "email": {
+    "title": "Correo",
+    "current": "Tu correo es <b>{{email}}</b>.",
+    "none": "Todavía no tienes un correo. Agrégalo para poder recuperar tu contraseña.",
+    "pending": "⏳ Pendiente de confirmar: {{email}}. Abre el enlace que te enviamos.",
+    "newLabel": "Correo nuevo",
+    "label": "Correo",
+    "password": "Contraseña actual",
+    "savedDemo": "Correo guardado ✓",
+    "sent": "Te enviamos un enlace a {{email}}. Ábrelo para confirmar el cambio.",
+    "change": "Cambiar correo",
+    "add": "Agregar correo"
+  },
+  "language": {
+    "title": "Idioma",
+    "intro": "El idioma de la app y de los correos que te enviamos.",
+    "saved": "Idioma guardado ✓",
+    "names": {
+      "es": "Español"
+    }
+  }
+}

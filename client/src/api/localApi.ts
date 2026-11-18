@@ -78,7 +78,7 @@ const demoUnavailable = () =>
 
 function normalizeEmail(email: string) {
   const value = email.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) throw new ApiError('Correo no válido', 400);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) throw new ApiError('Correo no válido', 400, 'INVALID_EMAIL');
   return value;
 }
 
@@ -90,21 +90,21 @@ function findByIdentifier(db: LocalDb, identifier: string) {
 
 function validateCredentials(username: string, password: string) {
   if (!/^[a-zA-Z0-9_.-]{3,24}$/.test(username.trim())) {
-    throw new ApiError('Usuario: 3-24 caracteres (letras, numeros, . _ -)', 400);
+    throw new ApiError('Usuario: 3-24 caracteres (letras, numeros, . _ -)', 400, 'INVALID_USERNAME');
   }
-  if (password.length < 6) throw new ApiError('La contraseña debe tener al menos 6 caracteres', 400);
+  if (password.length < 6) throw new ApiError('La contraseña debe tener al menos 6 caracteres', 400, 'PASSWORD_TOO_SHORT');
 }
 
 export function createLocalApi(getToken: () => string | null): RoamPassApi {
   async function currentUser(db: LocalDb): Promise<StoredUser> {
     const id = getToken()?.replace(/^local:/, '');
     const user = db.users.find((u) => u.id === id);
-    if (!user || !user.isActive) throw new ApiError('Sesion invalida o cuenta desactivada', 401);
+    if (!user || !user.isActive) throw new ApiError('Sesion invalida o cuenta desactivada', 401, 'SESSION_INVALID');
     return user;
   }
   async function requireAdmin(db: LocalDb) {
     const user = await currentUser(db);
-    if (user.role !== 'ADMIN') throw new ApiError('Solo administradores', 403);
+    if (user.role !== 'ADMIN') throw new ApiError('Solo administradores', 403, 'FORBIDDEN');
     return user;
   }
   const session = (u: StoredUser) => ({ token: `local:${u.id}`, user: strip(u) });
@@ -116,13 +116,13 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       const db = await load();
       const user = findByIdentifier(db, identifier);
       if (!user || (await hash(password, user.salt)) !== user.passwordHash) {
-        throw new ApiError('Usuario o contraseña incorrectos', 401);
+        throw new ApiError('Usuario o contraseña incorrectos', 401, 'INVALID_CREDENTIALS');
       }
-      if (!user.isActive) throw new ApiError('Cuenta desactivada. Contacta a un administrador.', 403);
+      if (!user.isActive) throw new ApiError('Cuenta desactivada. Contacta a un administrador.', 403, 'ACCOUNT_INACTIVE');
       return session(user);
     },
 
-    async register({ username, email, password }) {
+    async register({ username, email, password, locale }) {
       validateCredentials(username, password);
       const mail = normalizeEmail(email);
       const db = await load();
@@ -131,6 +131,7 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       }
       if (db.users.some((u) => u.email === mail)) throw new ApiError('Ese correo ya está registrado', 409, 'EMAIL_TAKEN');
       const user = await makeUser(username.trim(), password, 'PLAYER', mail);
+      if (locale) user.locale = locale;
       db.users.push(user);
       save(db);
       return session(user);
@@ -153,7 +154,7 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       return strip(await currentUser(await load()));
     },
 
-    async updateMe({ theme, currentPassword, newPassword, email }) {
+    async updateMe({ theme, locale, currentPassword, newPassword, email }) {
       const db = await load();
       const user = await currentUser(db);
       const mail = email === undefined ? undefined : normalizeEmail(email);
@@ -176,6 +177,7 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
         user.passwordHash = await hash(newPassword, user.salt);
       }
       if (theme) user.theme = theme;
+      if (locale) user.locale = locale;
       save(db);
       return strip(user);
     },
@@ -191,7 +193,7 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       validateCredentials(username, password);
       const db = await load();
       await requireAdmin(db);
-      if (db.users.some((u) => u.username === username.trim())) throw new ApiError('El usuario ya existe', 409);
+      if (db.users.some((u) => u.username === username.trim())) throw new ApiError('El usuario ya existe', 409, 'USERNAME_TAKEN');
       const user = await makeUser(username.trim(), password, role);
       db.users.push(user);
       save(db);
@@ -202,14 +204,14 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       const db = await load();
       const admin = await requireAdmin(db);
       if (id === admin.id && (data.isActive === false || data.role === 'PLAYER')) {
-        throw new ApiError('No puedes desactivarte ni quitarte el rol ADMIN a ti mismo', 400);
+        throw new ApiError('No puedes desactivarte ni quitarte el rol ADMIN a ti mismo', 400, 'CANNOT_CHANGE_SELF');
       }
       const user = db.users.find((u) => u.id === id);
-      if (!user) throw new ApiError('No encontrado', 404);
+      if (!user) throw new ApiError('No encontrado', 404, 'NOT_FOUND');
       if (data.username !== undefined) {
         validateCredentials(data.username, data.password ?? 'xxxxxx');
         if (db.users.some((u) => u.id !== id && u.username === data.username)) {
-          throw new ApiError('El usuario ya existe', 409);
+          throw new ApiError('El usuario ya existe', 409, 'USERNAME_TAKEN');
         }
         user.username = data.username.trim();
       }
@@ -226,7 +228,7 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
     async deleteUser(id) {
       const db = await load();
       const admin = await requireAdmin(db);
-      if (id === admin.id) throw new ApiError('No puedes eliminar tu propia cuenta', 400);
+      if (id === admin.id) throw new ApiError('No puedes eliminar tu propia cuenta', 400, 'CANNOT_DELETE_SELF');
       db.users = db.users.filter((u) => u.id !== id);
       save(db);
     },
@@ -270,8 +272,8 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       const db = await load();
       const user = await currentUser(db);
       const game = db.games[id];
-      if (!game) throw new ApiError('La partida no existe', 404);
-      if (user.role !== 'ADMIN' && game.hostId !== user.id) throw new ApiError('Solo quien creó la partida puede eliminarla', 403);
+      if (!game) throw new ApiError('La partida no existe', 404, 'GAME_NOT_FOUND');
+      if (user.role !== 'ADMIN' && game.hostId !== user.id) throw new ApiError('Solo quien creó la partida puede eliminarla', 403, 'GAME_FORBIDDEN');
       delete db.games[id];
       save(db);
     },
@@ -331,7 +333,7 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       const db = await load();
       await requireAdmin(db);
       const user = db.users.find((u) => u.id === userId);
-      if (!user) throw new ApiError('No encontrado', 404);
+      if (!user) throw new ApiError('No encontrado', 404, 'NOT_FOUND');
       delete user.photo;
       user.photoUpdatedAt = null;
       save(db);

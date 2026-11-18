@@ -7,3 +7,7 @@ export * from './countries';
 export * from './engine';
 export * from './labels';
 export * from './rules';
+export * from './i18n';
+export * from './localize';
+export { sharedTexts } from './locales';
+export type { SharedTexts } from './locales';

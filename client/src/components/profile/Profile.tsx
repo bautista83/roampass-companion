@@ -1,17 +1,17 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { UiTheme } from '@roampass/shared';
 import { useAuthStore } from '../../store/authStore';
 import { PassportCard } from '../dashboard/PassportCard';
 import { PhotoSection } from './PhotoSection';
 import { EmailSection } from './EmailSection';
+import { LanguageSection } from './LanguageSection';
 
-const STYLES: { theme: UiTheme; title: string; icon: string; desc: string; preview: string; bg: string; text: string; ink: string }[] = [
+const STYLES: { theme: UiTheme; icon: string; preview: string; bg: string; text: string; ink: string }[] = [
   {
     theme: 'COMIC',
-    title: 'Cómic',
     icon: '💥',
-    desc: 'El estilo base: pasteles, bordes negros y fichas tipo sticker.',
     preview: '/board/board.svg',
     bg: '#eaf2e6',
     text: '#111111',
@@ -19,9 +19,7 @@ const STYLES: { theme: UiTheme; title: string; icon: string; desc: string; previ
   },
   {
     theme: 'RETRO',
-    title: 'Modo 80s',
     icon: '🕹️',
-    desc: 'Neón synthwave, letras pixeladas y tablero pixelado.',
     preview: '/board/board-retro.png',
     bg: '#24093d',
     text: '#fbe9ff',
@@ -29,7 +27,6 @@ const STYLES: { theme: UiTheme; title: string; icon: string; desc: string; previ
   },
 ];
 
-const message = (e: unknown) => (e instanceof Error ? e.message : 'Error inesperado');
 
 /**
  * Mi perfil: el estilo visual del juego (se guarda en el perfil y se aplica al iniciar sesión)
@@ -45,6 +42,8 @@ export function Profile() {
   const [confirm, setConfirm] = useState('');
   const [pwStatus, setPwStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const { t } = useTranslation();
+  const message = (e: unknown) => (e instanceof Error ? e.message : t('common.unexpectedError'));
 
   if (!user) return null;
   const selected = user.theme ?? 'COMIC';
@@ -54,7 +53,7 @@ export function Profile() {
     setThemeStatus(null);
     try {
       await updateProfile({ theme });
-      setThemeStatus({ ok: true, text: 'Estilo guardado en tu perfil ✓' });
+      setThemeStatus({ ok: true, text: t('profile.styles.saved') });
     } catch (e) {
       setThemeStatus({ ok: false, text: message(e) });
     }
@@ -64,7 +63,7 @@ export function Profile() {
     e.preventDefault();
     setPwStatus(null);
     if (next !== confirm) {
-      setPwStatus({ ok: false, text: 'La contraseña nueva no coincide con la confirmación' });
+      setPwStatus({ ok: false, text: t('profile.password.mismatch') });
       return;
     }
     setBusy(true);
@@ -73,7 +72,7 @@ export function Profile() {
       setCurrent('');
       setNext('');
       setConfirm('');
-      setPwStatus({ ok: true, text: 'Contraseña actualizada ✓' });
+      setPwStatus({ ok: true, text: t('profile.password.updated') });
     } catch (err) {
       setPwStatus({ ok: false, text: message(err) });
     } finally {
@@ -87,9 +86,9 @@ export function Profile() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-3xl">Mi perfil</h1>
+        <h1 className="text-3xl">{t('profile.title')}</h1>
         <button className="btn-ghost" onClick={() => navigate('/')}>
-          ← Volver
+          {t('common.actions.back')}
         </button>
       </div>
 
@@ -103,13 +102,13 @@ export function Profile() {
           <section className="panel space-y-4 p-4 md:p-6" aria-labelledby="estilo">
             <div>
               <h2 id="estilo" className="text-xl">
-                Estilo del juego
+                {t('profile.styles.title')}
               </h2>
               <p className="text-sm text-passport-500 dark:text-passport-300">
-                Se guarda en tu perfil: cada vez que entres, el juego completo se ve así.
+                {t('profile.styles.intro')}
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2" role="radiogroup" aria-label="Estilo del juego">
+            <div className="grid gap-4 sm:grid-cols-2" role="radiogroup" aria-label={t('profile.styles.title')}>
               {STYLES.map((s, i) => {
                 const active = selected === s.theme;
                 return (
@@ -131,9 +130,9 @@ export function Profile() {
                     />
                     <span className="px-1 pb-1" style={{ color: s.text }}>
                       <span className="block font-display text-lg">
-                        {s.icon} {s.title} {active && '✓'}
+                        {s.icon} {t(`profile.styles.${s.theme}.title`)} {active && '✓'}
                       </span>
-                      <span className="block text-xs font-medium opacity-80">{s.desc}</span>
+                      <span className="block text-xs font-medium opacity-80">{t(`profile.styles.${s.theme}.desc`)}</span>
                     </span>
                   </button>
                 );
@@ -148,13 +147,15 @@ export function Profile() {
 
           <EmailSection user={user} />
 
+          <LanguageSection />
+
           <form className="panel space-y-4 p-4 md:p-6" onSubmit={changePassword} aria-labelledby="clave">
             <h2 id="clave" className="text-xl">
-              Contraseña
+              {t('profile.password.title')}
             </h2>
             <div>
               <label className="label" htmlFor="current-password">
-                Contraseña actual
+                {t('profile.password.current')}
               </label>
               <input
                 id="current-password"
@@ -169,7 +170,7 @@ export function Profile() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="label" htmlFor="new-password">
-                  Nueva contraseña
+                  {t('profile.password.new')}
                 </label>
                 <input
                   id="new-password"
@@ -184,7 +185,7 @@ export function Profile() {
               </div>
               <div>
                 <label className="label" htmlFor="confirm-password">
-                  Repetila
+                  {t('profile.password.repeat')}
                 </label>
                 <input
                   id="confirm-password"
@@ -204,7 +205,7 @@ export function Profile() {
               </p>
             )}
             <button className="btn-primary w-full sm:w-auto" disabled={busy}>
-              {busy ? 'Guardando…' : 'Cambiar contraseña'}
+              {busy ? t('common.actions.saving') : t('profile.password.submit')}
             </button>
           </form>
         </div>

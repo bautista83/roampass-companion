@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
-import { CARD_CATEGORIES, CATEGORY_META, dieFaceOf, type CardCategory } from '@roampass/shared';
-import { CATEGORY_TINT, POINTS_HINT } from './categoryStyle';
+import { CARD_CATEGORIES, dieFaceOf, type CardCategory } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
+import { CATEGORY_TINT } from './categoryStyle';
+import { usePointsHint } from './usePointsHint';
 import { DieFace } from './Die';
 
 /** Cada carta queda apenas girada como un sticker. */
@@ -20,12 +23,15 @@ export function CardGrid(props: {
   compact?: boolean;
 }) {
   const { disabled, remaining, onDraw, compact = false } = props;
+  const { t } = useTranslation();
+  const { categories } = useLabels();
+  const pointsHint = usePointsHint();
 
   if (compact) {
     return (
-      <ul className="grid grid-cols-3 gap-2 xl:grid-cols-6" aria-label="Cartas por número del dado">
+      <ul className="grid grid-cols-3 gap-2 xl:grid-cols-6" aria-label={t('game.cards.byDieAria')}>
         {CARD_CATEGORIES.map((category, i) => {
-          const meta = CATEGORY_META[category];
+          const meta = categories[category];
           const left = remaining[category];
           return (
             <li
@@ -38,7 +44,7 @@ export function CardGrid(props: {
                   {meta.icon} {meta.label}
                 </span>
                 <span className="block text-[10px] font-semibold text-ink/70 tabular-nums">
-                  {left === 0 ? 'Agotada' : `Quedan ${left}`}
+                  {left === 0 ? t('game.cards.exhausted') : t('game.cards.left', { count: left })}
                 </span>
               </span>
             </li>
@@ -51,7 +57,7 @@ export function CardGrid(props: {
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
       {CARD_CATEGORIES.map((category, i) => {
-        const meta = CATEGORY_META[category];
+        const meta = categories[category];
         const left = remaining[category];
         const exhausted = left === 0;
         const locked = disabled || exhausted;
@@ -67,7 +73,9 @@ export function CardGrid(props: {
             whileTap={locked ? undefined : { scale: 0.95, rotateZ: -1 }}
             className={`sticker group relative flex min-h-36 flex-col justify-between overflow-hidden p-3 text-left text-ink transition disabled:cursor-not-allowed disabled:grayscale-[0.7] disabled:opacity-60 sm:min-h-44 md:aspect-[4/5] md:min-h-0 md:p-4 ${CATEGORY_TINT[category]} ${TILT[i % TILT.length]}`}
             aria-label={
-              exhausted ? `${meta.label}: agotada, no quedan cartas nuevas` : `Robar carta ${meta.label} (dado ${dieFaceOf(category)})`
+              exhausted
+                ? t('game.cards.exhaustedAria', { label: meta.label })
+                : t('game.cards.drawAria', { label: meta.label, face: dieFaceOf(category) })
             }
           >
             <span className="flex items-start justify-between gap-2">
@@ -78,17 +86,17 @@ export function CardGrid(props: {
                 </span>
               </span>
               <span className="rounded-full border-2 border-ink bg-white px-2 py-0.5 text-[11px] font-bold whitespace-nowrap tabular-nums">
-                {exhausted ? 'Agotada' : `Quedan ${left}`}
+                {exhausted ? t('game.cards.exhausted') : t('game.cards.left', { count: left })}
               </span>
             </span>
             <span>
               <span className="block font-display text-base leading-tight break-words hyphens-auto sm:text-lg md:text-[clamp(0.95rem,1.6vw,1.25rem)]">{meta.label}</span>
               <span className="block text-xs font-medium text-ink/70">{meta.hint}</span>
-              <span className="mt-1.5 inline-block rounded-full border-2 border-ink bg-white px-2 py-0.5 text-xs font-bold whitespace-nowrap tabular-nums">{POINTS_HINT[category]}</span>
+              <span className="mt-1.5 inline-block rounded-full border-2 border-ink bg-white px-2 py-0.5 text-xs font-bold whitespace-nowrap tabular-nums">{pointsHint(category)}</span>
             </span>
             {exhausted && (
               <span className="stamp pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-ink bg-white/80 text-lg text-ink" aria-hidden>
-                Agotada
+                {t('game.cards.exhausted')}
               </span>
             )}
           </motion.button>

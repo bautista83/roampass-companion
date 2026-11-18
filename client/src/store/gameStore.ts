@@ -11,6 +11,7 @@ import {
   filterLocationMode,
   finish,
   generateCountryCards,
+  localizeCard,
   shuffle,
   skipTransportEvent,
   timerSecondsOf,
@@ -28,6 +29,7 @@ import {
 import seed from '@roampass/shared/seedData.json';
 import countries from '@roampass/shared/countries.json';
 import { api } from '../api';
+import { currentLocale } from '../i18n';
 
 export interface ActiveDraw {
   card: Card;
@@ -70,7 +72,7 @@ interface GameStore {
 /** Con clave de Google, LUGAR se juega con Street View; sin ella, con fotos. */
 export const hasStreetView = Boolean(import.meta.env.VITE_GOOGLE_MAPS_API_KEY);
 
-/** Cartas escritas a mano (backend o seed incluido) + banderas y capitales generadas localmente. */
+/** Cartas escritas a mano (backend o seed incluido) + banderas y capitales generadas localmente, en el idioma activo. */
 async function loadDeck(): Promise<Card[]> {
   let base = (seed as SeedData).cards;
   try {
@@ -79,7 +81,12 @@ async function loadDeck(): Promise<Card[]> {
   } catch {
     // backend caido: se juega con el mazo incluido en la app
   }
-  return [...filterLocationMode(base, hasStreetView), ...generateCountryCards(countries as CountryData, base)];
+  // Mazo en el idioma activo: las cartas con traduccion se muestran traducidas (si no, en español).
+  const locale = currentLocale();
+  return [
+    ...filterLocationMode(base, hasStreetView).map((card) => localizeCard(card, locale)),
+    ...generateCountryCards(countries as CountryData, base, locale),
+  ];
 }
 
 export const useGameStore = create<GameStore>()(
