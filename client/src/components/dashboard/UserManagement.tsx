@@ -80,6 +80,24 @@ export function UserManagement() {
                   <p className="truncate font-semibold">
                     @{u.username} {isMe && <span className="text-xs text-brass">(tú)</span>}
                   </p>
+                  {u.email && (
+                    <p className="truncate text-xs text-passport-500 dark:text-passport-300">
+                      {u.email}
+                      {!u.emailVerifiedAt && (
+                        <>
+                          {' · '}
+                          <span className="font-bold text-brass">sin confirmar</span>{' '}
+                          <button
+                            className="underline hover:text-stamp-green"
+                            onClick={() => patch(u, { emailVerified: true })}
+                            title="Confirmar el correo a mano (si el mensaje no llegó)"
+                          >
+                            Confirmar
+                          </button>
+                        </>
+                      )}
+                    </p>
+                  )}
                   <p className="text-xs text-passport-500 dark:text-passport-300">
                     Alta: {new Date(u.createdAt).toLocaleDateString('es')}
                     {u.photoUpdatedAt && (

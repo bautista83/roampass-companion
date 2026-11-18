@@ -41,8 +41,14 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
 
   return {
     mode: 'remote',
-    login: (username, password) => request<AuthSession>('/auth/login', json('POST', { username, password })),
-    register: (username, password) => request<RegisterResult>('/auth/register', json('POST', { username, password })),
+    login: (identifier, password) => request<AuthSession>('/auth/login', json('POST', { identifier, password })),
+    register: (data) => request<RegisterResult>('/auth/register', json('POST', data)),
+    verifyEmail: (token) => request<{ purpose: 'VERIFY_EMAIL' | 'CHANGE_EMAIL' }>('/auth/verify-email', json('POST', { token })),
+    resendVerification: (identifier) => request<{ message: string }>('/auth/resend-verification', json('POST', { identifier })),
+    forgotPassword: (identifier) => request<{ message: string }>('/auth/forgot-password', json('POST', { identifier })),
+    resetPassword: async (token, password) => {
+      await request<unknown>('/auth/reset-password', json('POST', { token, password }));
+    },
     me: async () => (await request<{ user: User }>('/auth/me')).user,
     updateMe: async (data) => (await request<{ user: User }>('/auth/me', json('PATCH', data))).user,
 

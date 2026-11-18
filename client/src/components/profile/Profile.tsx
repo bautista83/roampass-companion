@@ -4,6 +4,7 @@ import type { UiTheme } from '@roampass/shared';
 import { useAuthStore } from '../../store/authStore';
 import { PassportCard } from '../dashboard/PassportCard';
 import { PhotoSection } from './PhotoSection';
+import { EmailSection } from './EmailSection';
 
 const STYLES: { theme: UiTheme; title: string; icon: string; desc: string; preview: string; bg: string; text: string; ink: string }[] = [
   {
@@ -32,7 +33,7 @@ const message = (e: unknown) => (e instanceof Error ? e.message : 'Error inesper
 
 /**
  * Mi perfil: el estilo visual del juego (se guarda en el perfil y se aplica al iniciar sesión)
- * la foto del pasaporte y el cambio de contraseña.
+ * la foto del pasaporte, el correo y el cambio de contraseña.
  */
 export function Profile() {
   const user = useAuthStore((s) => s.user);
@@ -144,6 +145,8 @@ export function Profile() {
               </p>
             )}
           </section>
+
+          <EmailSection user={user} />
 
           <form className="panel space-y-4 p-4 md:p-6" onSubmit={changePassword} aria-labelledby="clave">
             <h2 id="clave" className="text-xl">
