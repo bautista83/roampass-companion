@@ -31,27 +31,27 @@ interface MailLocaleTexts {
 /** Español latino neutro. */
 const es: MailLocaleTexts = {
   verifyEmail: (username) => ({
-    subject: 'Confirma tu correo para activar tu pasaporte de RoamPass',
+    subject: 'Confirma tu correo para activar tu pasaporte de Roamle',
     heading: `¡Hola, ${username}!`,
-    intro: ['Gracias por registrarte en RoamPass. Confirma tu correo para activar tu pasaporte y empezar a viajar.'],
+    intro: ['Gracias por registrarte en Roamle. Confirma tu correo para activar tu pasaporte y empezar a viajar.'],
     button: 'Confirmar mi correo',
     outro: 'El enlace vence en 24 horas. Si no creaste esta cuenta, ignora este mensaje.',
   }),
   changeEmail: (username) => ({
-    subject: 'Confirma tu nuevo correo de RoamPass',
+    subject: 'Confirma tu nuevo correo de Roamle',
     heading: `¡Hola, ${username}!`,
-    intro: ['Pediste usar este correo en tu cuenta de RoamPass. Confírmalo para completar el cambio.'],
+    intro: ['Pediste usar este correo en tu cuenta de Roamle. Confírmalo para completar el cambio.'],
     button: 'Confirmar este correo',
     outro: 'El enlace vence en 24 horas. Si no pediste este cambio, ignora este mensaje: tu cuenta sigue igual.',
   }),
   resetPassword: (username) => ({
-    subject: 'Recupera tu contraseña de RoamPass',
+    subject: 'Recupera tu contraseña de Roamle',
     heading: `¡Hola, ${username}!`,
-    intro: ['Recibimos un pedido para cambiar la contraseña de tu cuenta de RoamPass.'],
+    intro: ['Recibimos un pedido para cambiar la contraseña de tu cuenta de Roamle.'],
     button: 'Elegir una contraseña nueva',
     outro: 'El enlace vence en 1 hora. Si no lo pediste, ignora este mensaje: tu contraseña sigue igual.',
   }),
-  footer: 'RoamPass · Viaja, adivina y explora',
+  footer: 'Roamle · Viaja, adivina y explora',
   linkFallback: 'Si el botón no funciona, copia este enlace en tu navegador:',
 };
 
@@ -75,7 +75,7 @@ export function renderMail(content: MailContent, link: string): { subject: strin
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px">
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fdf6e3;border:3px solid #111111;border-radius:16px">
-        <tr><td style="background:#ff5a5a;border-bottom:3px solid #111111;border-radius:13px 13px 0 0;padding:14px 20px;color:#ffffff;font-weight:bold;letter-spacing:2px">ROAMPASS · PASAPORTE</td></tr>
+        <tr><td style="background:#ff5a5a;border-bottom:3px solid #111111;border-radius:13px 13px 0 0;padding:14px 20px;color:#ffffff;font-weight:bold;letter-spacing:2px">ROAMLE · PASAPORTE</td></tr>
         <tr><td style="padding:24px 20px;font-size:16px;line-height:1.5">
           <h1 style="margin:0 0 16px;font-size:24px">${escape(content.heading)}</h1>
           ${paragraphs}

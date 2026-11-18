@@ -1,6 +1,6 @@
-# RoamPass — Viaja, adivina y explora · Companion App
+# Roamle — Viaja, adivina y explora · Companion App
 
-"Director de Juego Digital" del juego de mesa físico RoamPass. El tablero, los dados y los peones
+"Director de Juego Digital" del juego de mesa físico **Roamle** ([playroamle.com](https://playroamle.com)). El tablero, los dados y los peones
 son físicos; la web gestiona usuarios, hace de mazo de tarjetas interactivas y calcula el puntaje en
 tiempo real.
 

@@ -1,4 +1,4 @@
-# Despliegue de RoamPass en vm-dev-web
+# Despliegue de Roamle en vm-dev-web
 
 ```
 Navegador ──► Nginx de la VM :8080 ─┬─ /api/* ──► roampass-api  (127.0.0.1:4100, Express + Prisma)
@@ -77,24 +77,23 @@ Navegador ──HTTPS──► Cloudflare ──túnel──► cloudflared (VM)
 
 ### 1. Dominio
 
-1. En Cloudflare: **Domain Registration → Register Domains** y compra el dominio
-   (por ejemplo `tudominio.com`). Queda con los DNS de Cloudflare.
-2. Elige el subdominio de la app, por ejemplo `roampass.tudominio.com`.
+El dominio es **`playroamle.com`** (comprado en Cloudflare, con sus DNS ahí). La app va en la raíz
+del dominio; opcionalmente `www.playroamle.com` también.
 
 ### 2. Túnel
 
-1. **Zero Trust → Networks → Tunnels → Create a tunnel** → tipo **Cloudflared** → nombre `roampass`.
+1. **Zero Trust → Networks → Tunnels → Create a tunnel** → tipo **Cloudflared** → nombre `roamle`.
 2. Elige **Debian** y copia el comando que muestra el panel (`sudo cloudflared service install <token>`).
    Ejecútalo en la VM: instala `cloudflared` como servicio y arranca solo con la VM.
-3. En **Public Hostname**: subdominio `roampass`, dominio `tudominio.com`, servicio
-   **HTTP** → `localhost:8080`.
-4. Comprueba: `systemctl status cloudflared` y abre `https://roampass.tudominio.com`.
+3. En **Public Hostname**: subdominio **vacío**, dominio `playroamle.com`, servicio **HTTP** →
+   `localhost:8080`. (Para `www`, agrega otro hostname con subdominio `www` y el mismo servicio.)
+4. Comprueba: `systemctl status cloudflared` y abre `https://playroamle.com`.
 
 ### 3. `.env` del servidor
 
 ```bash
-CORS_ORIGIN="https://roampass.tudominio.com"
-APP_URL="https://roampass.tudominio.com"
+CORS_ORIGIN="https://playroamle.com"
+APP_URL="https://playroamle.com"
 TRUST_CLOUDFLARE=true
 ```
 
@@ -110,11 +109,11 @@ Los correos de confirmación y de recuperación de contraseña salen por SMTP. S
 no se envían: el enlace se imprime en el log de la API (`docker compose logs api`).
 
 1. Crea la cuenta en [brevo.com](https://www.brevo.com) (plan gratuito: 300 correos por día).
-2. **Senders, Domains & Dedicated IPs → Domains → Add a domain** → `tudominio.com`.
+2. **Senders, Domains & Dedicated IPs → Domains → Add a domain** → `playroamle.com`.
    Brevo muestra registros DNS (código de Brevo, **DKIM** y **DMARC**). Cárgalos en
    **Cloudflare → DNS → Records** tal cual y pulsa **Authenticate** en Brevo.
    Sin este paso los correos suelen terminar en spam.
-3. **Senders → Add a sender**: `no-reply@tudominio.com` (nombre `RoamPass`).
+3. **Senders → Add a sender**: `no-reply@playroamle.com` (nombre `Roamle`).
 4. **SMTP & API → SMTP**: copia el *login* y genera una **SMTP key**.
 5. En el `.env` del servidor:
 
@@ -123,7 +122,7 @@ no se envían: el enlace se imprime en el log de la API (`docker compose logs ap
    SMTP_PORT=587
    SMTP_USER="<login SMTP de Brevo>"
    SMTP_PASS="<SMTP key>"
-   MAIL_FROM="RoamPass <no-reply@tudominio.com>"
+   MAIL_FROM="Roamle <no-reply@playroamle.com>"
    ```
 
 6. `docker compose up -d` y prueba registrándote con un correo tuyo.
@@ -132,7 +131,7 @@ no se envían: el enlace se imprime en el log de la API (`docker compose logs ap
 
 Con el registro abierto a Internet, el captcha frena a los bots que crean cuentas y gastan el cupo de correos.
 
-1. Cloudflare → **Turnstile → Add widget**: dominio `roampass.tudominio.com`, modo **Managed**.
+1. Cloudflare → **Turnstile → Add widget**: dominio `playroamle.com`, modo **Managed**.
 2. En el `.env`: `VITE_TURNSTILE_SITE_KEY` (clave del sitio, va al navegador) y
    `TURNSTILE_SECRET_KEY` (clave secreta, solo servidor).
 3. `docker compose up -d --build` (la clave del sitio se compila en el bundle).

@@ -1,4 +1,4 @@
-# Cliente de RoamPass (React + Vite) servido como estaticos por Nginx. Build context: raiz del repo.
+# Cliente de Roamle (React + Vite) servido como estaticos por Nginx. Build context: raiz del repo.
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 

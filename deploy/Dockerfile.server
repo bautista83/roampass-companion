@@ -1,4 +1,4 @@
-# API de RoamPass (Express + Prisma). Build context: raiz del repo.
+# API de Roamle (Express + Prisma). Build context: raiz del repo.
 FROM node:24-bookworm-slim
 
 # Prisma necesita OpenSSL para hablar con PostgreSQL.

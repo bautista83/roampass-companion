@@ -3,7 +3,7 @@
 // se vuelve a correr este script y el PDF queda al dia.
 //
 //   npm run rules:pdf                 (español, el idioma por defecto)
-//   npm run rules:pdf -- --lang=en    (otro idioma: reglas-roampass-A4.en.pdf)
+//   npm run rules:pdf -- --lang=en    (otro idioma: reglas-roamle-A4.en.pdf)
 //
 // Arma un HTML y lo imprime con Chrome o Edge en modo headless (no agrega dependencias).
 // Si el navegador no se encuentra solo, indicar la ruta en CHROME_PATH.
@@ -34,7 +34,7 @@ import { CATEGORY_HEX } from '../../client/src/components/game/categoryStyle';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const locale: Locale = resolveLocale(process.argv.find((a) => a.startsWith('--lang='))?.slice(7));
-const OUTPUT = join(root, `art/worldmap/print/reglas-roampass-A4${locale === DEFAULT_LOCALE ? '' : `.${locale}`}.pdf`);
+const OUTPUT = join(root, `art/worldmap/print/reglas-roamle-A4${locale === DEFAULT_LOCALE ? '' : `.${locale}`}.pdf`);
 
 /** Textos propios del PDF (el resto sale de las reglas compartidas, shared/src/locales). */
 interface PdfTexts {
@@ -193,7 +193,7 @@ const pawns = PAWN_COLORS.slice(0, 4)
 
 const html = `<!doctype html>
 <html lang="${locale}"><head><meta charset="utf-8"/>
-<title>RoamPass · ${esc(T.title)}</title>
+<title>Roamle · ${esc(T.title)}</title>
 <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
   @page { size: A4; margin: 0; }
@@ -269,7 +269,7 @@ const html = `<!doctype html>
   <div class="page">
     <header>
       <img src="${asset('logo.svg')}" alt=""/>
-      <div><h1>RoamPass</h1><p>${esc(T.title)} · ${esc(T.subtitle)}</p></div>
+      <div><h1>Roamle</h1><p>${esc(T.title)} · ${esc(T.subtitle)}</p></div>
       <div class="meta">${esc(T.worldTour)}<br/><span class="chip">${BOARD_SPACES} ${esc(T.spaces)} = ${mi(WORLD_TOUR_MILES)}</span></div>
     </header>
     ${block(
@@ -282,7 +282,7 @@ const html = `<!doctype html>
       <div>${block('turn', true, dieTable)}</div>
     </div>
     ${physicalBox}
-    <footer><span>RoamPass · ${esc(T.title)}</span><span>${esc(T.page(1, 2))}</span></footer>
+    <footer><span>Roamle · ${esc(T.title)}</span><span>${esc(T.page(1, 2))}</span></footer>
   </div>
 
   <div class="page">

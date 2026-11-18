@@ -1,4 +1,4 @@
-# Despliegue de RoamPass en el servidor (vm-dev-web).
+# Despliegue de Roamle en el servidor (vm-dev-web).
 # Usa el PostgreSQL compartido (contenedor "postgres" en la red externa "dev-net").
 # Uso, desde la raiz del repo en el servidor:  docker compose up -d --build
 # (el .env de la raiz define COMPOSE_FILE=docker-compose.prod.yml)

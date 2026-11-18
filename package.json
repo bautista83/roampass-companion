@@ -2,7 +2,7 @@
   "name": "roampass-companion",
   "version": "0.1.0",
   "private": true,
-  "description": "RoamPass: Travel, Guess & Explore - Companion App (Director de Juego Digital)",
+  "description": "Roamle: Travel, Guess & Explore - Companion App (Director de Juego Digital)",
   "workspaces": [
     "shared",
     "client",

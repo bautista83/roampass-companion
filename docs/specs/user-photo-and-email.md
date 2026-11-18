@@ -18,6 +18,7 @@
 4. Publicar la app con **dominio propio** (Cloudflare Tunnel) y enviar correos con **Brevo**.
 5. Dejar la app **lista para varios idiomas**, de modo que en el futuro solo falte traducir el contenido.
 6. Mantener el nombre **RoamPass** con el subtítulo en español **"Viaja, adivina y explora"**.
+   _Actualización: el juego pasó a llamarse **Roamle** (dominio `playroamle.com`); el subtítulo se mantiene._
 
 ## 2. Decisiones
 
@@ -151,7 +152,7 @@ Errores: `{ error: string, code?: string }`. Códigos nuevos: `EMAIL_NOT_VERIFIE
 | --- | --- |
 | `APP_URL` | URL pública de la app, para los enlaces de los correos |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Servidor de correo (Brevo: `smtp-relay.brevo.com`, puerto 587) |
-| `MAIL_FROM` | Remitente, por ejemplo `RoamPass <no-reply@tudominio.com>` |
+| `MAIL_FROM` | Remitente, por ejemplo `Roamle <no-reply@playroamle.com>` |
 | `TURNSTILE_SECRET_KEY` / `VITE_TURNSTILE_SITE_KEY` | Captcha del registro (vacías = apagado) |
 | `TRUST_CLOUDFLARE` | `true` detrás de Cloudflare Tunnel: usa `CF-Connecting-IP` |
 
