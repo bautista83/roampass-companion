@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export interface TourStep {
   /** Valor del atributo data-tour del elemento a resaltar. Si no esta en pantalla, el paso se salta. */
@@ -26,6 +27,7 @@ export function GuidedTour({ steps, onClose }: { steps: TourStep[]; onClose: () 
   // Solo los pasos cuyo elemento existe (p. ej. "Continuar" o el modulo Admin no siempre estan).
   const [visible] = useState(() => steps.filter((s) => findTarget(s.target)));
   const [index, setIndex] = useState(0);
+  const { t } = useTranslation();
   const [rect, setRect] = useState<DOMRect | null>(null);
   const step = visible[index];
   const last = index === visible.length - 1;
@@ -87,7 +89,7 @@ export function GuidedTour({ steps, onClose }: { steps: TourStep[]; onClose: () 
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[1100]" role="dialog" aria-modal="true" aria-label="Recorrido por el panel">
+    <div className="fixed inset-0 z-[1100]" role="dialog" aria-modal="true" aria-label={t('tour.aria')}>
       {/* Fondo oscuro con un "agujero" sobre el elemento. Tambien captura los clics: no se toca el panel. */}
       <svg className="absolute inset-0 size-full" onClick={onClose} aria-hidden>
         <defs>
@@ -114,23 +116,21 @@ export function GuidedTour({ steps, onClose }: { steps: TourStep[]; onClose: () 
         animate={{ opacity: 1, y: 0 }}
         aria-live="polite"
       >
-        <p className="label">
-          {index + 1} de {visible.length}
-        </p>
+        <p className="label">{t('tour.stepOf', { step: index + 1, total: visible.length })}</p>
         <h2 className="mb-1 text-lg">{step.title}</h2>
         <p className="mb-4 text-sm">{step.text}</p>
         <div className="flex items-center gap-2">
           <button className="btn-ghost min-h-11 px-3 text-sm" onClick={onClose}>
-            Saltar
+            {t('tour.skip')}
           </button>
           <span className="flex-1" />
           {index > 0 && (
-            <button className="btn-ghost min-h-11 px-3 text-sm" onClick={() => setIndex(index - 1)} aria-label="Paso anterior">
+            <button className="btn-ghost min-h-11 px-3 text-sm" onClick={() => setIndex(index - 1)} aria-label={t('tour.previousAria')}>
               ←
             </button>
           )}
           <button className="btn-primary min-h-11 px-4 text-sm" onClick={() => (last ? onClose() : setIndex(index + 1))}>
-            {last ? '¡Listo!' : 'Siguiente →'}
+            {last ? t('tour.done') : t('tour.next')}
           </button>
         </div>
       </motion.div>

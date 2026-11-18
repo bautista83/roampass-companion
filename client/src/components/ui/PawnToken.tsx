@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { PAWN_COLOR_META, type PawnColor } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '../../store/themeStore';
 
 /**
@@ -135,16 +136,18 @@ const PIN = [
 /** Solo el avatar dibujado (sin pin), para listas y textos. */
 export function AvatarIcon({ avatar, className = '' }: { avatar: string; className?: string }) {
   const retro = useThemeStore((s) => s.retro);
+  const { t } = useTranslation();
+  const label = t('game.pawn.avatarAria', { avatar });
   if (retro && PIXEL[avatar]) {
     return (
-      <svg viewBox="0 0 7 7" className={className} shapeRendering="crispEdges" role="img" aria-label={`Avatar ${avatar}`}>
+      <svg viewBox="0 0 7 7" className={className} shapeRendering="crispEdges" role="img" aria-label={label}>
         {pixels(PIXEL[avatar]!, 0, 0)}
       </svg>
     );
   }
   if (VECTOR[avatar]) {
     return (
-      <svg viewBox="0 0 24 24" className={className} role="img" aria-label={`Avatar ${avatar}`}>
+      <svg viewBox="0 0 24 24" className={className} role="img" aria-label={label}>
         {VECTOR[avatar]}
       </svg>
     );
@@ -164,6 +167,8 @@ function pixels(rows: string[], ox: number, oy: number, colors: Record<string, s
  */
 export function PawnToken({ avatar, color, className = '', title }: { avatar: string; color: PawnColor; className?: string; title?: string }) {
   const retro = useThemeStore((s) => s.retro);
+  const { t } = useTranslation();
+  const label = title ?? t('game.pawn.aria', { avatar });
   const hex = PAWN_COLOR_META[color].hex;
 
   if (retro) {
@@ -173,7 +178,7 @@ export function PawnToken({ avatar, color, className = '', title }: { avatar: st
         className={className}
         shapeRendering="crispEdges"
         role="img"
-        aria-label={title ?? `Ficha ${avatar}`}
+        aria-label={label}
         style={{ filter: `drop-shadow(0 0 0.15em ${hex}) drop-shadow(0.12em 0.12em 0 #3ef2ff)` }}
       >
         {title && <title>{title}</title>}
@@ -193,7 +198,7 @@ export function PawnToken({ avatar, color, className = '', title }: { avatar: st
 
   const pin = 'M20 50 C14 40 4 32.5 4 20 A16 16 0 0 1 36 20 C36 32.5 26 40 20 50 Z';
   return (
-    <svg viewBox="0 0 42 54" className={className} role="img" aria-label={title ?? `Ficha ${avatar}`}>
+    <svg viewBox="0 0 42 54" className={className} role="img" aria-label={label}>
       {title && <title>{title}</title>}
       <ellipse cx="21" cy="51" rx="6" ry="2" fill="#111111" opacity="0.25" />
       <path d={pin} transform="translate(2.6 2.4)" fill="#111111" />

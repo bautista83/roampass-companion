@@ -1,0 +1,120 @@
+{
+  "table": {
+    "transportToast": "{{icon}} ¡{{place}}! Te toca un Evento de Viajero",
+    "noEventsToast": "No quedan Eventos de Viajero: la ficha se queda en el transporte",
+    "dieHintTransport": "Casilla de transporte: Evento de Viajero",
+    "dieHintDigital": "Toca el dado, {{name}}",
+    "dieHintPhysical": "Toca el dado o tira el dado físico y elige la carta",
+    "pause": "⏸ Pausar",
+    "rulesAria": "Ver las reglas del juego",
+    "rulesTitle": "Reglas del juego",
+    "endNow": "🏁 Terminar ahora",
+    "syncWarning": "⚠ Sin conexión con el servidor ({{error}}). La partida sigue guardada en este dispositivo.",
+    "boardAria": "Tablero",
+    "dieCardsAria": "Cartas del dado",
+    "deckAria": "Mazo de tarjetas",
+    "howToPlay": "📖 Cómo jugar",
+    "endTitle": "Terminar partida",
+    "endBody": "Se cerrará la partida ahora y ganará quien vaya primero en el marcador. ¿Continuar?",
+    "keepPlaying": "Seguir jugando",
+    "end": "Terminar"
+  },
+  "turn": {
+    "finished": "Partida terminada",
+    "turnOf": "Turno de",
+    "endOfTrip": "¡Fin del viaje!",
+    "round": "Ronda",
+    "goal": "Meta {{miles}}",
+    "perCard": "⏱ {{seconds}} s por carta"
+  },
+  "score": {
+    "title": "Marcador"
+  },
+  "cards": {
+    "byDieAria": "Cartas por número del dado",
+    "exhausted": "Agotada",
+    "left": "Quedan {{count}}",
+    "exhaustedAria": "{{label}}: agotada, no quedan cartas nuevas",
+    "drawAria": "Robar carta {{label}} (dado {{face}})",
+    "pointsRange": "+{{min}} a +{{max}}",
+    "pointsUpTo": "hasta +{{max}}",
+    "pointsSurprise": "± sorpresa"
+  },
+  "die": {
+    "rollAria": "Tirar el dado",
+    "noCards": "No quedan cartas en ninguna categoría",
+    "rolling": "¡Rodando!",
+    "exhaustedAgain": "{{label}} agotada: ¡otra vez!",
+    "result": "{{face}} · {{icon}} {{label}}",
+    "tapToStart": "Toca para empezar",
+    "rolled": "¡Salió el {{face}}!"
+  },
+  "result": {
+    "timeout": "¡Tiempo!",
+    "bonus": "Bonus",
+    "penalty": "Penalización",
+    "approved": "Aprobado",
+    "denied": "Denegado",
+    "for": "para <b>{{name}}</b>",
+    "seeResults": "🏆 Ver resultados",
+    "nextTurn": "Siguiente turno →"
+  },
+  "quiz": {
+    "turnOf": "Turno de <b>{{player}}</b>",
+    "mysteryFlag": "Bandera misteriosa",
+    "correctAnswer": "Respuesta correcta: <b>{{answer}}</b>"
+  },
+  "event": {
+    "forward": "Avanzar +{{miles}}",
+    "back": "Retroceder {{miles}}"
+  },
+  "location": {
+    "streetViewTitle": "Vista de calle del lugar misterioso",
+    "streetViewHelp": "🧭 Arrastra para mirar alrededor y usa las flechas para avanzar por la calle.",
+    "photoAlt": "Lugar misterioso",
+    "noGuess": "No marcaste ningún punto a tiempo.",
+    "distance": "Distancia: <b>{{km}}</b>",
+    "sure": "¿Seguro? Puedes tocar otro punto para moverlo.",
+    "tapStreetView": "👆 Toca el mapa donde crees que estás.",
+    "tapPhoto": "👆 Toca el mapa donde crees que se tomó la foto.",
+    "bracket": "≤{{km}} km: {{miles}}",
+    "confirm": "Confirmar ubicación"
+  },
+  "board": {
+    "alt": "Tablero de la vuelta al mundo",
+    "showAll": "🗺️ Ver todo",
+    "zoomIn": "🔍 Acercar"
+  },
+  "timer": {
+    "timedOut": "Tiempo agotado",
+    "answered": "Respondida a tiempo",
+    "left": "Quedan {{count}} segundos"
+  },
+  "victory": {
+    "aria": "Victoria",
+    "title": "¡Victoria!",
+    "tie": "Empate entre ",
+    "wins": "Gana ",
+    "summary": "{{rounds}} · {{cards}} cartas jugadas · {{goal}}",
+    "goalMiles": "meta {{miles}}",
+    "goalRounds": "{{count}} rondas",
+    "columns": {
+      "traveler": "Viajero",
+      "miles": "Millas",
+      "correct": "Aciertos",
+      "bestDistance": "Mejor distancia",
+      "strongIn": "Fuerte en"
+    },
+    "newGame": "🔁 Nueva partida",
+    "toDashboard": "Ir al panel"
+  },
+  "image": {
+    "failed": "📷 No se pudo cargar la imagen. Revisa la conexión."
+  },
+  "pawn": {
+    "aria": "Ficha {{avatar}}",
+    "avatarAria": "Avatar {{avatar}}"
+  },
+  "portrait": "Foto del pasaporte",
+  "modalClose": "Cerrar"
+}

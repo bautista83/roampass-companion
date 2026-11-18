@@ -1,0 +1,60 @@
+{
+  "steps": {
+    "aria": "Pasos",
+    "board": "Modo de juego",
+    "victory": "Condición de victoria",
+    "players": "Jugadores"
+  },
+  "board": {
+    "title": "¿Cómo juegan?",
+    "PHYSICAL": {
+      "title": "Con tablero físico",
+      "desc": "Usan el tablero impreso y un dado. La app muestra las tarjetas y lleva las millas."
+    },
+    "DIGITAL": {
+      "title": "Tablero digital",
+      "desc": "El tablero se juega en pantalla: dado animado y los avatares viajan solos desde {{start}}."
+    }
+  },
+  "victory": {
+    "title": "¿Cómo se gana este viaje?",
+    "POINTS": {
+      "title": "Vuelta al mundo",
+      "desc": "Gana el primero en recorrer las millas de la meta.",
+      "unit": "millas"
+    },
+    "ROUNDS": {
+      "title": "Número de Rondas",
+      "desc": "Al terminar las rondas, gana quien haya recorrido más millas.",
+      "unit": "rondas"
+    },
+    "timerTitle": "⏱ Tiempo por carta",
+    "timerDesc": "Si se agota, la carta cuenta como error. Los eventos de viajero no tienen tiempo.",
+    "timerAria": "Segundos por carta",
+    "secondsUnit": " s",
+    "levels": "Las cartas vienen en 3 niveles y las difíciles dan bonus:",
+    "noRepeat": "Ninguna carta se repite en la partida: si una categoría se agota, se marca como «Agotada»."
+  },
+  "players": {
+    "title": "Viajeros",
+    "summary": "{{count}}/{{max}} · {{goal}} · ⏱ {{seconds}} s",
+    "goalRounds": "{{count}} rondas",
+    "add": "+ Agregar jugador/equipo",
+    "defaultName": "Jugador 1",
+    "placeholder": "Jugador / equipo {{n}}",
+    "nameAria": "Nombre del jugador {{n}}",
+    "removeAria": "Quitar jugador {{n}}",
+    "pawn": "Peón 3D",
+    "colorAria": "Color {{color}}",
+    "colorTaken": " (ocupado)",
+    "avatar": "Avatar",
+    "avatarAria": "Avatar {{avatar}}",
+    "isSelf": "Este peón soy yo (@{{name}}) — cuenta para mi récord"
+  },
+  "nav": {
+    "next": "Siguiente →",
+    "back": "← Atrás",
+    "start": "🛫 Comenzar partida",
+    "starting": "Barajando mazo…"
+  }
+}

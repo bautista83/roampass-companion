@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { BOARD, boardPosition, currentPlayer, remainingByCategory, type CardCategory, type GamePlayer } from '@roampass/shared';
 import { useGameStore } from '../../store/gameStore';
 import { Modal } from '../ui/Modal';
@@ -46,6 +47,7 @@ export function GameTable() {
   const skipTransport = useGameStore((s) => s.skipTransport);
   const endEarly = useGameStore((s) => s.endEarly);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [moving, setMoving] = useState(false);
@@ -61,8 +63,8 @@ export function GameTable() {
 
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(() => setToast(null), 2800);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setToast(null), 2800);
+    return () => clearTimeout(timer);
   }, [toast]);
 
   // Casilla de transporte: con la ficha ya quieta, se abre solo el Evento de Viajero del mismo turno.
@@ -71,15 +73,15 @@ export function GameTable() {
   useEffect(() => {
     if (!transportPending || moving || !game || deck.length === 0) return;
     const space = BOARD.spaces[boardPosition(currentPlayer(game).score).space]!;
-    showToast(`${TRANSPORT_ICON[space.id] ?? '🧳'} ¡${space.name}! Te toca un Evento de Viajero`);
-    const t = setTimeout(() => {
+    showToast(t('game.table.transportToast', { icon: TRANSPORT_ICON[space.id] ?? '🧳', place: space.name }));
+    const timer = setTimeout(() => {
       if (eventsLeft > 0) draw('TRAVEL_EVENT');
       else {
-        showToast('No quedan Eventos de Viajero: la ficha se queda en el transporte');
+        showToast(t('game.table.noEventsToast'));
         skipTransport();
       }
     }, TRANSPORT_DELAY_MS);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [transportPending, moving, deck.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // En el tablero digital la llegada se anuncia con el lugar destacado sobre el mapa.
@@ -96,10 +98,10 @@ export function GameTable() {
   const available = (c: CardCategory) => remaining[c] > 0;
 
   const dieHint = game.transportEvent
-    ? 'Casilla de transporte: Evento de Viajero'
+    ? t('game.table.dieHintTransport')
     : digital
-      ? `Tocá el dado, ${player.name}`
-      : 'Tocá el dado o tirá el dado físico y elegí la carta';
+      ? t('game.table.dieHintDigital', { name: player.name })
+      : t('game.table.dieHintPhysical');
 
   const diePanel = (
     <div className="panel flex items-center justify-center gap-4 p-3 md:p-4">
@@ -110,20 +112,20 @@ export function GameTable() {
   const buttons = (
     <div className="flex gap-2">
       <button className="btn-ghost flex-1 text-sm" onClick={() => navigate('/')}>
-        ⏸ Pausar
+        {t('game.table.pause')}
       </button>
-      <button className="btn-ghost w-14 shrink-0 px-0 text-sm" onClick={() => setShowRules(true)} aria-label="Ver las reglas del juego" title="Reglas del juego">
+      <button className="btn-ghost w-14 shrink-0 px-0 text-sm" onClick={() => setShowRules(true)} aria-label={t('game.table.rulesAria')} title={t('game.table.rulesTitle')}>
         ❓
       </button>
       <button className="btn-ghost flex-1 text-sm text-stamp" onClick={() => setConfirmEnd(true)} disabled={finished}>
-        🏁 Terminar ahora
+        {t('game.table.endNow')}
       </button>
     </div>
   );
 
   const syncWarning = syncError && (
     <p className="mt-3 rounded-xl border-2 border-ink bg-sun px-3 py-2 text-xs font-semibold text-ink">
-      ⚠ Sin conexión con el servidor ({syncError}). La partida sigue guardada en este dispositivo.
+      {t('game.table.syncWarning', { error: syncError })}
     </p>
   );
 
@@ -141,7 +143,7 @@ export function GameTable() {
             <div className="order-6 md:order-none">{buttons}</div>
           </div>
           <div className="contents md:flex md:flex-col md:gap-4">
-            <section className="order-2 md:order-none" aria-label="Tablero">
+            <section className="order-2 md:order-none" aria-label={t('game.table.boardAria')}>
               <BoardView
                 players={game.players}
                 currentPlayerId={finished ? null : player.id}
@@ -150,7 +152,7 @@ export function GameTable() {
                 onMovingChange={setMoving}
               />
             </section>
-            <section className="order-4 md:order-none" aria-label="Cartas del dado">
+            <section className="order-4 md:order-none" aria-label={t('game.table.dieCardsAria')}>
               <CardGrid compact disabled remaining={remaining} onDraw={draw} />
               {syncWarning}
             </section>
@@ -161,7 +163,7 @@ export function GameTable() {
         <div className="flex flex-col gap-4 md:grid md:grid-cols-[minmax(0,35fr)_minmax(0,65fr)] md:grid-rows-[auto_auto_auto_1fr] md:items-start md:gap-6">
           <TurnBanner game={game} player={player} className="sticky top-0 z-20 md:static md:col-start-1 md:row-start-1" />
           <div className="md:col-start-1 md:row-start-2">{diePanel}</div>
-          <section className="md:col-start-2 md:row-span-4 md:row-start-1" aria-label="Mazo de tarjetas">
+          <section className="md:col-start-2 md:row-span-4 md:row-start-1" aria-label={t('game.table.deckAria')}>
             <CardGrid disabled={locked} remaining={remaining} onDraw={draw} />
             {syncWarning}
           </section>
@@ -196,18 +198,18 @@ export function GameTable() {
       {active?.card.category === 'TRAVEL_EVENT' && <TravelEventModal draw={active} />}
 
       {/* Reglas sin salir de la partida: no hay carta abierta, asi que ningun reloj corre mientras se leen. */}
-      <Modal open={showRules} onClose={() => setShowRules(false)} title="📖 Cómo jugar" size="xl">
+      <Modal open={showRules} onClose={() => setShowRules(false)} title={t('game.table.howToPlay')} size="xl">
         <div className="p-4 md:p-6">
           <RulesGuide onFinish={() => setShowRules(false)} />
         </div>
       </Modal>
 
-      <Modal open={confirmEnd} onClose={() => setConfirmEnd(false)} title="Terminar partida">
+      <Modal open={confirmEnd} onClose={() => setConfirmEnd(false)} title={t('game.table.endTitle')}>
         <div className="space-y-4 p-6">
-          <p>Se cerrará la partida ahora y ganará quien vaya primero en el marcador. ¿Continuar?</p>
+          <p>{t('game.table.endBody')}</p>
           <div className="flex justify-end gap-2">
             <button className="btn-ghost" onClick={() => setConfirmEnd(false)}>
-              Seguir jugando
+              {t('game.table.keepPlaying')}
             </button>
             <button
               className="btn-danger"
@@ -216,7 +218,7 @@ export function GameTable() {
                 setConfirmEnd(false);
               }}
             >
-              Terminar
+              {t('game.table.end')}
             </button>
           </div>
         </div>

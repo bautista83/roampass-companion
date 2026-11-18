@@ -12,9 +12,11 @@
   "dependencies": {
     "@roampass/shared": "*",
     "framer-motion": "^12.23.0",
+    "i18next": "^25.10.10",
     "leaflet": "^1.9.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-i18next": "^15.7.4",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.9.0",
     "zustand": "^5.0.8"

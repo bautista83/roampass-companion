@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import type { User } from '../../api';
+import { useLabels } from '../../i18n/useLabels';
 import { UserPhoto } from '../ui/UserPhoto';
 
 /** Numero de pasaporte estable a partir del id del usuario. */
@@ -9,10 +11,7 @@ function passportNumber(id: string) {
   return `RP${String(h).padStart(7, '0')}`;
 }
 
-const fmtDate = (iso: string) => {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-};
+const DATE_FORMAT: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
 
 /** Linea de lectura mecanica (MRZ) de 36 caracteres, como en los pasaportes reales. */
 const mrz = (text: string) => text.toUpperCase().replace(/[^A-Z0-9<]/g, '<').padEnd(36, '<').slice(0, 36);
@@ -33,7 +32,9 @@ function Field({ label, value }: { label: string; value: string }) {
  */
 export function PassportCard({ user }: { user: User }) {
   const number = passportNumber(user.id);
-  const role = user.role === 'ADMIN' ? 'Guía de viaje' : 'Viajero/a';
+  const { t } = useTranslation();
+  const { date } = useLabels();
+  const role = user.role === 'ADMIN' ? t('dashboard.passport.roleAdmin') : t('dashboard.passport.rolePlayer');
 
   return (
     <motion.section
@@ -41,7 +42,7 @@ export function PassportCard({ user }: { user: User }) {
       initial={{ y: 16, opacity: 0, rotate: -4 }}
       animate={{ y: 0, opacity: 1, rotate: -1 }}
       transition={{ type: 'spring', stiffness: 160, damping: 16 }}
-      aria-label={`Pasaporte de ${user.username}`}
+      aria-label={t('dashboard.passport.aria', { name: user.username })}
     >
       {/* fondo de seguridad: guilloche de lineas finas */}
       <div
@@ -56,9 +57,9 @@ export function PassportCard({ user }: { user: User }) {
       <header className="relative flex items-center justify-between gap-3 border-b-3 border-[#111111] bg-[#ff5a5a] px-4 py-2 md:px-5">
         <span className="flex items-center gap-2">
           <img src="/logo.svg" alt="" className="size-8" aria-hidden />
-          <span className="font-display text-sm text-white md:text-base">PASAPORTE · PASSPORT</span>
+          <span className="font-display text-sm text-white md:text-base">{t('dashboard.passport.header')}</span>
         </span>
-        <span className="text-[10px] font-extrabold tracking-widest text-white/90 uppercase">República de RoamPass</span>
+        <span className="text-[10px] font-extrabold tracking-widest text-white/90 uppercase">{t('dashboard.passport.country')}</span>
       </header>
 
       <div className="relative grid grid-cols-[auto_1fr] gap-4 p-4 md:gap-5 md:p-5">
@@ -69,30 +70,37 @@ export function PassportCard({ user }: { user: User }) {
 
         <div className="min-w-0 space-y-3">
           <div>
-            <p className="text-[10px] font-bold tracking-widest text-[#5a6357] uppercase">Pasaporte de</p>
-            <h1 className="truncate text-2xl leading-tight md:text-4xl">¡Hola, {user.username}! 👋</h1>
-            <p className="text-sm text-[#5a6357]">¿Listo para tu próximo viaje alrededor del mundo?</p>
+            <p className="text-[10px] font-bold tracking-widest text-[#5a6357] uppercase">{t('dashboard.passport.holder')}</p>
+            <h1 className="truncate text-2xl leading-tight md:text-4xl">{t('dashboard.passport.hello', { name: user.username })}</h1>
+            <p className="text-sm text-[#5a6357]">{t('dashboard.passport.tagline')}</p>
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-            <Field label="Apellido / Surname" value={user.username.toUpperCase()} />
-            <Field label="Categoría" value={role} />
-            <Field label="Nacionalidad" value="Ciudadano del mundo 🌎" />
-            <Field label="Emisión" value={fmtDate(user.createdAt)} />
-            <Field label="N.º de pasaporte" value={number} />
-            <Field label="Estado" value={user.isActive ? 'Vigente ✅' : 'Suspendido'} />
+            <Field label={t('dashboard.passport.surname')} value={user.username.toUpperCase()} />
+            <Field label={t('dashboard.passport.category')} value={role} />
+            <Field label={t('dashboard.passport.nationality')} value={t('dashboard.passport.nationalityValue')} />
+            <Field label={t('dashboard.passport.issued')} value={date(user.createdAt, DATE_FORMAT).toUpperCase()} />
+            <Field label={t('dashboard.passport.number')} value={number} />
+            <Field
+              label={t('dashboard.passport.status')}
+              value={user.isActive ? t('dashboard.passport.statusActive') : t('dashboard.passport.statusSuspended')}
+            />
           </div>
         </div>
       </div>
 
       {/* Linea MRZ */}
       <div className="relative border-t-2 border-dashed border-[#111111]/40 bg-white/60 px-4 py-2 font-mono text-[11px] leading-snug tracking-[0.15em] break-all text-[#111111] md:px-5 md:text-sm">
-        <p>{mrz(`P<RPS${user.username}<<VIAJERO`)}</p>
-        <p>{mrz(`${number}<0RPS${user.isActive ? 'VIGENTE' : 'SUSPENDIDO'}<<<${user.role}`)}</p>
+        <p>{mrz(`P<RPS${user.username}<<${t('dashboard.passport.mrzTraveler')}`)}</p>
+        <p>
+          {mrz(
+            `${number}<0RPS${user.isActive ? t('dashboard.passport.mrzActive') : t('dashboard.passport.mrzSuspended')}<<<${user.role}`,
+          )}
+        </p>
       </div>
 
       {/* sellos */}
       <span className="stamp pointer-events-none absolute right-4 bottom-14 rotate-[-12deg] border-[#e5484d]/60 text-2xl text-[#e5484d]/60 md:text-3xl" aria-hidden>
-        Approved
+        {t('dashboard.passport.stamp')}
       </span>
       <span
         className="pointer-events-none absolute top-14 right-6 grid size-16 rotate-12 place-items-center rounded-full border-4 border-double border-[#1e9e5a]/60 text-center text-[9px] leading-tight font-extrabold text-[#1e9e5a]/70 uppercase md:size-20"
@@ -100,7 +108,7 @@ export function PassportCard({ user }: { user: User }) {
       >
         ✈️
         <br />
-        Buenos Aires
+        {t('dashboard.passport.city')}
       </span>
     </motion.section>
   );

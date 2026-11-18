@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { currentLocale } from '../../i18n';
 import { api, ApiError } from '../../api';
 import { DEMO_ADMIN } from '../../api/localApi';
 import { useAuthStore } from '../../store/authStore';
@@ -25,6 +27,8 @@ export function Login() {
   /** Inicio de sesion rechazado por correo sin confirmar: se ofrece reenviarlo. */
   const [unverified, setUnverified] = useState(false);
   const [busy, setBusy] = useState(false);
+  const { t } = useTranslation();
+  const fail = (err: unknown) => errorMessage(err, t('common.unexpectedError'));
 
   if (token) return <Navigate to="/" replace />;
 
@@ -48,6 +52,7 @@ export function Login() {
           email: email.trim(),
           password,
           ...(captcha && { captchaToken: captcha }),
+          locale: currentLocale(),
         });
         if (pending) {
           // Cuenta creada sin confirmar: vuelve a "Iniciar sesion" con el aviso.
@@ -63,7 +68,7 @@ export function Login() {
       navigate('/');
     } catch (err) {
       if (err instanceof ApiError && err.code === 'EMAIL_NOT_VERIFIED') setUnverified(true);
-      setError(errorMessage(err));
+      setError(fail(err));
       // El token del captcha es de un solo uso: se pide otro para el siguiente intento.
       if (mode === 'register') setCaptchaKey((k) => k + 1);
     } finally {
@@ -79,7 +84,7 @@ export function Login() {
       setError(null);
       setNotice(message);
     } catch (err) {
-      setError(errorMessage(err));
+      setError(fail(err));
     } finally {
       setBusy(false);
     }
@@ -100,7 +105,7 @@ export function Login() {
               mode === m ? 'border-2 border-ink bg-sun text-ink' : 'text-passport-500 dark:text-passport-300'
             }`}
           >
-            {m === 'login' ? 'Iniciar sesión' : 'Registrarse'}
+            {m === 'login' ? t('auth.tabs.login') : t('auth.tabs.register')}
           </button>
         ))}
       </div>
@@ -109,7 +114,7 @@ export function Login() {
         {mode === 'login' ? (
           <div>
             <label className="label" htmlFor="identifier">
-              Usuario o correo
+              {t('auth.fields.identifier')}
             </label>
             <input
               id="identifier"
@@ -125,7 +130,7 @@ export function Login() {
           <>
             <div>
               <label className="label" htmlFor="username">
-                Usuario
+                {t('auth.fields.username')}
               </label>
               <input
                 id="username"
@@ -137,12 +142,12 @@ export function Login() {
                 minLength={3}
                 maxLength={24}
                 pattern="[a-zA-Z0-9_.\-]+"
-                title="Solo letras, números, punto, guion y guion bajo"
+                title={t('auth.fields.usernameHint')}
               />
             </div>
             <div>
               <label className="label" htmlFor="email">
-                Correo
+                {t('auth.fields.email')}
               </label>
               <input
                 id="email"
@@ -159,7 +164,7 @@ export function Login() {
         )}
         <div>
           <label className="label" htmlFor="password">
-            Contraseña
+            {t('auth.fields.password')}
           </label>
           <input
             id="password"
@@ -181,27 +186,27 @@ export function Login() {
             <p>{error}</p>
             {unverified && (
               <button type="button" className="mt-2 underline" onClick={resend} disabled={busy}>
-                Reenviar el correo de confirmación
+                {t('auth.resendVerification')}
               </button>
             )}
           </Notice>
         )}
         <button className="btn-primary w-full" disabled={busy || (needsCaptcha && !captcha)}>
-          {busy ? 'Validando pasaporte…' : mode === 'login' ? 'Embarcar ✈️' : 'Emitir pasaporte 🛂'}
+          {busy ? t('auth.submit.busy') : mode === 'login' ? t('auth.submit.login') : t('auth.submit.register')}
         </button>
       </form>
 
       {mode === 'login' && api.mode === 'remote' && (
         <p className="mt-4 text-center text-sm">
           <Link to="/forgot-password" className="font-bold underline">
-            ¿Olvidaste tu contraseña?
+            {t('auth.forgotLink')}
           </Link>
         </p>
       )}
 
       {api.mode === 'local' && (
         <p className="mt-6 rounded-xl border-2 border-dashed border-ink p-3 text-center text-xs text-passport-600 dark:border-passport-400 dark:text-passport-200">
-          <strong>Modo demo local</strong> (sin backend). Admin de prueba:{' '}
+          <strong>{t('auth.demo.title')}</strong> {t('auth.demo.body')}{' '}
           <code className="font-mono">{DEMO_ADMIN.username}</code> /{' '}
           <code className="font-mono">{DEMO_ADMIN.password}</code>
         </p>

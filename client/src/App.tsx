@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
+import { setLocale } from './i18n';
 import { AppShell } from './components/layout/AppShell';
 import { Login } from './components/auth/Login';
 import { ForgotPassword, ResetPassword, VerifyEmail } from './components/auth/EmailLinkPages';
@@ -20,6 +21,10 @@ function RequireAuth({ children }: { children: ReactNode }) {
 }
 
 export function App() {
+  // Idioma del perfil (o del navegador si no hay sesion).
+  const locale = useAuthStore((s) => s.user?.locale);
+  useEffect(() => setLocale(locale), [locale]);
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

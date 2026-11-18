@@ -1,16 +1,20 @@
 import { motion } from 'framer-motion';
 import { PawnToken } from '../ui/PawnToken';
-import { BOARD, PAWN_COLOR_META, boardPosition, progressToGoal, rankPlayers, type GameState, formatNumber } from '@roampass/shared';
+import { BOARD, PAWN_COLOR_META, boardPosition, progressToGoal, rankPlayers, type GameState } from '@roampass/shared';
+import { useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 
 /** Marcador global en tiempo real, ordenado por posicion. */
 export function Scoreboard({ game }: { game: GameState }) {
   const current = game.players[game.currentPlayerIndex];
+  const { t } = useTranslation();
+  const { num } = useLabels();
   const ranking = rankPlayers(game.players);
   const lastTurn = game.history.at(-1);
 
   return (
     <div className="panel p-3 md:p-4">
-      <h2 className="label mb-3">Marcador</h2>
+      <h2 className="label mb-3">{t('game.score.title')}</h2>
       <motion.ol layout className="space-y-2">
         {ranking.map(({ position, player }) => {
           const hex = PAWN_COLOR_META[player.color].hex;
@@ -34,8 +38,8 @@ export function Scoreboard({ game }: { game: GameState }) {
                 </span>
                 <div className="relative text-right">
                   <motion.span key={player.score} initial={{ scale: 1.35 }} animate={{ scale: 1 }} className="block text-xl font-extrabold tabular-nums">
-                    {formatNumber(player.score)}
-                    <span className="ml-1 text-xs font-semibold text-passport-400">mi</span>
+                    {num(player.score)}
+                    <span className="ml-1 text-xs font-semibold text-passport-400">{t('common.milesSuffix')}</span>
                   </motion.span>
                   {justScored !== null && justScored !== 0 && (
                     <motion.span
@@ -46,7 +50,7 @@ export function Scoreboard({ game }: { game: GameState }) {
                       className={`absolute -top-3 right-0 text-xs font-bold ${justScored > 0 ? 'text-stamp-green' : 'text-stamp'}`}
                     >
                       {justScored > 0 ? '+' : ''}
-                      {formatNumber(justScored)}
+                      {num(justScored)}
                     </motion.span>
                   )}
                 </div>

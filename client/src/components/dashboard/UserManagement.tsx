@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import type { Role } from '@roampass/shared';
+import { Trans, useTranslation } from 'react-i18next';
+import { useLabels } from '../../i18n/useLabels';
 import { api, type User, type UserUpdate } from '../../api';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../ui/Modal';
@@ -16,6 +18,8 @@ export function UserManagement() {
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<User | null>(null);
   const [removingPhoto, setRemovingPhoto] = useState<User | null>(null);
+  const { t } = useTranslation();
+  const { date } = useLabels();
 
   const reload = useCallback(() => {
     api
@@ -32,7 +36,7 @@ export function UserManagement() {
       reload();
       return true;
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error inesperado');
+      setError(e instanceof Error ? e.message : t('common.unexpectedError'));
       return false;
     }
   }
@@ -43,11 +47,11 @@ export function UserManagement() {
     <section className="panel p-4 md:p-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="label">Módulo Admin</p>
-          <h2 className="text-xl font-bold">Gestión de usuarios</h2>
+          <p className="label">{t('users.module')}</p>
+          <h2 className="text-xl font-bold">{t('users.title')}</h2>
         </div>
         <button className="btn-primary" onClick={() => setCreating(true)}>
-          + Nuevo usuario
+          {t('users.new')}
         </button>
       </div>
 
@@ -58,11 +62,11 @@ export function UserManagement() {
       )}
 
       <div className={`hidden px-3 pb-2 label ${COLS}`}>
-        <span>Usuario</span>
-        <span>Rol</span>
-        <span>Estado</span>
-        <span>Partidas</span>
-        <span className="text-right">Acciones</span>
+        <span>{t('users.columns.user')}</span>
+        <span>{t('users.columns.role')}</span>
+        <span>{t('users.columns.status')}</span>
+        <span>{t('users.columns.games')}</span>
+        <span className="text-right">{t('users.columns.actions')}</span>
       </div>
       <ul className="space-y-2">
         {users.map((u) => {
@@ -78,7 +82,7 @@ export function UserManagement() {
                 <UserPhoto user={u} shape="square" className="w-10 shrink-0 rounded-lg border-2 border-ink" />
                 <div className="min-w-0">
                   <p className="truncate font-semibold">
-                    @{u.username} {isMe && <span className="text-xs text-brass">(tú)</span>}
+                    @{u.username} {isMe && <span className="text-xs text-brass">{t('common.you')}</span>}
                   </p>
                   {u.email && (
                     <p className="truncate text-xs text-passport-500 dark:text-passport-300">
@@ -86,25 +90,25 @@ export function UserManagement() {
                       {!u.emailVerifiedAt && (
                         <>
                           {' · '}
-                          <span className="font-bold text-brass">sin confirmar</span>{' '}
+                          <span className="font-bold text-brass">{t('users.unverified')}</span>{' '}
                           <button
                             className="underline hover:text-stamp-green"
                             onClick={() => patch(u, { emailVerified: true })}
-                            title="Confirmar el correo a mano (si el mensaje no llegó)"
+                            title={t('users.confirmEmailTitle')}
                           >
-                            Confirmar
+                            {t('users.confirmEmail')}
                           </button>
                         </>
                       )}
                     </p>
                   )}
                   <p className="text-xs text-passport-500 dark:text-passport-300">
-                    Alta: {new Date(u.createdAt).toLocaleDateString('es')}
+                    {t('users.joined', { date: date(u.createdAt) })}
                     {u.photoUpdatedAt && (
                       <>
                         {' · '}
                         <button className="underline hover:text-stamp" onClick={() => setRemovingPhoto(u)}>
-                          Quitar foto
+                          {t('users.removePhoto')}
                         </button>
                       </>
                     )}
@@ -112,7 +116,7 @@ export function UserManagement() {
                 </div>
               </div>
               <select
-                aria-label={`Rol de ${u.username}`}
+                aria-label={t('users.roleOf', { name: u.username })}
                 className="input min-h-12 py-0"
                 value={u.role}
                 disabled={isMe}
@@ -127,17 +131,17 @@ export function UserManagement() {
                 }`}
                 disabled={isMe}
                 onClick={() => patch(u, { isActive: !u.isActive })}
-                title={u.isActive ? 'Desactivar' : 'Activar'}
+                title={u.isActive ? t('users.deactivate') : t('users.activate')}
               >
-                {u.isActive ? '● Activo' : '○ Inactivo'}
+                {u.isActive ? t('users.active') : t('users.inactive')}
               </button>
               <span className="text-sm tabular-nums">
-                <span className="md:hidden">Partidas: </span>
+                <span className="md:hidden">{t('users.gamesShort')}</span>
                 {u.gamesHosted ?? 0}
               </span>
               <div className="flex gap-2 md:justify-end">
                 <button className="btn-ghost min-h-12 flex-1 px-3 md:flex-none" onClick={() => setEditing(u)}>
-                  ✏️ Editar
+                  {t('users.editButton')}
                 </button>
                 <button
                   className="btn-ghost min-h-12 flex-1 px-3 text-stamp md:flex-none"
@@ -145,7 +149,7 @@ export function UserManagement() {
                   onClick={() => setDeleting(u)}
                 >
                   🗑️
-                  <span className="md:sr-only">Eliminar</span>
+                  <span className="md:sr-only">{t('common.actions.delete')}</span>
                 </button>
               </div>
             </li>
@@ -155,7 +159,7 @@ export function UserManagement() {
 
       <UserFormModal
         open={creating}
-        title="Nuevo usuario"
+        title={t('users.newTitle')}
         onClose={() => setCreating(false)}
         onSubmit={async ({ username, password, role }) => {
           if (await run(() => api.createUser({ username, password: password!, role }))) setCreating(false);
@@ -163,7 +167,7 @@ export function UserManagement() {
       />
       <UserFormModal
         open={editing !== null}
-        title={`Editar @${editing?.username ?? ''}`}
+        title={t('users.editTitle', { name: editing?.username ?? '' })}
         initial={editing ?? undefined}
         onClose={() => setEditing(null)}
         onSubmit={async ({ username, password, role }) => {
@@ -175,15 +179,14 @@ export function UserManagement() {
           if (await patch(editing, data)) setEditing(null);
         }}
       />
-      <Modal open={removingPhoto !== null} onClose={() => setRemovingPhoto(null)} title="Quitar foto">
+      <Modal open={removingPhoto !== null} onClose={() => setRemovingPhoto(null)} title={t('users.removePhotoTitle')}>
         <div className="space-y-4 p-6">
           <p>
-            ¿Quitar la foto de <strong>@{removingPhoto?.username}</strong>? Su pasaporte volverá a mostrar el retrato
-            dibujado. Puede subir otra cuando quiera.
+            <Trans i18nKey="users.removePhotoBody" values={{ name: removingPhoto?.username }} components={{ b: <strong /> }} />
           </p>
           <div className="flex justify-end gap-2">
             <button className="btn-ghost" onClick={() => setRemovingPhoto(null)}>
-              Cancelar
+              {t('common.actions.cancel')}
             </button>
             <button
               className="btn-danger"
@@ -191,20 +194,19 @@ export function UserManagement() {
                 if (removingPhoto && (await run(() => api.deleteUserPhoto(removingPhoto.id)))) setRemovingPhoto(null);
               }}
             >
-              Quitar foto
+              {t('users.removePhoto')}
             </button>
           </div>
         </div>
       </Modal>
-      <Modal open={deleting !== null} onClose={() => setDeleting(null)} title="Eliminar usuario">
+      <Modal open={deleting !== null} onClose={() => setDeleting(null)} title={t('users.deleteTitle')}>
         <div className="space-y-4 p-6">
           <p>
-            ¿Eliminar definitivamente a <strong>@{deleting?.username}</strong> y sus partidas? Esta acción no se puede
-            deshacer. Si solo quieres bloquear el acceso, desactívalo.
+            <Trans i18nKey="users.deleteBody" values={{ name: deleting?.username }} components={{ b: <strong /> }} />
           </p>
           <div className="flex justify-end gap-2">
             <button className="btn-ghost" onClick={() => setDeleting(null)}>
-              Cancelar
+              {t('common.actions.cancel')}
             </button>
             <button
               className="btn-danger"
@@ -212,7 +214,7 @@ export function UserManagement() {
                 if (deleting && (await run(() => api.deleteUser(deleting.id)))) setDeleting(null);
               }}
             >
-              Eliminar
+              {t('common.actions.delete')}
             </button>
           </div>
         </div>
@@ -238,6 +240,7 @@ function UserFormModal(props: {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<Role>('PLAYER');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!open) return;
@@ -256,13 +259,13 @@ function UserFormModal(props: {
       <form onSubmit={submit} className="space-y-4 p-6">
         <div>
           <label className="label" htmlFor="uf-username">
-            Usuario
+            {t('users.form.username')}
           </label>
           <input id="uf-username" className="input" value={username} onChange={(e) => setUsername(e.target.value)} required minLength={3} />
         </div>
         <div>
           <label className="label" htmlFor="uf-password">
-            {initial ? 'Nueva contraseña (opcional)' : 'Contraseña'}
+            {initial ? t('users.form.newPasswordOptional') : t('users.form.password')}
           </label>
           <input
             id="uf-password"
@@ -277,7 +280,7 @@ function UserFormModal(props: {
         </div>
         <div>
           <label className="label" htmlFor="uf-role">
-            Rol
+            {t('users.form.role')}
           </label>
           <select id="uf-role" className="input" value={role} onChange={(e) => setRole(e.target.value as Role)}>
             <option value="PLAYER">PLAYER</option>
@@ -286,9 +289,9 @@ function UserFormModal(props: {
         </div>
         <div className="flex justify-end gap-2">
           <button type="button" className="btn-ghost" onClick={onClose}>
-            Cancelar
+            {t('common.actions.cancel')}
           </button>
-          <button className="btn-primary">Guardar</button>
+          <button className="btn-primary">{t('common.actions.save')}</button>
         </div>
       </form>
     </Modal>

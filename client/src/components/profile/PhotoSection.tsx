@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api, type User } from '../../api';
 import { PhotoError, resizePhoto } from '../../lib/photo';
 import { useAuthStore } from '../../store/authStore';
 
-const message = (e: unknown) =>
-  e instanceof PhotoError || e instanceof Error ? e.message : 'No se pudo guardar la foto.';
 
 /**
  * Foto del pasaporte: sacarla con la camara (en el celular abre la frontal) o elegir una imagen.
@@ -17,6 +16,9 @@ export function PhotoSection({ user }: { user: User }) {
   const [preview, setPreview] = useState<{ blob: Blob; url: string } | null>(null);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const { t } = useTranslation();
+  const message = (e: unknown) =>
+    e instanceof PhotoError ? t(`profile.photo.${e.key}`) : e instanceof Error ? e.message : t('profile.photo.saveError');
 
   // Libera la URL temporal de la vista previa.
   useEffect(
@@ -60,10 +62,10 @@ export function PhotoSection({ user }: { user: User }) {
     <section className="panel space-y-4 p-4 md:p-6" aria-labelledby="foto">
       <div>
         <h2 id="foto" className="text-xl">
-          Foto del pasaporte
+          {t('profile.photo.title')}
         </h2>
         <p className="text-sm text-passport-500 dark:text-passport-300">
-          Sácate una foto o elige una imagen. La recortamos y la achicamos para que quede bien.
+          {t('profile.photo.intro')}
         </p>
       </div>
 
@@ -71,33 +73,33 @@ export function PhotoSection({ user }: { user: User }) {
         <div className="flex flex-wrap items-center gap-4">
           <img
             src={preview.url}
-            alt="Vista previa de tu nueva foto"
+            alt={t('profile.photo.previewAlt')}
             className="aspect-[100/124] w-28 border-3 border-ink object-cover shadow-[4px_4px_0_0_#111111]"
           />
           <div className="flex flex-1 flex-wrap gap-2">
-            <button className="btn-primary" disabled={busy} onClick={() => run(() => api.uploadPhoto(preview.blob), 'Foto guardada ✓')}>
-              {busy ? 'Guardando…' : 'Guardar foto'}
+            <button className="btn-primary" disabled={busy} onClick={() => run(() => api.uploadPhoto(preview.blob), t('profile.photo.saved'))}>
+              {busy ? t('common.actions.saving') : t('profile.photo.save')}
             </button>
             <button className="btn-ghost" disabled={busy} onClick={() => setPreview(null)}>
-              Cancelar
+              {t('common.actions.cancel')}
             </button>
           </div>
         </div>
       ) : (
         <div className="flex flex-wrap gap-2">
           <button className="btn-primary" disabled={busy} onClick={() => cameraInput.current?.click()}>
-            📸 Sacar foto
+            {t('profile.photo.take')}
           </button>
           <button className="btn-ghost" disabled={busy} onClick={() => fileInput.current?.click()}>
-            🖼️ Elegir imagen
+            {t('profile.photo.choose')}
           </button>
           {user.photoUpdatedAt && (
             <button
               className="btn-ghost text-stamp"
               disabled={busy}
-              onClick={() => run(() => api.deleteMyPhoto(), 'Foto quitada ✓')}
+              onClick={() => run(() => api.deleteMyPhoto(), t('profile.photo.removed'))}
             >
-              Quitar foto
+              {t('profile.photo.remove')}
             </button>
           )}
         </div>
