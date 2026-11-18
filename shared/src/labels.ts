@@ -22,6 +22,8 @@ const PAWN_HEX: Record<PawnColor, string> = {
   yellow: '#eab308',
   purple: '#9333ea',
   orange: '#ea580c',
+  pink: '#db2777',
+  teal: '#0d9488',
 };
 
 const numberFormats = new Map<string, Intl.NumberFormat>();

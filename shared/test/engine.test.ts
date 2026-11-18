@@ -175,7 +175,7 @@ describe('turnos y victoria', () => {
   });
 
   it('acepta hasta 6 jugadores (MAX_PLAYERS) y rechaza 7', () => {
-    const six = PAWN_COLORS.map((color, i) => ({ name: `J${i + 1}`, color, avatar: '🧭' }));
+    const six = PAWN_COLORS.slice(0, 6).map((color, i) => ({ name: `J${i + 1}`, color, avatar: '🧭' }));
     expect(MAX_PLAYERS).toBe(6);
     expect(createGame({ mode: 'ROUNDS', target: 10 }, six).players).toHaveLength(6);
     const seven = [...six, { name: 'J7', color: 'red' as const, avatar: '🧭' }];

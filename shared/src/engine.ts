@@ -206,22 +206,37 @@ export function skipTransportEvent(state: GameState, now: Date = new Date()): Ga
 const reachedGoal = (state: GameState) =>
   state.config.mode === 'POINTS' && state.players.some((p) => p.score >= state.config.target);
 
+/** El jugador juega su turno (los PAUSED y ABANDONED de las partidas online se saltan). */
+export const isPlayerActive = (p: GamePlayer) => (p.presence ?? 'ACTIVE') === 'ACTIVE';
+
 function advance(state: GameState, now: Date): GameState {
   const { mode, target } = state.config;
   if (reachedGoal(state)) {
     return finish(state, now);
   }
 
-  const wraps = state.currentPlayerIndex === state.players.length - 1;
-  if (wraps && mode === 'ROUNDS' && state.round >= target) {
-    return finish(state, now);
+  // Pasa al siguiente jugador activo. Cada vez que se da la vuelta empieza una ronda nueva; en modo
+  // rondas, dar la vuelta despues de la ultima termina la partida. Si nadie esta activo, queda en el
+  // siguiente (la partida online espera a que alguien se reactive).
+  let index = state.currentPlayerIndex;
+  let round = state.round;
+  for (let step = 0; step < state.players.length; step++) {
+    const wraps = index === state.players.length - 1;
+    if (wraps && mode === 'ROUNDS' && round >= target) {
+      return finish({ ...state, currentPlayerIndex: index, round }, now);
+    }
+    index = wraps ? 0 : index + 1;
+    if (wraps) round += 1;
+    if (isPlayerActive(state.players[index]!)) break;
   }
+  return { ...state, currentPlayerIndex: index, round };
+}
 
-  return {
-    ...state,
-    currentPlayerIndex: wraps ? 0 : state.currentPlayerIndex + 1,
-    round: wraps ? state.round + 1 : state.round,
-  };
+/** Pasa el turno sin jugar carta (pase o tiempo agotado en el modo online). */
+export function advanceTurn(state: GameState, now: Date = new Date()): GameState {
+  if (state.status === 'FINISHED') return state;
+  const { transportEvent: _pending, ...rest } = state;
+  return advance(rest, now);
 }
 
 /** Permite cerrar la partida antes de tiempo (gana quien vaya primero). */

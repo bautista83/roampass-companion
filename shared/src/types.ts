@@ -146,7 +146,8 @@ export interface SeedData {
   cards: Card[];
 }
 
-export const PAWN_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'] as const;
+/** 8 colores: con 6 jugadores siempre queda uno libre aunque alguien haya abandonado (conserva el suyo). */
+export const PAWN_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'teal'] as const;
 export type PawnColor = (typeof PAWN_COLORS)[number];
 
 export const AVATARS = ['🧭', '🎒', '🗺️', '📸', '🏕️', '🚂', '⛵', '🐪'] as const;
@@ -166,10 +167,15 @@ export interface PlayerStats {
   bestDistanceKm: number | null;
 }
 
+/** Solo en partidas online: ACTIVE juega, PAUSED y ABANDONED se saltan (ver online.ts). */
+export type PlayerPresence = 'ACTIVE' | 'PAUSED' | 'ABANDONED';
+
 export interface GamePlayer extends PlayerSetup {
   id: string;
   score: number;
   stats: PlayerStats;
+  /** undefined = ACTIVE (las partidas locales nunca lo usan). */
+  presence?: PlayerPresence;
 }
 
 export interface TurnRecord {
