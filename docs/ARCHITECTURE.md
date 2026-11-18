@@ -15,7 +15,7 @@ juega en pantalla (modo `DIGITAL`).
 
 | Dentro del alcance | Fuera del alcance |
 | --- | --- |
-| Cuentas (ADMIN / PLAYER) con aprobación de registros | Multijugador en red (varios dispositivos en la misma partida) |
+| Cuentas (ADMIN / PLAYER) con confirmación por correo y foto de pasaporte | Multijugador en red (varios dispositivos en la misma partida) |
 | Configuración de partida, turnos, puntaje, victoria | Validación anti-trampa del puntaje en el servidor |
 | Mazo de cartas (fotos, Street View, quiz, eventos) | Edición de cartas desde la UI (se cargan por seed) |
 | Historial, estadísticas y "últimas partidas" | Pagos, notificaciones, tiempo real (websockets) |
@@ -182,7 +182,11 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | `env.ts` / `loadEnv.ts` | Lee el `.env` de la raíz; `JWT_SECRET` obligatorio |
 | `http.ts` | `HttpError` y traducción de errores → JSON (`GameRuleError`/Zod → 400, P2002 → 409, P2025 → 404) |
 | `auth/middleware.ts` | `requireAuth` (verifica JWT **y recarga el usuario**: desactivar corta el acceso al instante), `requireAdmin` |
-| `auth/rateLimit.ts` | Login: 10 fallos / 15 min por IP. Registro: 5 / hora por IP |
+| `auth/rateLimit.ts` | Login: 10 fallos / 15 min por IP. Registro: 5 / hora. Correos: 3 / hora. IP real detrás de Cloudflare (`TRUST_CLOUDFLARE`) |
+| `auth/emailTokens.ts` | Enlaces de un solo uso (hash SHA-256) y limpieza de registros sin confirmar |
+| `auth/captcha.ts` | Turnstile de Cloudflare en el registro (apagado sin clave) |
+| `mail/` | Envío SMTP con nodemailer y textos de los correos |
+| `photos.ts` | Normaliza la foto del pasaporte con sharp (WebP 256×256, sin metadatos) |
 | `routes/*.ts` | Endpoints (ver 5.2) |
 | `cardMapper.ts` | `Card` (unión discriminada) ↔ fila plana `CardQuestion` |
 | `db.ts` | Singleton de `PrismaClient` |
@@ -192,9 +196,14 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | Método | Ruta | Auth | Descripción |
 | --- | --- | --- | --- |
 | GET | `/health` | — | `{ ok: true }` |
-| POST | `/auth/register` | rate limit | Crea usuario **inactivo**; responde `{ pending: true }` (sin token) |
-| POST | `/auth/login` | rate limit | `{ token, user }`; 403 si la cuenta está pendiente/desactivada |
-| GET / PATCH | `/auth/me` | usuario | Perfil; cambia tema y contraseña (exige la actual) |
+| POST | `/auth/register` | rate limit + captcha | Crea el usuario **sin confirmar** y envía el correo; responde `{ pending: true }` (sin token) |
+| POST | `/auth/login` | rate limit | `{ identifier, password }` (usuario o correo) → `{ token, user }`; 403 `EMAIL_NOT_VERIFIED` / `ACCOUNT_INACTIVE` |
+| POST | `/auth/verify-email` | rate limit | Confirma el registro o el cambio de correo |
+| POST | `/auth/resend-verification`, `/auth/forgot-password` | rate limit | Envían el correo; respuesta genérica |
+| POST | `/auth/reset-password` | rate limit | Contraseña nueva con el enlace |
+| GET / PATCH | `/auth/me` | usuario | Perfil; cambia tema, contraseña y correo (exigen la actual) |
+| PUT / DELETE | `/auth/me/photo` | usuario | Sube (imagen `image/*`) o quita la foto del pasaporte |
+| GET / DELETE | `/users/:id/photo` | usuario / ADMIN | Ver la foto (con sesión) / quitarla (moderación) |
 | GET / POST | `/users` | ADMIN | Listar (con `gamesHosted`) / crear |
 | PATCH / DELETE | `/users/:id` | ADMIN | Activar, rol, renombrar, contraseña / eliminar |
 | GET | `/cards` | usuario | Mazo activo completo |
@@ -204,7 +213,7 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | GET | `/games/recent?limit=` | usuario | Últimas partidas (ADMIN ve todas) |
 | DELETE | `/games/:id` | host o ADMIN | Elimina la partida (cascada a jugadores) |
 
-Formato de error uniforme: `{ error: string, issues? }`.
+Formato de error uniforme: `{ error: string, code?: string, issues? }`. El `code` es estable y sirve para traducir el mensaje.
 
 ### 5.3 Sincronización de partidas
 
@@ -236,7 +245,11 @@ erDiagram
   User ||--o{ GameSession : "hostea"
   User |o--o{ Player : "juega como (opcional)"
   GameSession ||--|{ Player : "tiene 2..4"
-  User { string id PK; string username UK; string passwordHash; Role role; bool isActive; UiTheme theme }
+  User { string id PK; string username UK; string email UK; datetime emailVerifiedAt; string passwordHash; Role role; bool isActive; UiTheme theme }
+  User ||--o| UserPhoto : "foto"
+  User ||--o{ EmailToken : "enlaces"
+  UserPhoto { string userId PK; bytes data "WebP 256x256" }
+  EmailToken { string id PK; string tokenHash UK; EmailTokenPurpose purpose; datetime expiresAt; datetime usedAt }
   GameSession { string id PK "generado en cliente"; string hostId FK; VictoryMode victoryMode; int target; GameStatus status; int currentRound; json state "snapshot del motor"; datetime finishedAt }
   Player { string id PK; string sessionId FK; string userId FK "null = invitado"; int turnOrder; string name; int score; bool isWinner; json stats }
   CardQuestion { string id PK "slug estable"; CardCategory category; Difficulty difficulty; string prompt; string[] options; float latitude; float longitude; int points; bool isActive }
@@ -258,7 +271,8 @@ erDiagram
 | Contraseñas | bcrypt (10 rondas) en servidor |
 | Sesión | JWT HS256, 7 días, en `localStorage` (Zustand persist) |
 | Autorización | Roles `ADMIN` / `PLAYER`; ownership por `hostId` en partidas |
-| Alta de cuentas | Registro público queda inactivo hasta aprobación de un ADMIN |
+| Alta de cuentas | El registro público se activa con un enlace enviado por correo (24 h, un solo uso, se guarda solo el hash). Las cuentas sin confirmar se borran a los 7 días. Captcha Turnstile opcional |
+| Fotos | Re-procesadas en el servidor (sin EXIF/GPS) y servidas solo con sesión |
 | Fuerza bruta | Rate limit por IP; `trust proxy` limitado a loopback/redes privadas |
 | Validación | Zod en todos los bodies |
 | Secretos | Un solo `.env`; solo variables `VITE_*` llegan al bundle |
@@ -311,7 +325,7 @@ roampass-api ──(red docker dev-net)──► postgres:5432 (PostgreSQL compa
 | 4 | ID de partida generado en el cliente + `PUT` upsert | Reintentos idempotentes, offline-first | Ownership verificado contra `hostId` |
 | 5 | `RoamPassApi` con adaptador local | Probar sin backend | Cada endpoint nuevo debe implementarse en **ambos** adaptadores |
 | 6 | Cartas de países generadas, no guardadas | 194 países sin inflar la BD | Viven en `countries.json` |
-| 7 | Registro con aprobación de ADMIN | App expuesta en Internet | Fricción para nuevos jugadores |
+| 7 | Registro con confirmación por correo (antes: aprobación de ADMIN) | App expuesta en Internet sin depender del admin | Necesita SMTP (Brevo) y un dominio con SPF/DKIM |
 | 8 | Un solo `.env` en la raíz | Configuración simple | Disciplina con el prefijo `VITE_` |
 | 9 | `tsx` en producción, sin build del servidor | Simplicidad | Imagen más pesada (incluye devDependencies) |
 

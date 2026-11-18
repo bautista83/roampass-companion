@@ -50,10 +50,52 @@ model User {
   role         Role          @default(PLAYER)
   isActive     Boolean       @default(true)
   theme        UiTheme       @default(COMIC)
+  /// Correo en minusculas. null en cuentas anteriores al registro con correo o creadas por el admin.
+  email           String?   @unique
+  /// null = correo sin confirmar: no puede iniciar sesion (salvo que no tenga correo).
+  emailVerifiedAt DateTime?
+  /// Correo nuevo pedido desde Mi perfil, hasta que se confirma con el enlace.
+  pendingEmail    String?
+  /// Cambia con cada foto nueva: el cliente lo usa para invalidar la cache. null = sin foto.
+  photoUpdatedAt DateTime?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  photo        UserPhoto?
+  emailTokens  EmailToken[]
   hostedGames  GameSession[]
   players      Player[]
+}
+
+enum EmailTokenPurpose {
+  VERIFY_EMAIL
+  CHANGE_EMAIL
+  RESET_PASSWORD
+}
+
+/// Enlace enviado por correo. Solo se guarda el hash SHA-256 del token; es de un solo uso.
+model EmailToken {
+  id        String            @id @default(cuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose   EmailTokenPurpose
+  tokenHash String            @unique
+  /// Correo al que se envio (en CHANGE_EMAIL, el correo nuevo).
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime          @default(now())
+
+  @@index([userId, purpose])
+}
+
+/// Foto del pasaporte: WebP 256x256 sin metadatos (la procesa el servidor con sharp).
+/// Tabla aparte para no cargar los bytes cada vez que se lee un usuario.
+model UserPhoto {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Bytes
+  mimeType  String
+  updatedAt DateTime @updatedAt
 }
 
 /// Partida. `state` guarda el snapshot completo del motor (@roampass/shared) para

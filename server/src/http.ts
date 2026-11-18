@@ -7,6 +7,8 @@ export class HttpError extends Error {
   constructor(
     public readonly status: number,
     message: string,
+    /** Codigo estable para que el cliente traduzca el error (ver docs/specs/user-photo-and-email.md). */
+    public readonly code?: string,
   ) {
     super(message);
   }
@@ -15,7 +17,9 @@ export class HttpError extends Error {
 // Express 5 propaga los errores de handlers async; aqui se traducen a JSON.
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof HttpError) {
-    res.status(err.status).json({ error: err.message });
+    res.status(err.status).json({ error: err.message, ...(err.code && { code: err.code }) });
+  } else if (err?.type === 'entity.too.large') {
+    res.status(413).json({ error: 'El archivo es demasiado grande', code: 'PAYLOAD_TOO_LARGE' });
   } else if (err instanceof GameRuleError) {
     res.status(400).json({ error: err.message });
   } else if (err instanceof ZodError) {

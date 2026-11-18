@@ -5,9 +5,23 @@ import { prisma } from '../db';
 import { env } from '../env';
 import { HttpError } from '../http';
 
-export type PublicUser = Pick<User, 'id' | 'username' | 'role' | 'isActive' | 'createdAt'>;
+export type PublicUser = Pick<
+  User,
+  'id' | 'username' | 'role' | 'isActive' | 'theme' | 'photoUpdatedAt' | 'email' | 'emailVerifiedAt' | 'pendingEmail' | 'createdAt'
+>;
 
-export const publicUserSelect = { id: true, username: true, role: true, isActive: true, theme: true, createdAt: true } as const;
+export const publicUserSelect = {
+  id: true,
+  username: true,
+  role: true,
+  isActive: true,
+  theme: true,
+  photoUpdatedAt: true,
+  email: true,
+  emailVerifiedAt: true,
+  pendingEmail: true,
+  createdAt: true,
+} as const;
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -20,20 +34,20 @@ export const signToken = (userId: string) => jwt.sign({ sub: userId }, env.jwtSe
 /** Verifica el JWT y recarga el usuario: desactivar una cuenta corta su acceso al instante. */
 export const requireAuth: RequestHandler = async (req, _res, next) => {
   const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ')) throw new HttpError(401, 'No autenticado');
+  if (!header?.startsWith('Bearer ')) throw new HttpError(401, 'No autenticado', 'SESSION_INVALID');
   let userId: string;
   try {
     userId = String(jwt.verify(header.slice(7), env.jwtSecret).sub);
   } catch {
-    throw new HttpError(401, 'Sesion invalida o expirada');
+    throw new HttpError(401, 'Sesion invalida o expirada', 'SESSION_INVALID');
   }
   const user = await prisma.user.findUnique({ where: { id: userId }, select: publicUserSelect });
-  if (!user || !user.isActive) throw new HttpError(401, 'Cuenta inexistente o desactivada');
+  if (!user || !user.isActive) throw new HttpError(401, 'Cuenta inexistente o desactivada', 'SESSION_INVALID');
   req.user = user;
   next();
 };
 
 export const requireAdmin: RequestHandler = (req, _res, next) => {
-  if (req.user?.role !== 'ADMIN') throw new HttpError(403, 'Solo administradores');
+  if (req.user?.role !== 'ADMIN') throw new HttpError(403, 'Solo administradores', 'FORBIDDEN');
   next();
 };

@@ -7,6 +7,14 @@ export interface User {
   isActive: boolean;
   /** Estilo visual del perfil. Los usuarios anteriores a esta opcion no lo tienen: COMIC. */
   theme?: UiTheme;
+  /** Fecha de la foto del pasaporte (cambia con cada foto nueva). null/undefined = sin foto. */
+  photoUpdatedAt?: string | null;
+  /** Correo (minusculas). null en cuentas anteriores al registro con correo o creadas por el admin. */
+  email?: string | null;
+  /** null con correo = registro sin confirmar. */
+  emailVerifiedAt?: string | null;
+  /** Correo nuevo pedido en Mi perfil, hasta confirmarlo con el enlace. */
+  pendingEmail?: string | null;
   createdAt: string;
   gamesHosted?: number;
 }
@@ -14,8 +22,19 @@ export interface User {
 /** Lo que cada usuario puede cambiar de su propio perfil. */
 export interface ProfileUpdate {
   theme?: UiTheme;
+  /** Obligatoria para cambiar la contraseña o el correo. */
   currentPassword?: string;
   newPassword?: string;
+  /** Correo nuevo: queda pendiente hasta abrir el enlace que le llega. */
+  email?: string;
+}
+
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  /** Token de Turnstile (solo si el captcha esta activo). */
+  captchaToken?: string;
 }
 
 export interface AuthSession {
@@ -23,7 +42,7 @@ export interface AuthSession {
   user: User;
 }
 
-/** Registro con backend: la cuenta queda pendiente hasta que un ADMIN la activa. */
+/** Registro con backend: la cuenta queda pendiente hasta confirmar el correo. */
 export interface PendingRegistration {
   pending: true;
   message: string;
@@ -69,6 +88,8 @@ export interface UserUpdate {
   password?: string;
   role?: Role;
   isActive?: boolean;
+  /** Confirmar el correo a mano (si el mensaje no llego). */
+  emailVerified?: true;
 }
 
 /**
@@ -78,8 +99,15 @@ export interface UserUpdate {
  */
 export interface RoamPassApi {
   readonly mode: 'remote' | 'local';
-  login(username: string, password: string): Promise<AuthSession>;
-  register(username: string, password: string): Promise<RegisterResult>;
+  /** `identifier`: usuario o correo. */
+  login(identifier: string, password: string): Promise<AuthSession>;
+  register(data: RegisterData): Promise<RegisterResult>;
+  /** Abre el enlace del correo (registro o cambio de correo). */
+  verifyEmail(token: string): Promise<{ purpose: 'VERIFY_EMAIL' | 'CHANGE_EMAIL' }>;
+  /** Respuestas genericas: no revelan si la cuenta existe. */
+  resendVerification(identifier: string): Promise<{ message: string }>;
+  forgotPassword(identifier: string): Promise<{ message: string }>;
+  resetPassword(token: string, password: string): Promise<void>;
   me(): Promise<User>;
   updateMe(data: ProfileUpdate): Promise<User>;
 
@@ -96,12 +124,22 @@ export interface RoamPassApi {
   getRecentGames(limit?: number): Promise<RecentGame[]>;
   /** Elimina una partida (solo quien la creo o un admin). */
   deleteGame(id: string): Promise<void>;
+
+  /** Foto del pasaporte: se manda ya achicada (ver lib/photo.ts); el servidor la normaliza. */
+  uploadPhoto(image: Blob): Promise<User>;
+  deleteMyPhoto(): Promise<User>;
+  /** Moderacion (ADMIN): quita la foto de otro usuario. */
+  deleteUserPhoto(userId: string): Promise<User>;
+  /** URL lista para <img> (blob: o data:), o null si no tiene foto. */
+  getPhotoUrl(userId: string, version: string): Promise<string | null>;
 }
 
 export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status: number,
+    /** Codigo estable del servidor (p. ej. EMAIL_NOT_VERIFIED) para reaccionar o traducir. */
+    public readonly code?: string,
   ) {
     super(message);
   }

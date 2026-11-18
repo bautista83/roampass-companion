@@ -67,7 +67,79 @@ docker compose up -d --build      # las migraciones nuevas se aplican solas al a
 docker image prune -f             # borra las imágenes viejas
 ```
 
-## Publicar en Internet con Tailscale Funnel
+## Publicar en Internet con dominio propio (Cloudflare Tunnel)
+
+El túnel sale desde la VM hacia Cloudflare: no hay que abrir puertos en el router y el HTTPS es automático.
+
+```
+Navegador ──HTTPS──► Cloudflare ──túnel──► cloudflared (VM) ──► Nginx :8080 ──► api / web
+```
+
+### 1. Dominio
+
+1. En Cloudflare: **Domain Registration → Register Domains** y compra el dominio
+   (por ejemplo `tudominio.com`). Queda con los DNS de Cloudflare.
+2. Elige el subdominio de la app, por ejemplo `roampass.tudominio.com`.
+
+### 2. Túnel
+
+1. **Zero Trust → Networks → Tunnels → Create a tunnel** → tipo **Cloudflared** → nombre `roampass`.
+2. Elige **Debian** y copia el comando que muestra el panel (`sudo cloudflared service install <token>`).
+   Ejecútalo en la VM: instala `cloudflared` como servicio y arranca solo con la VM.
+3. En **Public Hostname**: subdominio `roampass`, dominio `tudominio.com`, servicio
+   **HTTP** → `localhost:8080`.
+4. Comprueba: `systemctl status cloudflared` y abre `https://roampass.tudominio.com`.
+
+### 3. `.env` del servidor
+
+```bash
+CORS_ORIGIN="https://roampass.tudominio.com"
+APP_URL="https://roampass.tudominio.com"
+TRUST_CLOUDFLARE=true
+```
+
+Con `TRUST_CLOUDFLARE=true` los límites de intentos usan la IP real del visitante
+(encabezado `CF-Connecting-IP`). Sin eso, todas las visitas llegarían "desde" `cloudflared`
+y 10 logins fallidos de cualquiera bloquearían a todos.
+
+Luego: `docker compose up -d --build`.
+
+## Correo con Brevo
+
+Los correos de confirmación y de recuperación de contraseña salen por SMTP. Sin `SMTP_HOST`
+no se envían: el enlace se imprime en el log de la API (`docker compose logs api`).
+
+1. Crea la cuenta en [brevo.com](https://www.brevo.com) (plan gratuito: 300 correos por día).
+2. **Senders, Domains & Dedicated IPs → Domains → Add a domain** → `tudominio.com`.
+   Brevo muestra registros DNS (código de Brevo, **DKIM** y **DMARC**). Cárgalos en
+   **Cloudflare → DNS → Records** tal cual y pulsa **Authenticate** en Brevo.
+   Sin este paso los correos suelen terminar en spam.
+3. **Senders → Add a sender**: `no-reply@tudominio.com` (nombre `RoamPass`).
+4. **SMTP & API → SMTP**: copia el *login* y genera una **SMTP key**.
+5. En el `.env` del servidor:
+
+   ```bash
+   SMTP_HOST="smtp-relay.brevo.com"
+   SMTP_PORT=587
+   SMTP_USER="<login SMTP de Brevo>"
+   SMTP_PASS="<SMTP key>"
+   MAIL_FROM="RoamPass <no-reply@tudominio.com>"
+   ```
+
+6. `docker compose up -d` y prueba registrándote con un correo tuyo.
+
+## Captcha en el registro (Cloudflare Turnstile, opcional)
+
+Con el registro abierto a Internet, el captcha frena a los bots que crean cuentas y gastan el cupo de correos.
+
+1. Cloudflare → **Turnstile → Add widget**: dominio `roampass.tudominio.com`, modo **Managed**.
+2. En el `.env`: `VITE_TURNSTILE_SITE_KEY` (clave del sitio, va al navegador) y
+   `TURNSTILE_SECRET_KEY` (clave secreta, solo servidor).
+3. `docker compose up -d --build` (la clave del sitio se compila en el bundle).
+
+Sin las dos claves el captcha queda apagado.
+
+## Publicar en Internet con Tailscale Funnel (alternativa sin dominio)
 
 ```bash
 sudo tailscale funnel --bg 8080     # https://dev-web.<tu-tailnet>.ts.net -> Nginx :8080
@@ -75,12 +147,18 @@ tailscale funnel status
 sudo tailscale funnel reset         # dejar de publicar
 ```
 
-La API limita el login (10 intentos fallidos / 15 min por IP) y el registro (5 / hora por IP).
+Con Funnel no se pueden enviar correos desde un dominio propio: para el registro con
+confirmación conviene Cloudflare Tunnel + Brevo.
+
+La API limita el login (10 intentos fallidos / 15 min por IP), el registro (5 / hora por IP) y
+los correos de confirmación y recuperación (3 / hora por IP).
 
 ## Notas
 
 - Las variables `VITE_*` se compilan dentro del bundle: si cambias `VITE_GOOGLE_MAPS_API_KEY`
-  hay que reconstruir (`docker compose up -d --build`).
+  o `VITE_TURNSTILE_SITE_KEY` hay que reconstruir (`docker compose up -d --build`).
+- Las fotos de los pasaportes se guardan en PostgreSQL (tabla `UserPhoto`, ~30 KB cada una):
+  entran en los backups de la base.
 - Street View: en Google Cloud, agrega `http://192.168.100.202:8080/*` y `http://dev-web:8080/*`
   a las restricciones de referente HTTP de la API key.
 - Ver la base con DBeaver: base `roampass`, usuario `roampass` (o `bautista`).

@@ -24,7 +24,9 @@ Y darle al admin del sistema un **panel de control** propio.
   (`PATCH /api/users/:id` con `role`) o al crearlo (`POST /api/users`). Puede haber varios.
 - El seed crea o asciende a `ADMIN_USERNAME` del `.env`.
 - La administración de usuarios está dentro del panel principal (`UserManagement` en `Dashboard`):
-  activar/desactivar (incluye aprobar registros), renombrar, cambiar contraseña, cambiar rol y eliminar.
+  activar/desactivar, confirmar correos a mano, quitar fotos, renombrar, cambiar contraseña, cambiar rol y eliminar.
+  Desde [user-photo-and-email.md](user-photo-and-email.md) los registros se confirman por correo: el admin ya no
+  los aprueba (salvo las cuentas viejas que quedaron pendientes).
 - En "Últimas partidas" el admin ve las partidas de todos y puede eliminar cualquiera.
 
 ## 3. Reglas
@@ -40,13 +42,13 @@ Y darle al admin del sistema un **panel de control** propio.
 
 Contenido inicial (lo que ya existe, reorganizado):
 
-- **Usuarios:** listado, solicitudes pendientes de aprobación, activar/desactivar, renombrar, cambiar contraseña, eliminar.
+- **Usuarios:** listado con foto y correo, cuentas sin confirmar, activar/desactivar, renombrar, cambiar contraseña, eliminar.
 - **Partidas:** todas las partidas (locales y online), con estado, jugadores y anfitrión.
 
-### Futuro (fuera de esta spec)
+### Foto de pasaporte
 
-- **Foto de pasaporte:** cada usuario podrá sacarse o subir una foto para su pasaporte. El admin la
-  verá en el panel. Implica almacenamiento de archivos y moderación: se especifica aparte.
+Ya implementada en [user-photo-and-email.md](user-photo-and-email.md): el admin ve la foto de cada
+usuario y puede quitarla.
 
 ## 5. Preguntas abiertas
 

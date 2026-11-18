@@ -3,6 +3,7 @@ import type { Role } from '@roampass/shared';
 import { api, type User, type UserUpdate } from '../../api';
 import { useAuthStore } from '../../store/authStore';
 import { Modal } from '../ui/Modal';
+import { UserPhoto } from '../ui/UserPhoto';
 
 const COLS = 'md:grid md:grid-cols-[minmax(0,1.6fr)_8rem_9rem_6rem_auto] md:items-center md:gap-4';
 
@@ -14,6 +15,7 @@ export function UserManagement() {
   const [editing, setEditing] = useState<User | null>(null);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<User | null>(null);
+  const [removingPhoto, setRemovingPhoto] = useState<User | null>(null);
 
   const reload = useCallback(() => {
     api
@@ -72,13 +74,42 @@ export function UserManagement() {
                 u.isActive ? '' : 'opacity-60'
               }`}
             >
-              <div className="min-w-0">
-                <p className="truncate font-semibold">
-                  @{u.username} {isMe && <span className="text-xs text-brass">(tú)</span>}
-                </p>
-                <p className="text-xs text-passport-500 dark:text-passport-300">
-                  Alta: {new Date(u.createdAt).toLocaleDateString('es')}
-                </p>
+              <div className="flex min-w-0 items-center gap-3">
+                <UserPhoto user={u} shape="square" className="w-10 shrink-0 rounded-lg border-2 border-ink" />
+                <div className="min-w-0">
+                  <p className="truncate font-semibold">
+                    @{u.username} {isMe && <span className="text-xs text-brass">(tú)</span>}
+                  </p>
+                  {u.email && (
+                    <p className="truncate text-xs text-passport-500 dark:text-passport-300">
+                      {u.email}
+                      {!u.emailVerifiedAt && (
+                        <>
+                          {' · '}
+                          <span className="font-bold text-brass">sin confirmar</span>{' '}
+                          <button
+                            className="underline hover:text-stamp-green"
+                            onClick={() => patch(u, { emailVerified: true })}
+                            title="Confirmar el correo a mano (si el mensaje no llegó)"
+                          >
+                            Confirmar
+                          </button>
+                        </>
+                      )}
+                    </p>
+                  )}
+                  <p className="text-xs text-passport-500 dark:text-passport-300">
+                    Alta: {new Date(u.createdAt).toLocaleDateString('es')}
+                    {u.photoUpdatedAt && (
+                      <>
+                        {' · '}
+                        <button className="underline hover:text-stamp" onClick={() => setRemovingPhoto(u)}>
+                          Quitar foto
+                        </button>
+                      </>
+                    )}
+                  </p>
+                </div>
               </div>
               <select
                 aria-label={`Rol de ${u.username}`}
@@ -144,6 +175,27 @@ export function UserManagement() {
           if (await patch(editing, data)) setEditing(null);
         }}
       />
+      <Modal open={removingPhoto !== null} onClose={() => setRemovingPhoto(null)} title="Quitar foto">
+        <div className="space-y-4 p-6">
+          <p>
+            ¿Quitar la foto de <strong>@{removingPhoto?.username}</strong>? Su pasaporte volverá a mostrar el retrato
+            dibujado. Puede subir otra cuando quiera.
+          </p>
+          <div className="flex justify-end gap-2">
+            <button className="btn-ghost" onClick={() => setRemovingPhoto(null)}>
+              Cancelar
+            </button>
+            <button
+              className="btn-danger"
+              onClick={async () => {
+                if (removingPhoto && (await run(() => api.deleteUserPhoto(removingPhoto.id)))) setRemovingPhoto(null);
+              }}
+            >
+              Quitar foto
+            </button>
+          </div>
+        </div>
+      </Modal>
       <Modal open={deleting !== null} onClose={() => setDeleting(null)} title="Eliminar usuario">
         <div className="space-y-4 p-6">
           <p>

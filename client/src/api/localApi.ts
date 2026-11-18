@@ -8,6 +8,8 @@ import { ApiError, type PlayerStatsSummary, type RecentGame, type RoamPassApi, t
 interface StoredUser extends User {
   salt: string;
   passwordHash: string;
+  /** Foto del pasaporte como data: URL (ya achicada en el navegador, ~30 KB). */
+  photo?: string;
 }
 interface StoredGame {
   hostId: string;
@@ -29,15 +31,26 @@ async function hash(password: string, salt: string): Promise<string> {
 }
 
 const newId = () => crypto.randomUUID();
-const strip = ({ salt: _s, passwordHash: _p, ...user }: StoredUser): User => user;
+const strip = ({ salt: _s, passwordHash: _p, photo: _f, ...user }: StoredUser): User => user;
 
-async function makeUser(username: string, password: string, role: User['role']): Promise<StoredUser> {
+const toDataUrl = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+
+async function makeUser(username: string, password: string, role: User['role'], email?: string): Promise<StoredUser> {
   const salt = newId();
   return {
     id: newId(),
     username,
     role,
     isActive: true,
+    // Modo demo: no se envian correos, asi que el correo cuenta como confirmado (CO-11).
+    email: email ?? null,
+    emailVerifiedAt: email ? new Date().toISOString() : null,
     createdAt: new Date().toISOString(),
     salt,
     passwordHash: await hash(password, salt),
@@ -58,6 +71,21 @@ async function load(): Promise<LocalDb> {
 
 function save(db: LocalDb) {
   localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+const demoUnavailable = () =>
+  new ApiError('No disponible en el modo demo (no se envían correos).', 400, 'DEMO_UNAVAILABLE');
+
+function normalizeEmail(email: string) {
+  const value = email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) throw new ApiError('Correo no válido', 400);
+  return value;
+}
+
+/** Usuario o correo (los usuarios no pueden tener "@"). */
+function findByIdentifier(db: LocalDb, identifier: string) {
+  const value = identifier.trim();
+  return value.includes('@') ? db.users.find((u) => u.email === value.toLowerCase()) : db.users.find((u) => u.username === value);
 }
 
 function validateCredentials(username: string, password: string) {
@@ -84,9 +112,9 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
   return {
     mode: 'local',
 
-    async login(username, password) {
+    async login(identifier, password) {
       const db = await load();
-      const user = db.users.find((u) => u.username === username.trim());
+      const user = findByIdentifier(db, identifier);
       if (!user || (await hash(password, user.salt)) !== user.passwordHash) {
         throw new ApiError('Usuario o contraseña incorrectos', 401);
       }
@@ -94,27 +122,56 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       return session(user);
     },
 
-    async register(username, password) {
+    async register({ username, email, password }) {
       validateCredentials(username, password);
+      const mail = normalizeEmail(email);
       const db = await load();
-      if (db.users.some((u) => u.username === username.trim())) throw new ApiError('El usuario ya existe', 409);
-      const user = await makeUser(username.trim(), password, 'PLAYER');
+      if (db.users.some((u) => u.username === username.trim())) {
+        throw new ApiError('Ese nombre de usuario ya está en uso', 409, 'USERNAME_TAKEN');
+      }
+      if (db.users.some((u) => u.email === mail)) throw new ApiError('Ese correo ya está registrado', 409, 'EMAIL_TAKEN');
+      const user = await makeUser(username.trim(), password, 'PLAYER', mail);
       db.users.push(user);
       save(db);
       return session(user);
+    },
+
+    async verifyEmail() {
+      throw demoUnavailable();
+    },
+    async resendVerification() {
+      throw demoUnavailable();
+    },
+    async forgotPassword() {
+      throw demoUnavailable();
+    },
+    async resetPassword() {
+      throw demoUnavailable();
     },
 
     async me() {
       return strip(await currentUser(await load()));
     },
 
-    async updateMe({ theme, currentPassword, newPassword }) {
+    async updateMe({ theme, currentPassword, newPassword, email }) {
       const db = await load();
       const user = await currentUser(db);
-      if (newPassword) {
+      const mail = email === undefined ? undefined : normalizeEmail(email);
+      const changingEmail = mail !== undefined && mail !== user.email;
+      if (newPassword || changingEmail) {
         if (!currentPassword || (await hash(currentPassword, user.salt)) !== user.passwordHash) {
-          throw new ApiError('La contraseña actual no es correcta', 400);
+          throw new ApiError('La contraseña actual no es correcta', 400, 'WRONG_PASSWORD');
         }
+      }
+      if (changingEmail) {
+        if (db.users.some((u) => u.id !== user.id && u.email === mail)) {
+          throw new ApiError('Ese correo ya está registrado', 409, 'EMAIL_TAKEN');
+        }
+        // Sin correos en el modo demo: el cambio se aplica directo.
+        user.email = mail;
+        user.emailVerifiedAt = new Date().toISOString();
+      }
+      if (newPassword) {
         validateCredentials(user.username, newPassword);
         user.passwordHash = await hash(newPassword, user.salt);
       }
@@ -250,6 +307,41 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
             })),
           };
         });
+    },
+
+    async uploadPhoto(image) {
+      const db = await load();
+      const user = await currentUser(db);
+      user.photo = await toDataUrl(image);
+      user.photoUpdatedAt = new Date().toISOString();
+      save(db);
+      return strip(user);
+    },
+
+    async deleteMyPhoto() {
+      const db = await load();
+      const user = await currentUser(db);
+      delete user.photo;
+      user.photoUpdatedAt = null;
+      save(db);
+      return strip(user);
+    },
+
+    async deleteUserPhoto(userId) {
+      const db = await load();
+      await requireAdmin(db);
+      const user = db.users.find((u) => u.id === userId);
+      if (!user) throw new ApiError('No encontrado', 404);
+      delete user.photo;
+      user.photoUpdatedAt = null;
+      save(db);
+      return strip(user);
+    },
+
+    async getPhotoUrl(userId) {
+      const db = await load();
+      await currentUser(db);
+      return db.users.find((u) => u.id === userId)?.photo ?? null;
     },
   };
 }
