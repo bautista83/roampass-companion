@@ -227,7 +227,7 @@ const html = `<!doctype html>
   <div class="page">
     <header>
       <img src="${asset('logo.svg')}" alt=""/>
-      <div><h1>RoamPass</h1><p>Reglas del juego · Travel, Guess &amp; Explore</p></div>
+      <div><h1>RoamPass</h1><p>Reglas del juego · Viaja, adivina y explora</p></div>
       <div class="meta">La vuelta al mundo<br/><span class="chip">${BOARD_SPACES} casillas = ${mi(WORLD_TOUR_MILES)}</span></div>
     </header>
     ${block(

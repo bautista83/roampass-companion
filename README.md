@@ -1,4 +1,4 @@
-# RoamPass: Travel, Guess & Explore — Companion App
+# RoamPass — Viaja, adivina y explora · Companion App
 
 "Director de Juego Digital" del juego de mesa físico RoamPass. El tablero, los dados y los peones
 son físicos; la web gestiona usuarios, hace de mazo de tarjetas interactivas y calcula el puntaje en
@@ -30,7 +30,9 @@ solo lugar.
 
 | Componente | Función |
 | --- | --- |
-| `auth/Login` | Login / registro (roles `ADMIN` y `PLAYER`) |
+| `auth/Login` | Login con usuario o correo / registro con confirmación por correo (roles `ADMIN` y `PLAYER`) |
+| `auth/EmailLinkPages` | Enlaces de los correos: confirmar correo, olvidé mi contraseña, contraseña nueva |
+| `profile/Profile` | Mi perfil: foto del pasaporte, correo, estilo visual y contraseña |
 | `dashboard/Dashboard` | Métricas (partidas, victorias, récord), crear/continuar partida |
 | `dashboard/UserManagement` | CRUD de usuarios para ADMIN: activar/desactivar, rol, renombrar, cambiar contraseña, eliminar |
 | `setup/GameSetup` | Wizard: paso 1 condición de victoria y tiempo por carta, paso 2 jugadores (2-4, color de peón, avatar) |
@@ -56,6 +58,11 @@ solo lugar.
 - **Vuelta al mundo (12.500 media vuelta / 25.000 vuelta completa):** termina en cuanto alguien llega a la meta.
 - **Número de rondas (10/15/20):** termina cuando el último jugador completa la ronda final.
 - Desempate: más aciertos. Si persiste, comparten posición.
+- **Cuentas con correo:** al registrarse llega un correo con un enlace para activar el pasaporte (no hace
+  falta que un admin lo apruebe). Se entra con el usuario o con el correo, y la contraseña se recupera por
+  correo. Sin SMTP configurado (desarrollo), el enlace se imprime en la consola del servidor.
+- **Foto del pasaporte:** cada usuario se saca una foto o sube una imagen desde Mi perfil. La app la recorta
+  y la achica a 256×256; el servidor la vuelve a procesar y le quita los metadatos (incluida la ubicación GPS).
 - **Estilo visual por usuario:** el sitio arranca en el estilo base **Cómic** (también el login). Cada
   usuario elige en **Mi perfil** (botón con su nombre, arriba) entre Cómic y **Modo 80s** (synthwave
   pixelado); se guarda en su perfil y se aplica al iniciar sesión. En Mi perfil también cambia su contraseña.
@@ -107,7 +114,8 @@ npm run dev
 ```
 
 Edita el `.env` antes de sembrar: pon `VITE_API_URL=http://localhost:4000/api`, un `JWT_SECRET`
-aleatorio y la `ADMIN_PASSWORD` del admin inicial.
+aleatorio y la `ADMIN_PASSWORD` del admin inicial. Los correos (`SMTP_*`, `APP_URL`) y el captcha
+(`*TURNSTILE*`) son opcionales en desarrollo: ver `.env.example` y `deploy/DEPLOY.md`.
 
 ### Configuración: un solo `.env` en la raíz
 

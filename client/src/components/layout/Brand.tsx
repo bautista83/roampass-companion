@@ -6,7 +6,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
       <div className="leading-tight">
         <p className={`font-display ${compact ? 'text-xl' : 'text-4xl'}`}>RoamPass</p>
         <p className={`font-semibold text-passport-500 dark:text-passport-300 ${compact ? 'hidden text-xs sm:block' : 'text-sm'}`}>
-          Travel, Guess &amp; Explore
+          Viaja, adivina y explora
         </p>
       </div>
     </div>
