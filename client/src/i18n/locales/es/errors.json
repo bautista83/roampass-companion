@@ -34,5 +34,22 @@
   "PLAYER_COLOR_DUPLICATE": "Cada peón tiene que tener un color distinto.",
   "INVALID_TIMER": "El tiempo por carta no es válido.",
   "GAME_FINISHED": "La partida ya terminó.",
-  "TRANSPORT_EVENT_PENDING": "Primero se juega el Evento de Viajero de la casilla de transporte."
+  "TRANSPORT_EVENT_PENDING": "Primero se juega el Evento de Viajero de la casilla de transporte.",
+  "NOT_IN_GAME": "No participas en esta partida.",
+  "NOT_YOUR_TURN": "Todavía no es tu turno.",
+  "WRONG_PHASE": "No es el momento de hacer eso.",
+  "GAME_PAUSED": "La partida está en pausa.",
+  "NOT_HOST": "Solo el anfitrión puede hacer eso.",
+  "TOO_LATE": "Se acabó el tiempo para responder.",
+  "INVALID_ANSWER": "Esa respuesta no es válida.",
+  "CARD_NOT_FOUND": "No encontramos la carta.",
+  "ALREADY_IN_GAME": "Ese jugador ya está en la partida.",
+  "GAME_FULL": "La partida ya tiene el máximo de jugadores.",
+  "COLOR_TAKEN": "Ese color ya está en uso. Elige otro.",
+  "INVALID_INITIAL_MILES": "Las millas iniciales no son válidas.",
+  "ALREADY_IN_ONLINE_GAME": "Ya estás (o esa persona ya está) en otra partida online.",
+  "ALREADY_INVITED": "Ya invitaste a ese usuario.",
+  "INVITE_EXPIRED": "La invitación ya no es válida.",
+  "ONLINE_READ_ONLY": "Las partidas online no se pueden modificar desde aquí.",
+  "VERSION_CONFLICT": "La partida cambió mientras tanto. Vuelve a intentar."
 }

@@ -67,7 +67,9 @@ gamesRouter.put('/:id', async (req, res) => {
   validateConfig(state.config);
   if (state.timerSeconds !== undefined) validateTimer(state.timerSeconds);
 
-  const existing = await prisma.gameSession.findUnique({ where: { id: state.id }, select: { hostId: true } });
+  const existing = await prisma.gameSession.findUnique({ where: { id: state.id }, select: { hostId: true, kind: true } });
+  // Las partidas online las maneja solo el servidor (RN-19).
+  if (existing?.kind === 'ONLINE') throw new HttpError(409, 'Las partidas online no se pueden sobrescribir', 'ONLINE_READ_ONLY');
   if (existing && existing.hostId !== req.user!.id) throw new HttpError(403, 'La partida pertenece a otro usuario', 'GAME_FORBIDDEN');
 
   const winners = new Set(state.winnerIds ?? []);
@@ -106,7 +108,7 @@ gamesRouter.put('/:id', async (req, res) => {
 /** Ultima partida en curso del usuario, para reanudarla desde otro dispositivo. */
 gamesRouter.get('/active', async (req, res) => {
   const session = await prisma.gameSession.findFirst({
-    where: { hostId: req.user!.id, status: 'PLAYING' },
+    where: { hostId: req.user!.id, status: 'PLAYING', kind: 'LOCAL' },
     orderBy: { updatedAt: 'desc' },
     select: { state: true },
   });
@@ -131,11 +133,17 @@ gamesRouter.get('/recent', async (req, res) => {
   const limit = z.coerce.number().int().min(1).max(50).catch(12).parse(req.query.limit);
   const user = req.user!;
   const sessions = await prisma.gameSession.findMany({
-    where: user.role === 'ADMIN' ? {} : { OR: [{ hostId: user.id }, { players: { some: { userId: user.id } } }] },
+    where: {
+      status: { not: 'LOBBY' },
+      // Las partidas online que el usuario oculto de su panel no se listan (RN-21).
+      NOT: { players: { some: { userId: user.id, hiddenAt: { not: null } } } },
+      ...(user.role === 'ADMIN' ? {} : { OR: [{ hostId: user.id }, { players: { some: { userId: user.id } } }] }),
+    },
     orderBy: { updatedAt: 'desc' },
     take: limit,
     select: {
       id: true,
+      kind: true,
       status: true,
       victoryMode: true,
       target: true,
@@ -147,7 +155,7 @@ gamesRouter.get('/recent', async (req, res) => {
       host: { select: { username: true } },
       players: {
         orderBy: [{ score: 'desc' }, { turnOrder: 'asc' }],
-        select: { name: true, color: true, avatar: true, score: true, isWinner: true, user: { select: { username: true } } },
+        select: { name: true, color: true, avatar: true, score: true, isWinner: true, user: { select: { id: true, username: true } } },
       },
     },
   });
@@ -162,7 +170,10 @@ gamesRouter.get('/recent', async (req, res) => {
       round: s.currentRound,
       startedAt: s.startedAt.toISOString(),
       finishedAt: s.finishedAt?.toISOString() ?? null,
-      canDelete: user.role === 'ADMIN' || s.hostId === user.id,
+      online: s.kind === 'ONLINE',
+      // Las locales las elimina quien las creo; las online solo el admin (los demas las ocultan).
+      canDelete: user.role === 'ADMIN' || (s.kind === 'LOCAL' && s.hostId === user.id),
+      canHide: s.kind === 'ONLINE' && s.players.some((p) => p.user?.id === user.id),
       players: s.players.map(({ user: u, ...p }) => ({ ...p, username: u?.username ?? null })),
     })),
   });
@@ -170,9 +181,9 @@ gamesRouter.get('/recent', async (req, res) => {
 
 /** Elimina una partida (y sus jugadores, en cascada). Solo quien la creo o un admin. */
 gamesRouter.delete('/:id', async (req, res) => {
-  const session = await prisma.gameSession.findUnique({ where: { id: req.params.id }, select: { hostId: true } });
+  const session = await prisma.gameSession.findUnique({ where: { id: req.params.id }, select: { hostId: true, kind: true } });
   if (!session) throw new HttpError(404, 'La partida no existe', 'GAME_NOT_FOUND');
-  if (req.user!.role !== 'ADMIN' && session.hostId !== req.user!.id) {
+  if (req.user!.role !== 'ADMIN' && (session.kind === 'ONLINE' || session.hostId !== req.user!.id)) {
     throw new HttpError(403, 'Solo quien creó la partida puede eliminarla', 'GAME_FORBIDDEN');
   }
   await prisma.gameSession.delete({ where: { id: req.params.id } });

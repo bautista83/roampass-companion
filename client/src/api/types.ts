@@ -1,4 +1,4 @@
-import type { BoardMode, Card, GameState, Locale, PawnColor, Role, UiTheme, VictoryMode } from '@roampass/shared';
+import type { BoardMode, Card, GameState, InviteSummary, Locale, OnlinePhase, PawnColor, Role, UiTheme, VictoryMode } from '@roampass/shared';
 import { translateError } from '../i18n';
 
 export interface User {
@@ -75,8 +75,12 @@ export interface RecentGame {
   round: number;
   startedAt: string;
   finishedAt: string | null;
-  /** Puede eliminarla: quien la creo o un admin. */
+  /** Partida online multijugador. */
+  online?: boolean;
+  /** Puede eliminarla: quien la creo (locales) o un admin. */
   canDelete: boolean;
+  /** Online: cada participante la puede ocultar de su panel. */
+  canHide?: boolean;
   /** Ordenados por millas (de mayor a menor). */
   players: {
     name: string;
@@ -87,6 +91,23 @@ export interface RecentGame {
     /** Usuario registrado que jugo con este peon, si lo hay. */
     username: string | null;
   }[];
+}
+
+/** Configuracion de una sala online nueva. */
+export interface OnlineGameSetup {
+  mode: VictoryMode;
+  target: number;
+  timerSeconds: number;
+  dieTimeoutSeconds: number;
+  color: PawnColor;
+  avatar: string;
+}
+
+export interface SentInvite {
+  id: string;
+  username: string;
+  initialMiles: number;
+  expiresAt: string;
 }
 
 export interface UserUpdate {
@@ -138,6 +159,23 @@ export interface RoamPassApi {
   deleteUserPhoto(userId: string): Promise<User>;
   /** URL lista para <img> (blob: o data:), o null si no tiene foto. */
   getPhotoUrl(userId: string, version: string): Promise<string | null>;
+
+  // ── Online (solo con backend; en el modo demo lanzan DEMO_UNAVAILABLE) ──
+  searchUsers(q: string): Promise<{ id: string; username: string }[]>;
+  createOnlineGame(setup: OnlineGameSetup): Promise<{ sessionId: string }>;
+  getCurrentOnline(): Promise<{ sessionId: string; phase: OnlinePhase; round: number } | null>;
+  cancelOnlineGame(sessionId: string): Promise<void>;
+  leaveOnlineLobby(sessionId: string): Promise<void>;
+  inviteToOnline(sessionId: string, toUserId: string, initialMiles?: number): Promise<void>;
+  listSentInvites(sessionId: string): Promise<SentInvite[]>;
+  listInvites(): Promise<InviteSummary[]>;
+  acceptInvite(inviteId: string, pawn: { color: PawnColor; avatar: string }): Promise<{ sessionId: string }>;
+  declineInvite(inviteId: string): Promise<void>;
+  cancelInvite(inviteId: string): Promise<void>;
+  rejoinOnline(sessionId: string): Promise<void>;
+  hideOnline(sessionId: string): Promise<void>;
+  /** Foto fija de Street View para quien no tiene el turno (blob:), o null. */
+  getStreetViewPhoto(sessionId: string): Promise<string | null>;
 }
 
 /** Error de la API. El mensaje ya viene traducido por su codigo (errors.<CODE>) si el diccionario lo tiene. */

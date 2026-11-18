@@ -7,6 +7,8 @@ import { Login } from './components/auth/Login';
 import { ForgotPassword, ResetPassword, VerifyEmail } from './components/auth/EmailLinkPages';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { GameSetup } from './components/setup/GameSetup';
+import { OnlineRoom } from './components/online/OnlineRoom';
+import { OnlineSetup } from './components/online/OnlineSetup';
 import { GameTable } from './components/game/GameTable';
 import { Profile } from './components/profile/Profile';
 import { RulesPage } from './components/rules/RulesPage';
@@ -35,6 +37,8 @@ export function App() {
       <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth><GameSetup /></RequireAuth>} />
       <Route path="/play" element={<RequireAuth><GameTable /></RequireAuth>} />
+      <Route path="/online/new" element={<RequireAuth><OnlineSetup /></RequireAuth>} />
+      <Route path="/online/:id" element={<RequireAuth><OnlineRoom /></RequireAuth>} />
       <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
       <Route path="/rules" element={<RequireAuth><RulesPage /></RequireAuth>} />
       <Route path="*" element={<Navigate to="/" replace />} />

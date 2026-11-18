@@ -35,7 +35,7 @@ solo lugar.
 | `profile/Profile` | Mi perfil: foto del pasaporte, correo, estilo visual y contraseña |
 | `dashboard/Dashboard` | Métricas (partidas, victorias, récord), crear/continuar partida |
 | `dashboard/UserManagement` | CRUD de usuarios para ADMIN: activar/desactivar, rol, renombrar, cambiar contraseña, eliminar |
-| `setup/GameSetup` | Wizard: paso 1 condición de victoria y tiempo por carta, paso 2 jugadores (2-4, color de peón, avatar) |
+| `setup/GameSetup` | Wizard: paso 1 condición de victoria y tiempo por carta, paso 2 jugadores (2-6, color de peón, avatar) |
 | `game/GameTable` | Mesa: layout responsive de 1 columna (móvil) / 35%-65% (tablet) |
 | `game/TurnBanner` | Turno y ronda actual (sticky en móvil) |
 | `game/Scoreboard` | Marcador en tiempo real con barras de progreso |
@@ -146,6 +146,14 @@ usa las fotos de lugares conocidos. Los dos mazos nunca se mezclan.
 Si restringes la clave por dominio (recomendado: `http://localhost:5173/*` y tu dominio de producción),
 el script no podrá usarla porque corre fuera del navegador. En ese caso pásale otra clave sin esa
 restricción: `GOOGLE_MAPS_API_KEY=otra_clave npm run streetview:check -- --fix`.
+
+### Modo online (multijugador)
+
+Con backend, **🌐 Jugar online** crea una sala: el anfitrión invita a otros usuarios por su nombre,
+cada uno juega desde su dispositivo (de 2 a 6) y todos ven el dado, la carta y el tablero en vivo.
+El servidor tira el dado, controla los tiempos y calcula las millas; hay pausa, pase de turno,
+abandono, anfitrión que se transfiere y jugadores que se suman con la partida empezada. Las reglas
+completas están en `docs/specs/online-multiplayer.md`. No está disponible en el modo demo.
 
 ### Idiomas
 

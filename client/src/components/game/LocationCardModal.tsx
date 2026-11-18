@@ -27,10 +27,10 @@ const pin = (emoji: string, bg: string) =>
     iconSize: [40, 40],
     iconAnchor: [20, 40],
   });
-const GUESS_ICON = pin('🧭', '#233462');
-const TARGET_ICON = pin('📍', '#157347');
+export const GUESS_ICON = pin('🧭', '#233462');
+export const TARGET_ICON = pin('📍', '#157347');
 
-function PickOnClick({ enabled, onPick }: { enabled: boolean; onPick: (p: LatLng) => void }) {
+export function PickOnClick({ enabled, onPick }: { enabled: boolean; onPick: (p: LatLng) => void }) {
   useMapEvents({
     click(e) {
       if (enabled) onPick({ lat: e.latlng.lat, lng: normalizeLng(e.latlng.lng) });
@@ -40,7 +40,7 @@ function PickOnClick({ enabled, onPick }: { enabled: boolean; onPick: (p: LatLng
 }
 
 /** El modal anima su tamaño: Leaflet necesita recalcular el contenedor al terminar. */
-function FixSizeAndFit({ from, to }: { from: LatLng | null; to: LatLng }) {
+export function FixSizeAndFit({ from, to }: { from: LatLng | null; to: LatLng }) {
   const map = useMap();
   useEffect(() => {
     const t = setTimeout(() => map.invalidateSize(), 400);
@@ -58,7 +58,7 @@ function FixSizeAndFit({ from, to }: { from: LatLng | null; to: LatLng }) {
 const STREET_VIEW_CAMERA = { heading: 210, pitch: 10, fov: 35 };
 
 /** Vista 360° interactiva con la Maps Embed API (gratis e ilimitada; requiere API key). */
-function StreetViewFrame({ location }: { location: LatLng }) {
+export function StreetViewFrame({ location }: { location: LatLng }) {
   const { t } = useTranslation();
   const params = new URLSearchParams({
     key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,

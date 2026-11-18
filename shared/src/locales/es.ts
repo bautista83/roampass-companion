@@ -24,6 +24,8 @@ export const es: SharedTexts = {
     yellow: 'Amarillo',
     purple: 'Morado',
     orange: 'Naranja',
+    pink: 'Rosa',
+    teal: 'Turquesa',
   },
   milesUnit: 'mi',
   pointTarget: { full: 'vuelta completa', half: 'media vuelta', other: 'meta' },

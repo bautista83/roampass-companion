@@ -18,6 +18,10 @@
       "title": "▶ Continuar",
       "text": "Si dejaste una partida a medias, la retomas justo donde quedó."
     },
+    "online": {
+      "title": "🌐 Jugar online",
+      "text": "Crea una sala, invita a otros viajeros por su usuario y jueguen a la vez desde distintos dispositivos."
+    },
     "rules": {
       "title": "📖 Cómo jugar",
       "text": "Las reglas paso a paso. Durante la partida también las tienes en el botón ❓."

@@ -5,6 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
 import { api } from '../../api';
 import { Brand } from './Brand';
+import { InviteNotifier } from '../online/InviteNotifier';
 
 export function AppShell({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user);
@@ -42,6 +43,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="flex-1">{children}</main>
+      {api.mode === 'remote' && <InviteNotifier />}
     </div>
   );
 }

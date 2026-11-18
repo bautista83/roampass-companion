@@ -22,8 +22,10 @@ export function RecentGames({ isAdmin, onDeleted }: { isAdmin: boolean; onDelete
       .catch(() => setError(true));
   }, []);
 
-  async function remove(id: string) {
-    await api.deleteGame(id);
+  async function remove(id: string, online: boolean) {
+    // Las partidas online se ocultan del panel propio (el admin si las elimina).
+    if (online && !games?.find((g) => g.id === id)?.canDelete) await api.hideOnline(id);
+    else await api.deleteGame(id);
     setGames((gs) => gs?.filter((g) => g.id !== id) ?? null);
     onDeleted?.(id);
   }
@@ -60,7 +62,7 @@ export function RecentGames({ isAdmin, onDeleted }: { isAdmin: boolean; onDelete
                 animate={{ y: 0, opacity: 1, transition: { delay: Math.min(i, 8) * 0.05 } }}
                 exit={{ scale: 0.6, rotate: -8, opacity: 0, transition: { duration: 0.25 } }}
               >
-                <GameCard game={g} isAdmin={isAdmin} tilt={TILT[i % TILT.length]!} onDelete={() => remove(g.id)} />
+                <GameCard game={g} isAdmin={isAdmin} tilt={TILT[i % TILT.length]!} onDelete={() => remove(g.id, !!g.online)} />
               </motion.li>
             ))}
           </AnimatePresence>
@@ -80,6 +82,8 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
   const { t } = useTranslation();
   const { num, miles, dateTime } = useLabels();
   const goal = g.mode === 'POINTS' ? t('dashboard.recent.goalMiles', { miles: miles(g.target) }) : t('dashboard.recent.goalRounds', { count: g.target });
+
+  const hideOnly = !!g.online && !g.canDelete;
 
   async function confirmDelete() {
     setBusy(true);
@@ -109,10 +113,16 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
               <p className="text-3xl" aria-hidden>
                 🗑️
               </p>
-              <p className="font-display text-lg leading-tight">{t('dashboard.recent.confirmTitle')}</p>
+              <p className="font-display text-lg leading-tight">{hideOnly ? t('dashboard.recent.hideTitle') : t('dashboard.recent.confirmTitle')}</p>
               <p className="text-sm text-passport-500 dark:text-passport-300">
-                {g.status === 'PLAYING' ? t('dashboard.recent.confirmInProgress') : ''}
-                {t('dashboard.recent.confirmIrreversible')}
+                {hideOnly ? (
+                  g.status === 'PLAYING' ? t('dashboard.recent.hideInProgress') : t('dashboard.recent.hideBody')
+                ) : (
+                  <>
+                    {g.status === 'PLAYING' ? t('dashboard.recent.confirmInProgress') : ''}
+                    {t('dashboard.recent.confirmIrreversible')}
+                  </>
+                )}
               </p>
               {error && <p className="text-sm font-bold text-stamp">{error}</p>}
               <div className="flex justify-center gap-2">
@@ -120,7 +130,7 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
                   {t('common.actions.cancel')}
                 </button>
                 <button className="btn-danger min-h-10 px-4" onClick={confirmDelete} disabled={busy} autoFocus>
-                  {busy ? t('common.actions.deleting') : t('common.actions.delete')}
+                  {busy ? t('common.actions.deleting') : hideOnly ? t('dashboard.recent.hide') : t('common.actions.delete')}
                 </button>
               </div>
             </div>
@@ -130,7 +140,7 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
 
       <header className="flex items-center justify-between gap-2 border-b-3 border-ink bg-sky/40 px-4 py-2 dark:border-black dark:bg-white/5">
         <span className="text-xs font-extrabold tracking-widest uppercase">
-          {g.board === 'DIGITAL' ? t('dashboard.recent.boardDigital') : t('dashboard.recent.boardPhysical')}
+          {g.online ? t('dashboard.recent.boardOnline') : g.board === 'DIGITAL' ? t('dashboard.recent.boardDigital') : t('dashboard.recent.boardPhysical')}
         </span>
         <span className="flex items-center gap-2">
           <span
@@ -140,12 +150,12 @@ function GameCard(props: { game: RecentGame; isAdmin: boolean; tilt: string; onD
           >
             {finished ? t('dashboard.recent.finished') : t('dashboard.recent.inProgress', { round: g.round })}
           </span>
-          {g.canDelete && (
+          {(g.canDelete || g.canHide) && (
             <button
               className="grid size-7 place-items-center rounded-full border-2 border-ink bg-white text-sm font-extrabold text-ink transition hover:scale-110 hover:bg-coral dark:border-black"
               onClick={() => setConfirming(true)}
-              aria-label={t('dashboard.recent.deleteGame')}
-              title={t('dashboard.recent.deleteGame')}
+              aria-label={hideOnly ? t('dashboard.recent.hideGame') : t('dashboard.recent.deleteGame')}
+              title={hideOnly ? t('dashboard.recent.hideGame') : t('dashboard.recent.deleteGame')}
             >
               ✕
             </button>
