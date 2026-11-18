@@ -25,7 +25,7 @@ export const env = {
         pass: optional('SMTP_PASS'),
       }
     : null,
-  mailFrom: optional('MAIL_FROM') ?? 'RoamPass <no-reply@localhost>',
+  mailFrom: optional('MAIL_FROM') ?? 'Roamle <no-reply@localhost>',
   /** Captcha de Cloudflare en el registro. Sin clave, apagado. */
   turnstileSecret: optional('TURNSTILE_SECRET_KEY'),
   /** Detras de Cloudflare Tunnel: la IP real del cliente viene en CF-Connecting-IP. */

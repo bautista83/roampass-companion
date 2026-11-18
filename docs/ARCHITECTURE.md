@@ -1,4 +1,4 @@
-# Arquitectura de RoamPass Companion
+# Arquitectura de Roamle Companion
 
 > Documento de diseño de software (SDD) y referencia para desarrollo guiado por especificaciones.
 > Describe **cómo está construida la app hoy** (rama `Feature.AddNewGameRules`, noviembre 2026),
@@ -8,7 +8,7 @@
 
 ## 1. Propósito y alcance
 
-RoamPass es un juego de mesa **físico** (tablero impreso, dado, peones). La app es el
+Roamle (antes RoamPass) es un juego de mesa **físico** (tablero impreso, dado, peones). La app es el
 **"Director de Juego Digital"**: gestiona usuarios, hace de mazo de tarjetas interactivas, cronometra
 las respuestas y calcula el puntaje (millas) en tiempo real. Opcionalmente el tablero también se
 juega en pantalla (modo `DIGITAL`).

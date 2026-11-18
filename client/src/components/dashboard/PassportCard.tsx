@@ -8,7 +8,7 @@ import { UserPhoto } from '../ui/UserPhoto';
 function passportNumber(id: string) {
   let h = 7;
   for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) % 9_999_991;
-  return `RP${String(h).padStart(7, '0')}`;
+  return `RL${String(h).padStart(7, '0')}`;
 }
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
@@ -90,10 +90,10 @@ export function PassportCard({ user }: { user: User }) {
 
       {/* Linea MRZ */}
       <div className="relative border-t-2 border-dashed border-[#111111]/40 bg-white/60 px-4 py-2 font-mono text-[11px] leading-snug tracking-[0.15em] break-all text-[#111111] md:px-5 md:text-sm">
-        <p>{mrz(`P<RPS${user.username}<<${t('dashboard.passport.mrzTraveler')}`)}</p>
+        <p>{mrz(`P<RML${user.username}<<${t('dashboard.passport.mrzTraveler')}`)}</p>
         <p>
           {mrz(
-            `${number}<0RPS${user.isActive ? t('dashboard.passport.mrzActive') : t('dashboard.passport.mrzSuspended')}<<<${user.role}`,
+            `${number}<0RML${user.isActive ? t('dashboard.passport.mrzActive') : t('dashboard.passport.mrzSuspended')}<<<${user.role}`,
           )}
         </p>
       </div>

@@ -3,7 +3,7 @@ import { env } from './env';
 import { purgeUnverifiedAccounts } from './auth/emailTokens';
 
 createApp().listen(env.port, () => {
-  console.log(`🧭 RoamPass API escuchando en http://localhost:${env.port}/api`);
+  console.log(`🧭 Roamle API escuchando en http://localhost:${env.port}/api`);
 });
 
 // Libera cada hora los registros sin confirmar de mas de 7 dias (CO-03).
