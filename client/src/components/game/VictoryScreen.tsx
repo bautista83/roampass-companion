@@ -18,13 +18,29 @@ function bestCategory(p: GamePlayer, categories: ReturnType<typeof useLabels>['c
 }
 
 /** Pantalla "¡Victoria!": podio + resumen de estadisticas. Las tarjetas quedan bloqueadas. */
-export function VictoryScreen({ game }: { game: GameState }) {
+export function VictoryScreen({
+  game,
+  onLeave,
+  abandonedIds = [],
+  subtitle,
+}: {
+  game: GameState;
+  /** Partidas online: salir sin tocar la partida local guardada. */
+  onLeave?: (to: string) => void;
+  /** Jugadores que abandonaron (se marcan en el ranking). */
+  abandonedIds?: string[];
+  /** Motivo del final (online). */
+  subtitle?: string;
+}) {
   const clear = useGameStore((s) => s.clear);
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { categories, num, miles } = useLabels();
   const ranking = rankPlayers(game.players);
-  const winners = ranking.filter((r) => r.position === 1).map((r) => r.player);
+  // El motor decide quien gano (en online, "ultimo en pie" puede ganar con menos millas).
+  const winners = game.winnerIds?.length
+    ? game.players.filter((p) => game.winnerIds!.includes(p.id))
+    : ranking.filter((r) => r.position === 1).map((r) => r.player);
   // Con empates en el podio, cada escalon muestra a quien ocupe esa posicion por orden.
   const byPlace = (place: number) => ranking.find((_, i) => i + 1 === place);
   const totalTurns = game.history.length;
@@ -32,6 +48,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
   const roundsPlayed = game.history.at(-1)?.round ?? 0;
 
   const leave = (to: string) => {
+    if (onLeave) return onLeave(to);
     clear();
     navigate(to);
   };
@@ -52,6 +69,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
         <p className="text-center text-lg">
           {winners.length > 1 ? t('game.victory.tie') : t('game.victory.wins')}
           <strong>{winners.map((w) => w.name).join(` ${t('common.and')} `)}</strong>
+          {subtitle && <span className="block text-sm text-white/80">{subtitle}</span>}
           <span className="block text-sm text-white/60">
             {t('game.victory.summary', {
               rounds: t('common.rounds', { count: roundsPlayed }),
@@ -105,6 +123,7 @@ export function VictoryScreen({ game }: { game: GameState }) {
                     <td className="p-3 font-semibold">
                       <AvatarIcon avatar={player.avatar} className="mr-1.5 inline-block size-5 align-[-0.25em]" />
                       {player.name}
+                      {abandonedIds.includes(player.id) && <span className="ml-1 text-xs text-white/60">{t('online.table.abandonedMark')}</span>}
                     </td>
                     <td className="p-3 text-right font-bold tabular-nums">{num(player.score)}</td>
                     <td className="p-3 text-right tabular-nums">

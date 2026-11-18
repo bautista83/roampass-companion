@@ -4,8 +4,11 @@ import { BOARD, PAWN_COLOR_META, boardPosition, progressToGoal, rankPlayers, typ
 import { useTranslation } from 'react-i18next';
 import { useLabels } from '../../i18n/useLabels';
 
-/** Marcador global en tiempo real, ordenado por posicion. */
-export function Scoreboard({ game }: { game: GameState }) {
+/**
+ * Marcador global en tiempo real, ordenado por posicion. `badges` agrega una marca por jugador
+ * (en las partidas online: en pausa, abandono, desconectado, anfitrion).
+ */
+export function Scoreboard({ game, badges }: { game: GameState; badges?: Record<string, string> }) {
   const current = game.players[game.currentPlayerIndex];
   const { t } = useTranslation();
   const { num } = useLabels();
@@ -35,6 +38,7 @@ export function Scoreboard({ game }: { game: GameState }) {
                   <span className="block truncate text-[11px] font-semibold text-passport-500 dark:text-passport-300">
                     📍 {boardPosition(player.score).space} · {BOARD.spaces[boardPosition(player.score).space]!.name}
                   </span>
+                  {badges?.[player.id] && <span className="block truncate text-[11px] font-bold text-brass">{badges[player.id]}</span>}
                 </span>
                 <div className="relative text-right">
                   <motion.span key={player.score} initial={{ scale: 1.35 }} animate={{ scale: 1 }} className="block text-xl font-extrabold tabular-nums">

@@ -1,4 +1,4 @@
-import type { Card, GameState } from '@roampass/shared';
+import type { Card, GameState, InviteSummary } from '@roampass/shared';
 import {
   ApiError,
   type AuthSession,
@@ -6,6 +6,7 @@ import {
   type RecentGame,
   type RegisterResult,
   type RoamPassApi,
+  type SentInvite,
   type User,
 } from './types';
 
@@ -74,6 +75,27 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     deleteMyPhoto: async () => (await request<{ user: User }>('/auth/me/photo', { method: 'DELETE' })).user,
     deleteUserPhoto: async (userId) =>
       (await request<{ user: User }>(`/users/${encodeURIComponent(userId)}/photo`, { method: 'DELETE' })).user,
+    searchUsers: async (q) => (await request<{ users: { id: string; username: string }[] }>(`/users/search?q=${encodeURIComponent(q)}`)).users,
+    createOnlineGame: (setup) => request<{ sessionId: string }>('/online', json('POST', setup)),
+    getCurrentOnline: async () => (await request<{ current: Awaited<ReturnType<RoamPassApi['getCurrentOnline']>> }>('/online/current')).current,
+    cancelOnlineGame: (id) => request<void>(`/online/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    leaveOnlineLobby: (id) => request<void>(`/online/${encodeURIComponent(id)}/leave`, { method: 'POST' }),
+    inviteToOnline: async (id, toUserId, initialMiles = 0) => {
+      await request<unknown>(`/online/${encodeURIComponent(id)}/invites`, json('POST', { toUserId, initialMiles }));
+    },
+    listSentInvites: async (id) => (await request<{ invites: SentInvite[] }>(`/online/${encodeURIComponent(id)}/invites`)).invites,
+    listInvites: async () => (await request<{ invites: InviteSummary[] }>('/invites')).invites,
+    acceptInvite: (inviteId, pawn) => request<{ sessionId: string }>(`/invites/${encodeURIComponent(inviteId)}/accept`, json('POST', pawn)),
+    declineInvite: (inviteId) => request<void>(`/invites/${encodeURIComponent(inviteId)}/decline`, { method: 'POST' }),
+    cancelInvite: (inviteId) => request<void>(`/invites/${encodeURIComponent(inviteId)}`, { method: 'DELETE' }),
+    rejoinOnline: (id) => request<void>(`/online/${encodeURIComponent(id)}/rejoin`, { method: 'POST' }),
+    hideOnline: (id) => request<void>(`/online/${encodeURIComponent(id)}/hide`, { method: 'POST' }),
+    async getStreetViewPhoto(id) {
+      const token = getToken();
+      const res = await fetch(`${baseUrl}/online/${encodeURIComponent(id)}/streetview-photo`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      return res.ok ? URL.createObjectURL(await res.blob()) : null;
+    },
+
     getPhotoUrl(userId, version) {
       const key = `${userId}:${version}`;
       let url = photoCache.get(key);

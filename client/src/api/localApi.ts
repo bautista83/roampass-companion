@@ -340,6 +340,40 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       return strip(user);
     },
 
+    // El modo online necesita el servidor (sockets, timers): en el modo demo no esta disponible.
+    searchUsers: async () => [],
+    createOnlineGame: async () => {
+      throw demoUnavailable();
+    },
+    getCurrentOnline: async () => null,
+    cancelOnlineGame: async () => {
+      throw demoUnavailable();
+    },
+    leaveOnlineLobby: async () => {
+      throw demoUnavailable();
+    },
+    inviteToOnline: async () => {
+      throw demoUnavailable();
+    },
+    listSentInvites: async () => [],
+    listInvites: async () => [],
+    acceptInvite: async () => {
+      throw demoUnavailable();
+    },
+    declineInvite: async () => {
+      throw demoUnavailable();
+    },
+    cancelInvite: async () => {
+      throw demoUnavailable();
+    },
+    rejoinOnline: async () => {
+      throw demoUnavailable();
+    },
+    hideOnline: async () => {
+      throw demoUnavailable();
+    },
+    getStreetViewPhoto: async () => null,
+
     async getPhotoUrl(userId) {
       const db = await load();
       await currentUser(db);

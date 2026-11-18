@@ -23,6 +23,7 @@ export function Dashboard() {
   const { num } = useLabels();
   const [stats, setStats] = useState<PlayerStatsSummary | null>(null);
   const [remoteGame, setRemoteGame] = useState<GameState | null>(null);
+  const [onlineGame, setOnlineGame] = useState<{ sessionId: string; round: number } | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
 
   // La primera vez que el usuario entra al panel (en este dispositivo) el recorrido se abre solo,
@@ -47,6 +48,7 @@ export function Dashboard() {
   useEffect(() => {
     void loadStats();
     api.getActiveGame().then(setRemoteGame).catch(() => setRemoteGame(null));
+    api.getCurrentOnline().then(setOnlineGame).catch(() => setOnlineGame(null));
   }, []);
 
   const inProgress = localGame?.status === 'PLAYING' ? localGame : remoteGame;
@@ -84,6 +86,15 @@ export function Dashboard() {
               </button>
             )}
           </div>
+          {api.mode === 'remote' && (
+            <button
+              className="btn-ghost text-lg"
+              data-tour="online"
+              onClick={() => navigate(onlineGame ? `/online/${onlineGame.sessionId}` : '/online/new')}
+            >
+              {onlineGame ? t('online.backToGame') : t('online.playOnline')}
+            </button>
+          )}
           <div className="flex gap-3">
             <button className="btn-ghost flex-1" data-tour="rules" onClick={() => navigate('/rules')}>
               {t('dashboard.howToPlay')}

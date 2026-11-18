@@ -2,7 +2,7 @@ import type { TFunction } from 'i18next';
 import type { TourStep } from './GuidedTour';
 
 /** Elementos del panel que recorre el tour (data-tour). Los textos estan en tour.steps.<target>. */
-const TARGETS = ['passport', 'new-game', 'continue', 'rules', 'stats', 'recent', 'admin', 'profile', 'tour'] as const;
+const TARGETS = ['passport', 'new-game', 'continue', 'online', 'rules', 'stats', 'recent', 'admin', 'profile', 'tour'] as const;
 
 /** Pasos del recorrido por el panel. Los que no estan en pantalla (Continuar, Admin) se saltan solos. */
 export const dashboardTour = (t: TFunction): TourStep[] =>
