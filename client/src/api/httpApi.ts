@@ -22,10 +22,22 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     });
     if (res.status === 204) return undefined as T;
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new ApiError(body.error ?? `Error ${res.status}`, res.status);
+    if (!res.ok) throw new ApiError(body.error ?? `Error ${res.status}`, res.status, body.code);
     return body as T;
   }
   const json = (method: string, data: unknown): RequestInit => ({ method, body: JSON.stringify(data) });
+
+  // Las fotos se piden con el token (no son publicas) y se muestran como blob:. Se cachean por version.
+  const photoCache = new Map<string, Promise<string | null>>();
+  async function fetchPhoto(userId: string, version: string): Promise<string | null> {
+    const token = getToken();
+    const res = await fetch(`${baseUrl}/users/${encodeURIComponent(userId)}/photo?v=${encodeURIComponent(version)}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new ApiError(`Error ${res.status}`, res.status);
+    return URL.createObjectURL(await res.blob());
+  }
 
   return {
     mode: 'remote',
@@ -45,5 +57,21 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     getMyStats: () => request<PlayerStatsSummary>('/games/stats/me'),
     deleteGame: (id) => request<void>(`/games/${encodeURIComponent(id)}`, { method: 'DELETE' }),
     getRecentGames: async (limit = 12) => (await request<{ games: RecentGame[] }>(`/games/recent?limit=${limit}`)).games,
+
+    uploadPhoto: async (image) =>
+      (await request<{ user: User }>('/auth/me/photo', { method: 'PUT', body: image, headers: { 'Content-Type': image.type || 'image/jpeg' } })).user,
+    deleteMyPhoto: async () => (await request<{ user: User }>('/auth/me/photo', { method: 'DELETE' })).user,
+    deleteUserPhoto: async (userId) =>
+      (await request<{ user: User }>(`/users/${encodeURIComponent(userId)}/photo`, { method: 'DELETE' })).user,
+    getPhotoUrl(userId, version) {
+      const key = `${userId}:${version}`;
+      let url = photoCache.get(key);
+      if (!url) {
+        url = fetchPhoto(userId, version);
+        url.catch(() => photoCache.delete(key)); // un error no queda cacheado
+        photoCache.set(key, url);
+      }
+      return url;
+    },
   };
 }

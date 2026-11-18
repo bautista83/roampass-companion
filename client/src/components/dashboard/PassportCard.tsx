@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { User } from '../../api';
-import { AvatarPortrait } from '../ui/AvatarPortrait';
+import { UserPhoto } from '../ui/UserPhoto';
 
 /** Numero de pasaporte estable a partir del id del usuario. */
 function passportNumber(id: string) {
@@ -27,8 +27,8 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 /**
- * Pagina de datos del pasaporte del viajero: foto (por ahora un retrato dibujado al azar, a futuro la
- * foto que se cargue en la gestion de usuarios), datos y la linea MRZ. Siempre se ve como documento,
+ * Pagina de datos del pasaporte del viajero: foto (la que subio el usuario o, si no tiene, un retrato
+ * dibujado al azar), datos y la linea MRZ. Siempre se ve como documento,
  * con sus propios colores, en cualquier tema.
  */
 export function PassportCard({ user }: { user: User }) {
@@ -63,7 +63,7 @@ export function PassportCard({ user }: { user: User }) {
 
       <div className="relative grid grid-cols-[auto_1fr] gap-4 p-4 md:gap-5 md:p-5">
         <div className="flex flex-col items-center gap-2">
-          <AvatarPortrait seed={user.username} className="w-24 border-3 border-[#111111] shadow-[4px_4px_0_0_#111111] md:w-32" />
+          <UserPhoto user={user} className="w-24 border-3 border-[#111111] shadow-[4px_4px_0_0_#111111] md:w-32" />
           <span className="font-['Brush_Script_MT',cursive] text-lg leading-none text-[#233462] italic">{user.username}</span>
         </div>
 

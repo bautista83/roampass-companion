@@ -50,10 +50,23 @@ model User {
   role         Role          @default(PLAYER)
   isActive     Boolean       @default(true)
   theme        UiTheme       @default(COMIC)
+  /// Cambia con cada foto nueva: el cliente lo usa para invalidar la cache. null = sin foto.
+  photoUpdatedAt DateTime?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  photo        UserPhoto?
   hostedGames  GameSession[]
   players      Player[]
+}
+
+/// Foto del pasaporte: WebP 256x256 sin metadatos (la procesa el servidor con sharp).
+/// Tabla aparte para no cargar los bytes cada vez que se lee un usuario.
+model UserPhoto {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Bytes
+  mimeType  String
+  updatedAt DateTime @updatedAt
 }
 
 /// Partida. `state` guarda el snapshot completo del motor (@roampass/shared) para

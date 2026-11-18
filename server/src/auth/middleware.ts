@@ -7,7 +7,15 @@ import { HttpError } from '../http';
 
 export type PublicUser = Pick<User, 'id' | 'username' | 'role' | 'isActive' | 'createdAt'>;
 
-export const publicUserSelect = { id: true, username: true, role: true, isActive: true, theme: true, createdAt: true } as const;
+export const publicUserSelect = {
+  id: true,
+  username: true,
+  role: true,
+  isActive: true,
+  theme: true,
+  photoUpdatedAt: true,
+  createdAt: true,
+} as const;
 
 declare module 'express-serve-static-core' {
   interface Request {

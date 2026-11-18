@@ -12,6 +12,8 @@ interface AuthState {
   refresh: () => Promise<void>;
   /** Mi perfil: estilo visual y contraseña del usuario logueado. */
   updateProfile: (data: ProfileUpdate) => Promise<void>;
+  /** Reemplaza el usuario guardado (p. ej. tras subir la foto). */
+  setUser: (user: User) => void;
   logout: () => void;
 }
 
@@ -38,6 +40,9 @@ export const useAuthStore = create<AuthState>()(
       },
       async updateProfile(data) {
         set({ user: await api.updateMe(data) });
+      },
+      setUser(user) {
+        set({ user });
       },
       logout() {
         set({ token: null, user: null });

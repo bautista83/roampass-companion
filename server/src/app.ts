@@ -4,6 +4,7 @@ import { env } from './env';
 import { errorHandler } from './http';
 import { authRouter } from './auth/routes';
 import { usersRouter } from './routes/users';
+import { photosRouter } from './routes/photos';
 import { cardsRouter } from './routes/cards';
 import { gamesRouter } from './routes/games';
 
@@ -19,6 +20,8 @@ export function createApp() {
     res.json({ ok: true });
   });
   app.use('/api/auth', authRouter);
+  // Fotos antes que usersRouter: ver la foto solo requiere sesion, no ser ADMIN.
+  app.use('/api/users', photosRouter);
   app.use('/api/users', usersRouter);
   app.use('/api/cards', cardsRouter);
   app.use('/api/games', gamesRouter);

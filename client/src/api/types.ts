@@ -7,6 +7,8 @@ export interface User {
   isActive: boolean;
   /** Estilo visual del perfil. Los usuarios anteriores a esta opcion no lo tienen: COMIC. */
   theme?: UiTheme;
+  /** Fecha de la foto del pasaporte (cambia con cada foto nueva). null/undefined = sin foto. */
+  photoUpdatedAt?: string | null;
   createdAt: string;
   gamesHosted?: number;
 }
@@ -96,12 +98,22 @@ export interface RoamPassApi {
   getRecentGames(limit?: number): Promise<RecentGame[]>;
   /** Elimina una partida (solo quien la creo o un admin). */
   deleteGame(id: string): Promise<void>;
+
+  /** Foto del pasaporte: se manda ya achicada (ver lib/photo.ts); el servidor la normaliza. */
+  uploadPhoto(image: Blob): Promise<User>;
+  deleteMyPhoto(): Promise<User>;
+  /** Moderacion (ADMIN): quita la foto de otro usuario. */
+  deleteUserPhoto(userId: string): Promise<User>;
+  /** URL lista para <img> (blob: o data:), o null si no tiene foto. */
+  getPhotoUrl(userId: string, version: string): Promise<string | null>;
 }
 
 export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status: number,
+    /** Codigo estable del servidor (p. ej. EMAIL_NOT_VERIFIED) para reaccionar o traducir. */
+    public readonly code?: string,
   ) {
     super(message);
   }

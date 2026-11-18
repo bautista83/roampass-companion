@@ -21,6 +21,7 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.7.4",
     "jsonwebtoken": "^9.0.2",
+    "sharp": "^0.34.5",
     "zod": "^4.1.0"
   },
   "devDependencies": {

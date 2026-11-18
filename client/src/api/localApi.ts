@@ -8,6 +8,8 @@ import { ApiError, type PlayerStatsSummary, type RecentGame, type RoamPassApi, t
 interface StoredUser extends User {
   salt: string;
   passwordHash: string;
+  /** Foto del pasaporte como data: URL (ya achicada en el navegador, ~30 KB). */
+  photo?: string;
 }
 interface StoredGame {
   hostId: string;
@@ -29,7 +31,15 @@ async function hash(password: string, salt: string): Promise<string> {
 }
 
 const newId = () => crypto.randomUUID();
-const strip = ({ salt: _s, passwordHash: _p, ...user }: StoredUser): User => user;
+const strip = ({ salt: _s, passwordHash: _p, photo: _f, ...user }: StoredUser): User => user;
+
+const toDataUrl = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
 
 async function makeUser(username: string, password: string, role: User['role']): Promise<StoredUser> {
   const salt = newId();
@@ -250,6 +260,41 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
             })),
           };
         });
+    },
+
+    async uploadPhoto(image) {
+      const db = await load();
+      const user = await currentUser(db);
+      user.photo = await toDataUrl(image);
+      user.photoUpdatedAt = new Date().toISOString();
+      save(db);
+      return strip(user);
+    },
+
+    async deleteMyPhoto() {
+      const db = await load();
+      const user = await currentUser(db);
+      delete user.photo;
+      user.photoUpdatedAt = null;
+      save(db);
+      return strip(user);
+    },
+
+    async deleteUserPhoto(userId) {
+      const db = await load();
+      await requireAdmin(db);
+      const user = db.users.find((u) => u.id === userId);
+      if (!user) throw new ApiError('No encontrado', 404);
+      delete user.photo;
+      user.photoUpdatedAt = null;
+      save(db);
+      return strip(user);
+    },
+
+    async getPhotoUrl(userId) {
+      const db = await load();
+      await currentUser(db);
+      return db.users.find((u) => u.id === userId)?.photo ?? null;
     },
   };
 }

@@ -1,10 +1,11 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { HttpError } from '../http';
 import { publicUserSelect, requireAuth, signToken } from './middleware';
 import { loginLimiter, registerLimiter } from './rateLimit';
+import { MAX_PHOTO_UPLOAD, deletePhoto, savePhoto } from '../photos';
 
 export const credentialsSchema = z.object({
   username: z
@@ -75,4 +76,14 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
     select: publicUserSelect,
   });
   res.json({ user });
+});
+
+/** Foto del pasaporte: el cuerpo es la imagen tal cual (image/*). El servidor la normaliza. */
+authRouter.put('/me/photo', requireAuth, express.raw({ type: 'image/*', limit: MAX_PHOTO_UPLOAD }), async (req, res) => {
+  const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+  res.json({ user: await savePhoto(req.user!.id, body) });
+});
+
+authRouter.delete('/me/photo', requireAuth, async (req, res) => {
+  res.json({ user: await deletePhoto(req.user!.id) });
 });

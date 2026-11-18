@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { UiTheme } from '@roampass/shared';
 import { useAuthStore } from '../../store/authStore';
 import { PassportCard } from '../dashboard/PassportCard';
+import { PhotoSection } from './PhotoSection';
 
 const STYLES: { theme: UiTheme; title: string; icon: string; desc: string; preview: string; bg: string; text: string; ink: string }[] = [
   {
@@ -31,7 +32,7 @@ const message = (e: unknown) => (e instanceof Error ? e.message : 'Error inesper
 
 /**
  * Mi perfil: el estilo visual del juego (se guarda en el perfil y se aplica al iniciar sesión)
- * y el cambio de contraseña. Más adelante, la foto del pasaporte.
+ * la foto del pasaporte y el cambio de contraseña.
  */
 export function Profile() {
   const user = useAuthStore((s) => s.user);
@@ -94,9 +95,7 @@ export function Profile() {
       <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-start">
         <div className="space-y-3">
           <PassportCard user={user} />
-          <p className="text-sm text-passport-500 dark:text-passport-300">
-            📷 Más adelante vas a poder subir tu foto para el pasaporte desde acá.
-          </p>
+          <PhotoSection user={user} />
         </div>
 
         <div className="space-y-6">
