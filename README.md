@@ -18,7 +18,7 @@ shared/   @roampass/shared  Motor de juego puro en TS (sin dependencias)
   data/seedData.json        183 cartas escritas a mano (42 lugares con foto + 40 con Street View, 23 historia, 38 personalidades, 18 eventos, banderas y ciudades)
   data/countries.json       194 países (ONU + Vaticano): nombre, capital, región, popularidad, banderas parecidas, ciudades trampa
   scripts/check-streetview.mjs  Valida y ajusta las coordenadas de Street View
-  test/                     Vitest (27 tests)
+  test/                     Vitest (53 tests)
 client/   @roampass/client  React 19 + Vite + Tailwind v4 + Framer Motion + Zustand + react-leaflet
 server/   @roampass/server  Express 5 + Prisma 6 + PostgreSQL + JWT
 ```
