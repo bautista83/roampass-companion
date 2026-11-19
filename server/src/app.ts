@@ -8,6 +8,7 @@ import { photosRouter } from './routes/photos';
 import { cardsRouter } from './routes/cards';
 import { gamesRouter } from './routes/games';
 import { invitesRouter, onlineRouter, userSearchRouter } from './online/routes';
+import { adminInvitesRouter, emailInvitesRouter } from './invites/routes';
 
 export function createApp() {
   const app = express();
@@ -29,6 +30,8 @@ export function createApp() {
   app.use('/api/games', gamesRouter);
   app.use('/api/online', onlineRouter);
   app.use('/api/invites', invitesRouter);
+  app.use('/api/email-invites', emailInvitesRouter);
+  app.use('/api/admin/email-invites', adminInvitesRouter);
 
   app.use(errorHandler);
   return app;
