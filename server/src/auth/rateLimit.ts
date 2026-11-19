@@ -47,6 +47,14 @@ export const emailLimiter = rateLimit({
   message: message('Ya enviamos varios correos. Revisa tu bandeja (y el spam) o prueba más tarde.'),
 });
 
+/** Invitaciones por correo: 20 por hora por IP (ademas de los limites por usuario, D8). */
+export const inviteLimiter = rateLimit({
+  ...common,
+  windowMs: 60 * 60 * 1000,
+  limit: 20,
+  message: message('Demasiadas invitaciones desde esta conexión. Prueba de nuevo más tarde.'),
+});
+
 /** Abrir enlaces (confirmar, restablecer): frena probar tokens al azar. */
 export const tokenLimiter = rateLimit({
   ...common,

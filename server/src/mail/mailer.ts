@@ -20,8 +20,8 @@ function getTransporter(): Transporter | null {
  * Envia un correo con un boton/enlace. Sin SMTP configurado (desarrollo) no envia nada: imprime
  * el enlace en la consola para poder seguir el flujo.
  */
-export async function sendLinkMail(to: string, content: MailContent, link: string): Promise<void> {
-  const mail = renderMail(content, link);
+export async function sendLinkMail(to: string, content: MailContent, link: string, optOutLink?: string): Promise<void> {
+  const mail = renderMail(content, link, optOutLink);
   const transport = getTransporter();
   if (!transport) {
     console.log(`✉️  [sin SMTP] Para: ${to} · ${mail.subject}\n    ${link}`);
