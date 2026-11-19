@@ -146,6 +146,7 @@ export function GameTable() {
             <section className="order-2 md:order-none" aria-label={t('game.table.boardAria')}>
               <BoardView
                 players={game.players}
+                config={game.config}
                 currentPlayerId={finished ? null : player.id}
                 frozen={!!active}
                 onArrive={onArrive}
