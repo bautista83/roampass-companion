@@ -79,6 +79,8 @@ export function PawnPicker(props: {
 export const firstFree = (taken: PawnColor[]) => PAWN_COLORS.find((c) => !taken.includes(c)) ?? PAWN_COLORS[0];
 
 /** Buscar usuarios registrados e invitarlos (con millas iniciales si la partida ya empezo). */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 export function PlayerSearch(props: { sessionId: string; excludeNames: string[]; maxInitialMiles?: number; onInvited?: () => void }) {
   const { sessionId, excludeNames, maxInitialMiles, onInvited } = props;
   const { t } = useTranslation();
@@ -88,9 +90,12 @@ export function PlayerSearch(props: { sessionId: string; excludeNames: string[];
   const [initial, setInitial] = useState(0);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
 
+  // Un correo no se busca (no se revela si tiene cuenta): se ofrece invitarlo por correo.
+  const email = EMAIL_RE.test(q.trim()) ? q.trim().toLowerCase() : null;
+
   useEffect(() => {
     const term = q.trim();
-    if (term.length < 2) {
+    if (term.length < 2 || term.includes('@')) {
       setResults([]);
       return;
     }
@@ -105,6 +110,18 @@ export function PlayerSearch(props: { sessionId: string; excludeNames: string[];
     try {
       await api.inviteToOnline(sessionId, u.id, initial);
       setStatus({ ok: true, text: t('online.lobby.invited', { name: u.username }) });
+      onInvited?.();
+    } catch (err) {
+      setStatus({ ok: false, text: errorText(err) });
+    }
+  }
+
+  async function inviteByEmail(to: string) {
+    setStatus(null);
+    try {
+      await api.inviteToOnlineByEmail(sessionId, to, initial);
+      setStatus({ ok: true, text: t('invites.search.sent', { email: to }) });
+      setQ('');
       onInvited?.();
     } catch (err) {
       setStatus({ ok: false, text: errorText(err) });
@@ -133,7 +150,14 @@ export function PlayerSearch(props: { sessionId: string; excludeNames: string[];
           <p className="mt-1 text-xs text-passport-500 dark:text-passport-300">{t('online.table.initialMilesHint', { max: miles(maxInitialMiles) })}</p>
         </div>
       )}
-      {q.trim().length < 2 ? (
+      {email ? (
+        <div className="space-y-1.5">
+          <button className="btn-primary w-full min-h-10 px-3 text-sm" onClick={() => inviteByEmail(email)}>
+            <span className="truncate">{t('invites.search.byEmail', { email })}</span>
+          </button>
+          <p className="text-xs text-passport-500 dark:text-passport-300">{t('invites.search.byEmailHint')}</p>
+        </div>
+      ) : q.trim().length < 2 || q.includes('@') ? (
         <p className="text-xs text-passport-500 dark:text-passport-300">{t('online.lobby.searchHint')}</p>
       ) : shown.length === 0 ? (
         <p className="text-sm text-passport-500 dark:text-passport-300">{t('online.lobby.noResults')}</p>

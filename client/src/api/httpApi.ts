@@ -5,8 +5,13 @@ import {
   type PlayerStatsSummary,
   type RecentGame,
   type RegisterResult,
+  type AdminEmailInvite,
+  type EmailInviteInfo,
+  type EmailInviteStats,
+  type MyEmailInvite,
   type RoamPassApi,
   type SentInvite,
+  type SentInvites,
   type User,
 } from './types';
 
@@ -83,7 +88,13 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     inviteToOnline: async (id, toUserId, initialMiles = 0) => {
       await request<unknown>(`/online/${encodeURIComponent(id)}/invites`, json('POST', { toUserId, initialMiles }));
     },
-    listSentInvites: async (id) => (await request<{ invites: SentInvite[] }>(`/online/${encodeURIComponent(id)}/invites`)).invites,
+    inviteToOnlineByEmail: async (id, email, initialMiles = 0) => {
+      await request<unknown>(`/online/${encodeURIComponent(id)}/email-invites`, json('POST', { email, initialMiles }));
+    },
+    listSentInvites: async (id) => {
+      const body = await request<{ invites: SentInvite[]; emails?: SentInvites['emails'] }>(`/online/${encodeURIComponent(id)}/invites`);
+      return { users: body.invites, emails: body.emails ?? [] };
+    },
     listInvites: async () => (await request<{ invites: InviteSummary[] }>('/invites')).invites,
     acceptInvite: (inviteId, pawn) => request<{ sessionId: string }>(`/invites/${encodeURIComponent(inviteId)}/accept`, json('POST', pawn)),
     declineInvite: (inviteId) => request<void>(`/invites/${encodeURIComponent(inviteId)}/decline`, { method: 'POST' }),
@@ -95,6 +106,18 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
       const res = await fetch(`${baseUrl}/online/${encodeURIComponent(id)}/streetview-photo`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
       return res.ok ? URL.createObjectURL(await res.blob()) : null;
     },
+
+    inviteFriend: async (email) => {
+      await request<unknown>('/email-invites', json('POST', { email }));
+    },
+    listMyEmailInvites: async () => (await request<{ invites: MyEmailInvite[] }>('/email-invites/mine')).invites,
+    getEmailInvite: (token) => request<EmailInviteInfo>(`/email-invites/token?token=${encodeURIComponent(token)}`),
+    optOutInvites: (token) => request<void>('/email-invites/opt-out', json('POST', { token })),
+    listEmailInvites: async (filter = {}) => {
+      const q = new URLSearchParams(Object.entries(filter).filter((e): e is [string, string] => Boolean(e[1])));
+      return (await request<{ invites: AdminEmailInvite[] }>(`/admin/email-invites?${q}`)).invites;
+    },
+    getEmailInviteStats: () => request<EmailInviteStats>('/admin/email-invites/stats'),
 
     getPhotoUrl(userId, version) {
       const key = `${userId}:${version}`;

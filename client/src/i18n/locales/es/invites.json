@@ -1,0 +1,93 @@
+{
+  "friend": {
+    "button": "💌 Invitar a un amigo",
+    "title": "Invitar a un amigo",
+    "intro": "Escribe el correo de tu amigo y le enviaremos una invitación para crear su pasaporte en Roamle.",
+    "email": "Correo de tu amigo",
+    "send": "Enviar invitación",
+    "sending": "Enviando…",
+    "sent": "¡Invitación enviada a {{email}}!",
+    "limits": "Puedes enviar hasta 10 invitaciones por día. La invitación vence en 7 días."
+  },
+  "mine": {
+    "title": "Mis invitaciones",
+    "empty": "Todavía no invitaste a nadie.",
+    "friend": "Amigo",
+    "game": "Partida",
+    "status": {
+      "PENDING": "Pendiente",
+      "REGISTERED": "Se registró como @{{username}}",
+      "REGISTERED_DELETED": "Se registró",
+      "EXPIRED": "Venció"
+    }
+  },
+  "search": {
+    "byEmail": "Enviar invitación por correo a {{email}}",
+    "byEmailHint": "Si no tiene cuenta, le llegará una invitación para registrarse y sumarse a la partida.",
+    "sent": "Invitación enviada a {{email}}",
+    "pendingEmail": "✉️ {{email}} · invitación por correo"
+  },
+  "register": {
+    "title": "¡Te invitaron a Roamle!",
+    "fromFriend": "<b>@{{from}}</b> te invita a sumarte a Roamle. Crea tu pasaporte para empezar a viajar.",
+    "fromGame": "<b>@{{from}}</b> te invitó a jugar una partida online. Crea tu pasaporte para sumarte.",
+    "gameGone": "La partida de @{{from}} ya terminó, pero igual puedes crear tu pasaporte.",
+    "emailFixed": "La invitación es para este correo.",
+    "submit": "Crear mi pasaporte 🛂",
+    "loading": "Abriendo tu invitación…",
+    "invalid": "El enlace no es válido o ya venció.",
+    "invalidHelp": "Puedes registrarte igual desde la pantalla de inicio.",
+    "goRegister": "Ir a registrarme",
+    "haveAccount": "¿Ya tienes cuenta? Inicia sesión",
+    "welcomeGame": "¡Te damos la bienvenida a Roamle! Tienes una invitación a la partida de @{{from}}: acéptala en el aviso.",
+    "welcomeGameGone": "Tu cuenta quedó creada, pero la partida de @{{from}} ya no está disponible."
+  },
+  "optOut": {
+    "title": "Invitaciones de Roamle",
+    "body": "¿No quieres recibir más invitaciones de Roamle en este correo?",
+    "confirm": "No quiero recibir invitaciones",
+    "busy": "Guardando…",
+    "done": "Listo. No te enviaremos más invitaciones a este correo.",
+    "home": "Ir a Roamle"
+  },
+  "admin": {
+    "title": "📨 Invitaciones por correo",
+    "sent": "Enviadas",
+    "registered": "Cuentas creadas",
+    "conversion": "Conversión",
+    "pending": "Pendientes",
+    "ranking": "Quién invitó más",
+    "rankingRow": "Enviadas: {{sent}} · Cuentas: {{registered}}",
+    "noRanking": "Todavía no hay invitaciones.",
+    "list": "Todas las invitaciones",
+    "filterStatus": "Estado",
+    "filterFrom": "Quién invitó",
+    "all": "Todas",
+    "allUsers": "Todos",
+    "date": "Fecha",
+    "from": "Invitó",
+    "email": "Correo",
+    "kind": "Tipo",
+    "statusCol": "Estado",
+    "account": "Cuenta creada",
+    "deletedUser": "cuenta eliminada",
+    "empty": "No hay invitaciones con ese filtro.",
+    "status": {
+      "PENDING": "Pendiente",
+      "REGISTERED": "Se registró",
+      "ALREADY_MEMBER": "Ya tenía cuenta",
+      "CLOSED": "Cerrada",
+      "BLOCKED": "No enviada",
+      "EXPIRED": "Venció"
+    },
+    "statusHelp": {
+      "PENDING": "Se envió y todavía no se usó el enlace.",
+      "REGISTERED": "Se creó una cuenta con este enlace.",
+      "ALREADY_MEMBER": "El correo ya tenía cuenta: no se le pidió registrarse.",
+      "CLOSED": "El correo se registró por otra invitación o sin enlace.",
+      "BLOCKED": "No se envió: el correo se dio de baja o ya recibió 3 invitaciones ese día.",
+      "EXPIRED": "Pasaron 7 días sin usar el enlace."
+    },
+    "invitedBy": "Invitación de @{{username}}"
+  }
+}

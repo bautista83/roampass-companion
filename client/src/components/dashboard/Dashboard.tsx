@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { GameState } from '@roampass/shared';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,9 @@ import { api, type PlayerStatsSummary } from '../../api';
 import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
 import { UserManagement } from './UserManagement';
+import { InviteStats } from './InviteStats';
+import { InviteFriendButton } from '../invites/InviteFriend';
+import type { InviteWelcome } from '../auth/InvitePages';
 import { PassportCard } from './PassportCard';
 import { RecentGames } from './RecentGames';
 import { GuidedTour } from '../tour/GuidedTour';
@@ -25,6 +28,11 @@ export function Dashboard() {
   const [remoteGame, setRemoteGame] = useState<GameState | null>(null);
   const [onlineGame, setOnlineGame] = useState<{ sessionId: string; round: number } | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
+  // Primera entrada desde una invitacion a partida (InviteRegister).
+  const location = useLocation();
+  const [welcome, setWelcome] = useState<InviteWelcome | null>(
+    () => (location.state as { inviteWelcome?: InviteWelcome } | null)?.inviteWelcome ?? null,
+  );
 
   // La primera vez que el usuario entra al panel (en este dispositivo) el recorrido se abre solo,
   // cuando ya se acomodaron las animaciones de entrada.
@@ -67,6 +75,18 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {welcome && (
+        <div role="status" className="flex items-start justify-between gap-3 rounded-xl border-2 border-ink bg-sun px-3 py-2 text-sm font-bold text-ink">
+          <p>
+            {welcome.gameAvailable
+              ? t('invites.register.welcomeGame', { from: welcome.from })
+              : t('invites.register.welcomeGameGone', { from: welcome.from })}
+          </p>
+          <button className="shrink-0 underline" onClick={() => setWelcome(null)}>
+            {t('common.actions.close')}
+          </button>
+        </div>
+      )}
       {/* Pasaporte del viajero a la izquierda; acciones y estadisticas a la derecha */}
       <div className="grid gap-6 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:items-start">
         {user && (
@@ -95,6 +115,7 @@ export function Dashboard() {
               {onlineGame ? t('online.backToGame') : t('online.playOnline')}
             </button>
           )}
+          {api.mode === 'remote' && <InviteFriendButton />}
           <div className="flex gap-3">
             <button className="btn-ghost flex-1" data-tour="rules" onClick={() => navigate('/rules')}>
               {t('dashboard.howToPlay')}
@@ -140,8 +161,9 @@ export function Dashboard() {
       </div>
 
       {user?.role === 'ADMIN' && (
-        <div data-tour="admin">
+        <div data-tour="admin" className="space-y-6">
           <UserManagement />
+          {api.mode === 'remote' && <InviteStats />}
         </div>
       )}
 

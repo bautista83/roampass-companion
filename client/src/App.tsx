@@ -5,6 +5,7 @@ import { setLocale } from './i18n';
 import { AppShell } from './components/layout/AppShell';
 import { Login } from './components/auth/Login';
 import { ForgotPassword, ResetPassword, VerifyEmail } from './components/auth/EmailLinkPages';
+import { InviteOptOut, InviteRegister } from './components/auth/InvitePages';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { GameSetup } from './components/setup/GameSetup';
 import { OnlineRoom } from './components/online/OnlineRoom';
@@ -34,6 +35,8 @@ export function App() {
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/invite" element={<InviteRegister />} />
+      <Route path="/invite/opt-out" element={<InviteOptOut />} />
       <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth><GameSetup /></RequireAuth>} />
       <Route path="/play" element={<RequireAuth><GameTable /></RequireAuth>} />
