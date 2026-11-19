@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **Borrador** — listo para implementar si se aprueba |
+| Estado | **Implementado** — rama `Feature.EmailInvitations` (ver 12) |
 | Fecha | 2026-11-19 |
 | Afecta | `shared`, `server`, `client` |
 | Relacionado | [online-multiplayer.md](online-multiplayer.md) · [user-photo-and-email.md](user-photo-and-email.md) · [admin-panel.md](admin-panel.md) |
@@ -105,7 +105,7 @@ botón (no se da de baja con solo abrir el enlace, porque los antivirus del corr
 | EI-05 | Al registrarse con un enlace válido: la cuenta nace confirmada, la invitación pasa a `REGISTERED` con la cuenta nueva, y `User.invitedById` apunta a quien invitó (D6). |
 | EI-06 | Al registrarse, si la invitación era a una partida que sigue sin terminar, hay lugar y el anfitrión sigue siendo quien invitó (o sigue en la partida), se crea la invitación de partida normal con las millas que eligió el anfitrión (ajustadas al máximo vigente). |
 | EI-07 | Un enlace vencido, usado o cancelado muestra "El enlace no es válido o ya venció" y ofrece el registro normal. |
-| EI-08 | Si el anfitrión cancela la sala, sus invitaciones por correo a esa partida pasan a `CANCELLED`, pero el enlace sigue sirviendo para registrarse como invitación de amigo (sin partida). |
+| EI-08 | Si el anfitrión cancela la sala, la invitación por correo queda sin partida (`sessionId` en `null`) y el enlace sigue sirviendo para registrarse, como una invitación de amigo. |
 | EI-09 | Si se elimina la cuenta que invitó, sus invitaciones se conservan para el admin con "cuenta eliminada" (`fromUserId` queda en `null`). |
 
 ## 6. Modelo de datos
@@ -123,8 +123,7 @@ enum EmailInviteStatus {
   REGISTERED      // se creo una cuenta con este enlace
   ALREADY_MEMBER  // el correo ya tenia cuenta (D2/D3)
   CLOSED          // el correo se registro por otra invitacion o sin enlace (D6)
-  BLOCKED         // el correo pidio no recibir invitaciones (D9)
-  CANCELLED       // el anfitrion cancelo la sala (EI-08)
+  BLOCKED         // no se envio: baja (D9) o limite del correo de destino (D8)
   EXPIRED
 }
 
@@ -174,8 +173,8 @@ model User {
 | `POST /api/email-invites` `{ email }` | con sesión | Invitación de amigo. Responde siempre `201 { sent: true }` salvo `INVITE_LIMIT`. |
 | `GET /api/email-invites/mine` | con sesión | "Mis invitaciones" (4.3). |
 | `POST /api/online/:id/email-invites` `{ email, initialMiles }` | anfitrión | Invitación a partida por correo (4.1). |
-| `GET /api/email-invites/token/:token` | público | Datos para la página de registro: `{ email, fromUsername, kind, gameAvailable }`. |
-| `POST /api/auth/register` `{ …, inviteToken? }` | público | Con `inviteToken` válido: el correo debe coincidir, la cuenta nace confirmada y responde `{ token, user, gameInvite? }`. |
+| `GET /api/email-invites/token?token=` | público | Datos para la página de registro: `{ email, fromUsername, kind, gameAvailable }`. |
+| `POST /api/auth/register` `{ …, inviteToken? }` | público | Con `inviteToken` válido: el correo debe coincidir, la cuenta nace confirmada y responde `{ token, user, gameAvailable? }`. |
 | `POST /api/email-invites/opt-out` `{ token }` | público | Baja de invitaciones (4.5). |
 | `GET /api/admin/email-invites?status&fromUserId` | admin | Listado completo (4.4). |
 | `GET /api/admin/email-invites/stats` | admin | Totales y ranking (4.4). |
@@ -187,7 +186,7 @@ Códigos de error nuevos: `INVITE_LIMIT`, `INVALID_INVITE`, `INVITE_EMAIL_MISMAT
 
 - `components/invites/InviteFriend.tsx` (modal con formulario y "Mis invitaciones") y botón en `Dashboard`.
 - `PlayerSearch` (online): opción "Enviar invitación por correo" cuando el texto es un correo.
-- Ruta `/invite/:token`: registro con correo fijo; ruta `/invite/:token/opt-out`: baja.
+- Ruta `/invite?token=…`: registro con correo fijo; ruta `/invite/opt-out?token=…`: baja.
 - `components/dashboard/InviteStats.tsx` (solo admin) y columna "Invitado por" en `UserManagement`.
 - Textos en `locales/es/invites.json`.
 
@@ -233,4 +232,30 @@ Códigos de error nuevos: `INVITE_LIMIT`, `INVALID_INVITE`, `INVITE_EMAIL_MISMAT
 
 ## 11. Preguntas abiertas
 
-Ninguna: las decisiones de la sección 3 quedaron acordadas. Si alguna no te convence, se cambia antes de empezar.
+Ninguna.
+
+## 12. Notas de la implementación
+
+- Los enlaces usan `?token=` (como los de confirmar correo): `/invite?token=…` y `/invite/opt-out?token=…`.
+- No hay estado `CANCELLED`: al cancelar la sala, la invitación queda sin partida (EI-08).
+- `BLOCKED` cubre los dos casos en que no se envía el correo: baja (D9) y límite del correo de destino (D8).
+- En la sala, todas las invitaciones por correo se muestran igual ("✉️ correo · invitación por correo")
+  hasta que esa persona se sienta, tenga cuenta o no (D1, D2). Las invitaciones en la app que nacieron
+  de un correo no aparecen con el usuario.
+- Si alguien con cuenta es invitado a la partida por correo pero no se le puede mandar la invitación
+  en la app (ya está en otra partida, ya invitado), no se envía nada y quien invita ve "enviada".
+- Confirmar el correo de una cuenta (registro normal o cambio de correo) cierra las invitaciones
+  pendientes a ese correo (`CLOSED`).
+- E3 y E4 quedaron en un mismo commit (el panel usa los dos módulos).
+- Textos neutros: "Invitación de @pepe" en la administración y "Te damos la bienvenida" en el aviso.
+
+### Pruebas hechas
+
+- Script de punta a punta contra una base temporal y Mailpit: 48/48 (CA-01 a CA-17, D6, límites,
+  baja, sala cancelada, invitarse a sí mismo, 403 del admin).
+- En el navegador, con dos orígenes: invitar a un amigo → correo → registro con correo fijo → entra
+  directo; invitación por correo en la sala → registro → aviso de bienvenida e invitación → aceptar →
+  sentado en la sala; sección del admin (totales, ranking, filtro, "Invitación de @pepe") en escritorio
+  y celular; página de baja.
+- Sin probar: envío real con Brevo y el captcha de Turnstile en la página de invitación (se usa el mismo
+  componente que en el registro).

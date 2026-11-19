@@ -32,6 +32,9 @@ solo lugar.
 | --- | --- |
 | `auth/Login` | Login con usuario o correo / registro con confirmación por correo (roles `ADMIN` y `PLAYER`) |
 | `auth/EmailLinkPages` | Enlaces de los correos: confirmar correo, olvidé mi contraseña, contraseña nueva |
+| `auth/InvitePages` | Registro desde una invitación por correo (correo fijo, entra directo) y baja de invitaciones |
+| `invites/InviteFriend` | "Invitar a un amigo" y "Mis invitaciones" |
+| `dashboard/InviteStats` | ADMIN: invitaciones por correo, quién invitó a quién y cuentas creadas |
 | `profile/Profile` | Mi perfil: foto del pasaporte, correo, estilo visual y contraseña |
 | `dashboard/Dashboard` | Métricas (partidas, victorias, récord), crear/continuar partida |
 | `dashboard/UserManagement` | CRUD de usuarios para ADMIN: activar/desactivar, rol, renombrar, cambiar contraseña, eliminar |
@@ -154,6 +157,14 @@ cada uno juega desde su dispositivo (de 2 a 6) y todos ven el dado, la carta y e
 El servidor tira el dado, controla los tiempos y calcula las millas; hay pausa, pase de turno,
 abandono, anfitrión que se transfiere y jugadores que se suman con la partida empezada. Las reglas
 completas están en `docs/specs/online-multiplayer.md`. No está disponible en el modo demo.
+
+### Invitaciones por correo
+
+En la sala, si escribes un **correo** en el buscador, se invita por correo: si no tiene cuenta, le
+llega "Pepe te invitó a jugar una partida de Roamle" y, al registrarse desde el enlace, entra directo
+con la invitación a la partida. Desde el panel, **💌 Invitar a un amigo** invita a Roamle sin partida.
+El admin ve quién invitó a quién y qué invitaciones terminaron en una cuenta. Detalle en
+`docs/specs/email-invitations.md`. Necesita backend y SMTP (sin SMTP, el enlace se imprime en la consola).
 
 ### Idiomas
 
