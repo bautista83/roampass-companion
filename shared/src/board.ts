@@ -3,7 +3,7 @@
 
 import board from '../data/board.json';
 import { MILES_PER_SPACE } from './scoring';
-import type { CardCategory } from './types';
+import type { CardCategory, VictoryCondition } from './types';
 
 export type BoardSpaceType = 'monument' | 'transport';
 
@@ -36,6 +36,19 @@ export function boardPosition(miles: number): { lap: number; space: number } {
   const steps = Math.floor(Math.max(0, miles) / MILES_PER_SPACE);
   return { lap: Math.floor(steps / BOARD_SPACES), space: steps % BOARD_SPACES };
 }
+
+/**
+ * Millas donde se ubica la ficha. En el modo por millas la meta es la llegada: aunque la ultima
+ * carta de mas millas de las que faltaban, la ficha se queda en la meta (el Obelisco en la vuelta
+ * completa) y no sigue de largo. El puntaje no cambia: solo la posicion en el tablero.
+ */
+export function pawnMiles(miles: number, config: Pick<VictoryCondition, 'mode' | 'target'>): number {
+  return config.mode === 'POINTS' ? Math.min(miles, config.target) : miles;
+}
+
+/** La ficha llego a la meta del modo por millas. */
+export const reachedFinish = (miles: number, config: Pick<VictoryCondition, 'mode' | 'target'>) =>
+  config.mode === 'POINTS' && miles >= config.target;
 
 export const isTransportSpace = (space: number) => BOARD.spaces[space]?.type === 'transport';
 

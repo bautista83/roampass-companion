@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { BOARD, BOARD_SPACES, MILES_PER_SPACE, type GamePlayer } from '@roampass/shared';
+import { BOARD, BOARD_SPACES, MILES_PER_SPACE, pawnMiles, reachedFinish, type GamePlayer, type VictoryCondition } from '@roampass/shared';
 import { useTranslation } from 'react-i18next';
 import { useLabels } from '../../i18n/useLabels';
 import { useThemeStore } from '../../store/themeStore';
@@ -173,21 +173,25 @@ function PassPop({ steps }: { steps: number }) {
   );
 }
 
-/** Duracion del lugar destacado al llegar una ficha. */
+/** Duracion del lugar destacado al llegar una ficha (mas larga al llegar a la meta). */
 export const SPOTLIGHT_MS = 2400;
+const FINISH_SPOTLIGHT_MS = 3600;
+const CONFETTI = ['🎉', '🎊', '⭐', '✨', '🏁', '🎉', '🎊', '✨'];
 
 /**
  * Al llegar una ficha, la ficha de esa casilla (el taxi en Cuba, la Torre Eiffel en Paris...) aparece
  * en grande en el centro del mapa, temblando, con un pulso sobre la casilla real.
  */
-function Spotlight({ steps, player, onDone }: { steps: number; player: GamePlayer; onDone: () => void }) {
+function Spotlight(props: { steps: number; player: GamePlayer; finish: 'world' | 'goal' | null; onDone: () => void }) {
+  const { steps, player, finish, onDone } = props;
   const dir = useSpacesDir();
+  const { t } = useTranslation();
   const space = BOARD.spaces[mod(steps)]!;
   const [x, y] = spaceXY(steps);
   useEffect(() => {
-    const t = setTimeout(onDone, SPOTLIGHT_MS);
-    return () => clearTimeout(t);
-  }, [onDone]);
+    const timer = setTimeout(onDone, finish ? FINISH_SPOTLIGHT_MS : SPOTLIGHT_MS);
+    return () => clearTimeout(timer);
+  }, [onDone, finish]);
 
   return (
     <motion.div className="pointer-events-none absolute inset-0 z-40" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -217,8 +221,37 @@ function Spotlight({ steps, player, onDone }: { steps: number; player: GamePlaye
             <AvatarIcon avatar={player.avatar} className="mr-[0.6cqw] inline-block size-[1.1em] align-[-0.15em]" />
             {space.name}
           </motion.p>
+          {finish && (
+            <motion.p
+              className="sticker bg-sun px-[2cqw] py-[0.8cqw] text-center font-display text-[max(2.6cqw,15px)] leading-tight text-ink"
+              initial={{ scale: 0.4, opacity: 0 }}
+              animate={{ scale: [0.4, 1.12, 1], opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
+            >
+              {t(finish === 'world' ? 'game.board.finishWorld' : 'game.board.finishGoal', { name: player.name })}
+            </motion.p>
+          )}
         </div>
       </div>
+      {finish &&
+        CONFETTI.map((c, i) => (
+          <motion.span
+            key={i}
+            className="absolute top-1/2 left-1/2 text-[max(3cqw,18px)]"
+            initial={{ x: 0, y: 0, opacity: 0, scale: 0.4 }}
+            animate={{
+              x: `${Math.cos((i / CONFETTI.length) * Math.PI * 2) * 22}cqw`,
+              y: `${Math.sin((i / CONFETTI.length) * Math.PI * 2) * 14}cqw`,
+              opacity: [0, 1, 1, 0],
+              scale: [0.4, 1.3, 1],
+              rotate: i % 2 ? 180 : -180,
+            }}
+            transition={{ delay: 0.6, duration: 1.8, ease: 'easeOut' }}
+            aria-hidden
+          >
+            {c}
+          </motion.span>
+        ))}
     </motion.div>
   );
 }
@@ -252,17 +285,21 @@ function stackOffsets(players: GamePlayer[], stepsById: Record<string, number>):
  */
 export function BoardView(props: {
   players: GamePlayer[];
+  /** Condicion de victoria: en el modo por millas la ficha no pasa de la meta. */
+  config: Pick<VictoryCondition, 'mode' | 'target'>;
   currentPlayerId: string | null;
   frozen: boolean;
   onArrive: (player: GamePlayer, steps: number) => void;
   onMovingChange: (moving: boolean) => void;
 }) {
-  const { players, currentPlayerId, frozen, onArrive, onMovingChange } = props;
+  const { players, config, currentPlayerId, frozen, onArrive, onMovingChange } = props;
+  /** Pasos de la ficha de cada jugador (topeada en la meta). */
+  const pawnSteps = (p: GamePlayer) => stepsOf(pawnMiles(p.score, config));
   const [zoom, setZoom] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
   const scroller = useRef<HTMLDivElement>(null);
   const retro = useThemeStore((s) => s.retro);
   const { t } = useTranslation();
-  const [spot, setSpot] = useState<{ player: GamePlayer; steps: number; key: number } | null>(null);
+  const [spot, setSpot] = useState<{ player: GamePlayer; steps: number; key: number; finish: 'world' | 'goal' | null } | null>(null);
   // La ficha cuenta como "en movimiento" hasta que termina de mostrarse el lugar al que llego.
   const [passing, setPassing] = useState<{ steps: number; key: number }[]>([]);
   const onPass = useCallback((steps: number) => {
@@ -276,7 +313,7 @@ export function BoardView(props: {
   }, [onMovingChange]);
   const moving = useRef(new Set<string>());
   const [shownSteps, setShownSteps] = useState<Record<string, number>>(() =>
-    Object.fromEntries(players.map((p) => [p.id, stepsOf(p.score)])),
+    Object.fromEntries(players.map((p) => [p.id, pawnSteps(p)])),
   );
 
   const focus = useCallback(
@@ -308,21 +345,25 @@ export function BoardView(props: {
       setShownSteps((s) => ({ ...s, [id]: steps }));
       const player = players.find((p) => p.id === id);
       if (player) {
-        setSpot({ player, steps, key: Date.now() });
+        // Llego a la meta: felicitaciones (vuelta al mundo completa si la meta es la vuelta entera).
+        const finish = reachedFinish(player.score, config) && steps === stepsOf(config.target)
+          ? config.target % (BOARD_SPACES * MILES_PER_SPACE) === 0 ? 'world' : 'goal'
+          : null;
+        setSpot({ player, steps, key: Date.now(), finish });
         onArrive(player, steps);
       }
       else if (moving.current.size === 0) onMovingChange(false);
     },
-    [players, onArrive, onMovingChange],
+    [players, config, onArrive, onMovingChange],
   );
 
   // Con zoom (celular), la vista sigue a la ficha del jugador en turno.
   useEffect(() => {
     const current = players.find((p) => p.id === currentPlayerId);
-    if (current) focus(stepsOf(current.score));
+    if (current) focus(pawnSteps(current));
   }, [currentPlayerId, zoom]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const offsets = stackOffsets(players, { ...Object.fromEntries(players.map((p) => [p.id, stepsOf(p.score)])), ...shownSteps });
+  const offsets = stackOffsets(players, { ...Object.fromEntries(players.map((p) => [p.id, pawnSteps(p)])), ...shownSteps });
 
   return (
     <div className="sticker relative overflow-hidden bg-paper p-0 dark:bg-passport-950">
@@ -338,7 +379,7 @@ export function BoardView(props: {
             <Pawn
               key={p.id}
               player={p}
-              steps={stepsOf(p.score)}
+              steps={pawnSteps(p)}
               offset={moving.current.has(p.id) ? [0, 0] : (offsets[p.id] ?? [0, 0])}
               isTurn={p.id === currentPlayerId}
               frozen={frozen}
@@ -351,7 +392,7 @@ export function BoardView(props: {
             <PassPop key={p.key} steps={p.steps} />
           ))}
           <AnimatePresence>
-            {spot && <Spotlight key={spot.key} steps={spot.steps} player={spot.player} onDone={clearSpot} />}
+            {spot && <Spotlight key={spot.key} steps={spot.steps} player={spot.player} finish={spot.finish} onDone={clearSpot} />}
           </AnimatePresence>
         </div>
       </div>

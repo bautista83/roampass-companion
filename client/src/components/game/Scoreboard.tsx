@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { PawnToken } from '../ui/PawnToken';
-import { BOARD, PAWN_COLOR_META, boardPosition, progressToGoal, rankPlayers, type GameState } from '@roampass/shared';
+import { BOARD, PAWN_COLOR_META, boardPosition, pawnMiles, progressToGoal, rankPlayers, type GameState } from '@roampass/shared';
 import { useTranslation } from 'react-i18next';
 import { useLabels } from '../../i18n/useLabels';
 
@@ -36,7 +36,7 @@ export function Scoreboard({ game, badges }: { game: GameState; badges?: Record<
                   <span className="block truncate font-semibold">{player.name}</span>
                   {/* Casilla del tablero (sirve tambien para ubicar el peon en el tablero fisico) */}
                   <span className="block truncate text-[11px] font-semibold text-passport-500 dark:text-passport-300">
-                    📍 {boardPosition(player.score).space} · {BOARD.spaces[boardPosition(player.score).space]!.name}
+                    📍 {boardPosition(pawnMiles(player.score, game.config)).space} · {BOARD.spaces[boardPosition(pawnMiles(player.score, game.config)).space]!.name}
                   </span>
                   {badges?.[player.id] && <span className="block truncate text-[11px] font-bold text-brass">{badges[player.id]}</span>}
                 </span>

@@ -188,7 +188,7 @@ export function OnlineTable({ view }: { view: PublicGameView }) {
           {controls}
         </div>
         <section aria-label={t('game.table.boardAria')}>
-          <BoardView players={state.players} currentPlayerId={finished ? null : player.id} frozen={frozen} onArrive={onArrive} onMovingChange={setMoving} />
+          <BoardView players={state.players} config={state.config} currentPlayerId={finished ? null : player.id} frozen={frozen} onArrive={onArrive} onMovingChange={setMoving} />
         </section>
       </div>
 

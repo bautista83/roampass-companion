@@ -6,6 +6,8 @@ import {
   GameRuleError,
   applyTurn,
   boardPosition,
+  pawnMiles,
+  reachedFinish,
   createGame,
   dieFaceOf,
   isTransportSpace,
@@ -65,6 +67,33 @@ describe('tablero', () => {
     [26_500, 1, 3],
   ])('%d mi → vuelta %d, casilla %d', (miles, lap, space) => {
     expect(boardPosition(miles)).toEqual({ lap, space });
+  });
+});
+
+describe('pawnMiles: la ficha no pasa de la meta', () => {
+  const points = (target: number) => ({ mode: 'POINTS' as const, target });
+  it.each([
+    [24_000, 25_000, 24_000],
+    [25_000, 25_000, 25_000],
+    [26_500, 25_000, 25_000],
+    [14_000, 12_500, 12_500],
+  ])('%d mi con meta %d → ficha en %d', (miles, target, expected) => {
+    expect(pawnMiles(miles, points(target))).toBe(expected);
+  });
+
+  it('vuelta completa con millas de mas: queda en el Obelisco (casilla 0)', () => {
+    expect(boardPosition(pawnMiles(27_000, points(25_000)))).toEqual({ lap: 1, space: 0 });
+    expect(BOARD.spaces[0]!.id).toMatch(/obelisco/);
+  });
+
+  it('modo por rondas: la ficha sigue dando vueltas', () => {
+    expect(pawnMiles(26_500, { mode: 'ROUNDS', target: 10 })).toBe(26_500);
+  });
+
+  it('reachedFinish', () => {
+    expect(reachedFinish(25_000, points(25_000))).toBe(true);
+    expect(reachedFinish(24_500, points(25_000))).toBe(false);
+    expect(reachedFinish(40_000, { mode: 'ROUNDS', target: 10 })).toBe(false);
   });
 });
 

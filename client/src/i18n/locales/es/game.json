@@ -83,7 +83,9 @@
   "board": {
     "alt": "Tablero de la vuelta al mundo",
     "showAll": "🗺️ Ver todo",
-    "zoomIn": "🔍 Acercar"
+    "zoomIn": "🔍 Acercar",
+    "finishWorld": "🏁 ¡Felicitaciones, {{name}}! Completaste la vuelta al mundo",
+    "finishGoal": "🏁 ¡Felicitaciones, {{name}}! Llegaste a la meta"
   },
   "timer": {
     "timedOut": "Tiempo agotado",
