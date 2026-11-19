@@ -60,6 +60,7 @@
     "rollIn": "Tira antes de {{seconds}} s o el turno pasa",
     "waitingRoll": "{{name}} tiene {{seconds}} s para tirar",
     "rolled": "¡Salió el {{face}}! · {{icon}} {{label}}",
+    "continue": "Continuar →",
     "skippedTimeout": "{{name}} no tiró a tiempo: pierde el turno",
     "skippedPass": "{{name}} pasó el turno",
     "idle": "Nadie está activo: la partida espera a que alguien vuelva",

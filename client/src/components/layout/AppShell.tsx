@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/authStore';
 import { useGameStore } from '../../store/gameStore';
 import { api } from '../../api';
+import { Modal } from '../ui/Modal';
 import { Brand } from './Brand';
 import { InviteNotifier } from '../online/InviteNotifier';
 
@@ -13,9 +14,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const clearGame = useGameStore((s) => s.clear);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  // "Salir" esta al lado de "Mi perfil": se pide confirmacion para no cerrar la sesion sin querer.
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   const onLogout = () => {
     // La partida queda guardada en el backend (o en la base demo) y se puede reanudar al volver.
+    setConfirmLogout(false);
     clearGame();
     logout();
     navigate('/login');
@@ -37,13 +41,27 @@ export function AppShell({ children }: { children: ReactNode }) {
             👤 <span className="hidden md:inline">@{user?.username}{user?.role === 'ADMIN' && t('dashboard.shell.adminSuffix')}</span>
             <span className="md:hidden">{t('dashboard.shell.profileShort')}</span>
           </Link>
-          <button className="btn-ghost min-h-12 px-3 text-sm" onClick={onLogout}>
+          <button className="btn-ghost min-h-12 px-3 text-sm" onClick={() => setConfirmLogout(true)}>
             {t('dashboard.shell.logout')}
           </button>
         </div>
       </header>
       <main className="flex-1">{children}</main>
       {api.mode === 'remote' && <InviteNotifier />}
+
+      <Modal open={confirmLogout} onClose={() => setConfirmLogout(false)} title={t('dashboard.shell.logoutTitle')}>
+        <div className="space-y-4 p-6">
+          <p>{t('dashboard.shell.logoutBody')}</p>
+          <div className="flex justify-end gap-2">
+            <button className="btn-ghost" onClick={() => setConfirmLogout(false)} autoFocus>
+              {t('dashboard.shell.logoutStay')}
+            </button>
+            <button className="btn-danger" onClick={onLogout}>
+              {t('dashboard.shell.logoutConfirm')}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

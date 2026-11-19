@@ -182,7 +182,7 @@ Siguen vigentes las reglas del motor (ARCHITECTURE 3.3). Se agregan:
 | RN-12 | Un turno salteado (RN-08, RN-10) queda en el historial pero **no** cuenta como carta jugada ni como error. Una carta vencida (RN-09) sí cuenta como error, igual que hoy. |
 | RN-13 | Los turnos de jugadores `PAUSED` o `ABANDONED` se saltan al instante. Las rondas siguen avanzando igual. Si **no queda ningún jugador `ACTIVE`**, la partida espera sin timers hasta que alguien se reactive. |
 | RN-14 | Las opciones de la carta se mezclan **en el servidor** y se guardan con la carta pendiente: todos ven el mismo orden, también al reconectar. |
-| RN-15 | Pausas fijas (no configurables): **3 s** de revelado entre el dado y la carta, y **4 s** mostrando el resultado antes del turno siguiente. |
+| RN-15 | Pausas fijas (no configurables): **4,5 s** de revelado entre el dado y la carta (el dado gira y se muestra la carta que salió, como en el modo local), y **4 s** mostrando el resultado antes del turno siguiente. |
 
 **Fin y anfitrión**
 

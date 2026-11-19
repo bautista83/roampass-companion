@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { DIE_FACES, rollDie, type CardCategory } from '@roampass/shared';
@@ -47,6 +47,56 @@ const FACE_PLACE: Record<number, string> = {
   6: 'rotateY(180deg)',
 };
 const FACE_TURN: Record<number, [number, number]> = { 1: [0, 0], 2: [0, -90], 3: [-90, 0], 4: [90, 0], 5: [0, 90], 6: [0, 180] };
+
+/** Giro del cubo 3D: lo usan el dado local y el online (que gira hasta la cara del servidor). */
+function useDieMotion() {
+  const rx = useMotionValue(-18);
+  const ry = useMotionValue(24);
+  const toss = useMotionValue(0);
+  const shadowScale = useTransform(toss, [-90, 0], [0.45, 1]);
+
+  async function spinTo(face: number, spins: number, seconds: number) {
+    const [fx, fy] = FACE_TURN[face]!;
+    const baseX = Math.ceil(rx.get() / 360) * 360 + 360 * spins;
+    const baseY = Math.ceil(ry.get() / 360) * 360 + 360 * (spins + 1);
+    await Promise.all([
+      animate(rx, baseX + fx, { duration: seconds, ease: [0.15, 0.6, 0.25, 1] }),
+      animate(ry, baseY + fy, { duration: seconds, ease: [0.15, 0.6, 0.25, 1] }),
+      animate(toss, [0, -90, 0, -22, 0], { duration: seconds, times: [0, 0.35, 0.7, 0.85, 1], ease: 'easeOut' }),
+    ]);
+  }
+
+  return { rx, ry, toss, shadowScale, spinTo };
+}
+
+type DieMotion = ReturnType<typeof useDieMotion>;
+
+/** El cubo con sus 6 caras, dentro del boton que lo tira. */
+function DieCube(props: { motion: DieMotion; disabled: boolean; busy: boolean; onClick: () => void; label: string }) {
+  const { motion: m, disabled, busy, onClick, label } = props;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      className="group relative grid place-items-center rounded-3xl pt-6 pb-3 transition disabled:cursor-not-allowed"
+      style={{ perspective: 600, width: SIZE + 40, height: SIZE + 46 }}
+    >
+      <motion.span className="absolute bottom-1 h-3 rounded-[50%] bg-ink/30" style={{ width: SIZE, scaleX: m.shadowScale, opacity: m.shadowScale }} aria-hidden />
+      <motion.span
+        className={`relative block transition-opacity ${disabled && !busy ? 'opacity-50' : 'group-hover:-translate-y-1'}`}
+        style={{ width: SIZE, height: SIZE, transformStyle: 'preserve-3d', rotateX: m.rx, rotateY: m.ry, y: m.toss }}
+      >
+        {[1, 2, 3, 4, 5, 6].map((f) => (
+          <span key={f} className="absolute inset-0" style={{ transform: `${FACE_PLACE[f]} translateZ(${SIZE / 2}px)`, backfaceVisibility: 'hidden' }}>
+            <DieFace face={f} size={SIZE} flat />
+          </span>
+        ))}
+      </motion.span>
+    </button>
+  );
+}
 
 /** Carta que salio, en grande, antes de abrir la pregunta (y su reloj). */
 function RevealCard({ face, category, onDone }: { face: number; category: CardCategory; onDone: () => void }) {
@@ -123,24 +173,11 @@ export function Die(props: {
   const [reveal, setReveal] = useState<{ face: number; category: CardCategory } | null>(null);
   const { t } = useTranslation();
   const { categories } = useLabels();
-  const rx = useMotionValue(-18);
-  const ry = useMotionValue(24);
-  const toss = useMotionValue(0);
-  const shadowScale = useTransform(toss, [-90, 0], [0.45, 1]);
+  const dieMotion = useDieMotion();
+  const { spinTo } = dieMotion;
 
   // Al cambiar de turno se borra el resultado de la tirada anterior.
   useEffect(() => setNote(null), [hint]);
-
-  async function spinTo(face: number, spins: number, seconds: number) {
-    const [fx, fy] = FACE_TURN[face]!;
-    const baseX = Math.ceil(rx.get() / 360) * 360 + 360 * spins;
-    const baseY = Math.ceil(ry.get() / 360) * 360 + 360 * (spins + 1);
-    await Promise.all([
-      animate(rx, baseX + fx, { duration: seconds, ease: [0.15, 0.6, 0.25, 1] }),
-      animate(ry, baseY + fy, { duration: seconds, ease: [0.15, 0.6, 0.25, 1] }),
-      animate(toss, [0, -90, 0, -22, 0], { duration: seconds, times: [0, 0.35, 0.7, 0.85, 1], ease: 'easeOut' }),
-    ]);
-  }
 
   async function roll() {
     if (disabled || rolling) return;
@@ -172,39 +209,83 @@ export function Die(props: {
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <button
-        type="button"
-        onClick={roll}
-        disabled={disabled || rolling}
-        aria-label={t('game.die.rollAria')}
-        className="group relative grid place-items-center rounded-3xl pt-6 pb-3 transition disabled:cursor-not-allowed"
-        style={{ perspective: 600, width: SIZE + 40, height: SIZE + 46 }}
-      >
-        <motion.span
-          className="absolute bottom-1 h-3 rounded-[50%] bg-ink/30"
-          style={{ width: SIZE, scaleX: shadowScale, opacity: shadowScale }}
-          aria-hidden
-        />
-        <motion.span
-          className={`relative block transition-opacity ${disabled && !rolling ? 'opacity-50' : 'group-hover:-translate-y-1'}`}
-          style={{ width: SIZE, height: SIZE, transformStyle: 'preserve-3d', rotateX: rx, rotateY: ry, y: toss }}
-        >
-          {[1, 2, 3, 4, 5, 6].map((f) => (
-            <span
-              key={f}
-              className="absolute inset-0"
-              style={{ transform: `${FACE_PLACE[f]} translateZ(${SIZE / 2}px)`, backfaceVisibility: 'hidden' }}
-            >
-              <DieFace face={f} size={SIZE} flat />
-            </span>
-          ))}
-        </motion.span>
-      </button>
+      <DieCube motion={dieMotion} disabled={disabled || rolling} busy={rolling} onClick={roll} label={t('game.die.rollAria')} />
       <p className="min-h-5 text-center text-sm font-bold" aria-live="polite">
         {note ?? hint}
       </p>
       <AnimatePresence>
         {reveal && <RevealCard key="reveal" face={reveal.face} category={reveal.category} onDone={finishReveal} />}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/**
+ * Dado de las partidas online: el numero lo decide el servidor. Al llegar la tirada (`rolled`), todos
+ * los jugadores ven el mismo giro hasta esa cara y despues la carta que salio, como en el modo local.
+ * `onRoll` solo esta para el jugador en turno.
+ */
+export function OnlineDie(props: {
+  /** Cara que tiro el servidor y una clave unica de esa tirada (null cuando no hay tirada). */
+  rolled: { face: number; key: string } | null;
+  /** El jugador en turno puede tirar. */
+  canRoll: boolean;
+  onRoll: () => void;
+  hint?: string;
+}) {
+  const { rolled, canRoll, onRoll, hint } = props;
+  const { t } = useTranslation();
+  const { categories } = useLabels();
+  const dieMotion = useDieMotion();
+  const [note, setNote] = useState<string | null>(null);
+  const [waiting, setWaiting] = useState(false);
+  const [reveal, setReveal] = useState<{ face: number; category: CardCategory } | null>(null);
+  const shown = useRef<string | null>(null);
+
+  // Llego la tirada del servidor: gira hasta esa cara y muestra la carta (una vez por tirada).
+  const rolledKey = rolled?.key ?? null;
+  useEffect(() => {
+    if (!rolled || shown.current === rolled.key) return;
+    shown.current = rolled.key;
+    let cancelled = false;
+    const category = DIE_FACES[rolled.face - 1]!;
+    void (async () => {
+      setNote(t('game.die.rolling'));
+      await dieMotion.spinTo(rolled.face, 3, 1.6);
+      if (cancelled) return;
+      setNote(t('game.die.result', { face: rolled.face, icon: categories[category].icon, label: categories[category].label }));
+      setWaiting(false);
+      await sleep(250);
+      if (!cancelled) setReveal({ face: rolled.face, category });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [rolledKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Termino la pausa de revelado (se abre la carta): se cierra el cartel.
+  useEffect(() => {
+    if (!rolledKey) {
+      setReveal(null);
+      setNote(null);
+    }
+  }, [rolledKey]);
+
+  function roll() {
+    if (!canRoll || waiting) return;
+    setWaiting(true);
+    setNote(t('game.die.rolling'));
+    onRoll();
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <DieCube motion={dieMotion} disabled={!canRoll || waiting} busy={waiting || !!rolled} onClick={roll} label={t('game.die.rollAria')} />
+      <p className="min-h-5 text-center text-sm font-bold" aria-live="polite">
+        {note ?? hint}
+      </p>
+      <AnimatePresence>
+        {reveal && <RevealCard key="reveal" face={reveal.face} category={reveal.category} onDone={() => setReveal(null)} />}
       </AnimatePresence>
     </div>
   );
