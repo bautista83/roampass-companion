@@ -39,8 +39,8 @@ import type {
 /** Opciones del tiempo para tirar el dado (se elige al crear la sala). */
 export const DIE_TIMEOUT_OPTIONS = [30, 60, 90, 120] as const;
 export const DEFAULT_DIE_TIMEOUT_SECONDS = 60;
-/** Pausa fija entre el dado y la carta, y mostrando el resultado (RN-15). */
-export const REVEAL_MS = 3000;
+/** Pausa fija entre el dado y la carta (giro del dado + carta que salio), y mostrando el resultado (RN-15). */
+export const REVEAL_MS = 4500;
 export const RESULT_MS = 4000;
 /** Margen por latencia para responder (RN-09). */
 export const ANSWER_GRACE_MS = 2000;

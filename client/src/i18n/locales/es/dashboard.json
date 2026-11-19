@@ -5,7 +5,11 @@
     "profileTitle": "Mi perfil: foto, correo, contraseña y estilo del juego",
     "profileShort": "Perfil",
     "adminSuffix": " · Admin",
-    "logout": "Salir"
+    "logout": "Salir",
+    "logoutTitle": "Cerrar sesión",
+    "logoutBody": "¿Seguro que quieres salir? Tus partidas quedan guardadas y puedes retomarlas cuando vuelvas a entrar.",
+    "logoutStay": "Seguir jugando",
+    "logoutConfirm": "Cerrar sesión"
   },
   "newGame": "✈️ Crear Nueva Partida",
   "continue": "▶ Continuar (ronda {{round}})",

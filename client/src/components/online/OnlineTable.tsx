@@ -1,14 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { DIE_FACES, MAX_PLAYERS, currentPlayer, maxInitialMiles, seatedPlayers, type GamePlayer, type PublicGameView } from '@roampass/shared';
+import { MAX_PLAYERS, currentPlayer, maxInitialMiles, seatedPlayers, type GamePlayer, type PublicGameView } from '@roampass/shared';
 import { api } from '../../api';
 import { errorText } from '../../i18n';
-import { useLabels } from '../../i18n/useLabels';
 import { useOnlineStore } from '../../store/onlineStore';
 import { BoardView } from '../game/BoardView';
-import { DieFace } from '../game/Die';
+import { OnlineDie } from '../game/Die';
 import { Scoreboard } from '../game/Scoreboard';
 import { TurnBanner } from '../game/TurnBanner';
 import { VictoryScreen } from '../game/VictoryScreen';
@@ -22,7 +21,6 @@ type Confirm = 'abandon' | 'end' | null;
 export function OnlineTable({ view }: { view: PublicGameView }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { categories } = useLabels();
   const act = useOnlineStore((s) => s.act);
   const connected = useOnlineStore((s) => s.connected);
   const offline = useOnlineStore((s) => s.offline);
@@ -37,6 +35,9 @@ export function OnlineTable({ view }: { view: PublicGameView }) {
   const [confirm, setConfirm] = useState<Confirm>(null);
   const [inviting, setInviting] = useState(false);
   const [moving, setMoving] = useState(false);
+  /** Resultado que este jugador ya cerro (la ficha avanza recien al cerrarlo). */
+  const [dismissedAt, setDismissedAt] = useState<string | null>(null);
+  const [victoryReady, setVictoryReady] = useState(false);
 
   const run = useCallback(async (fn: () => Promise<void>) => {
     setError(null);
@@ -70,30 +71,26 @@ export function OnlineTable({ view }: { view: PublicGameView }) {
     diePanel = <p className="text-center font-bold">{t('online.table.pausedByHost')}</p>;
   } else if (online.phase === 'IDLE') {
     diePanel = <p className="text-center font-bold">{t('online.table.idle')}</p>;
-  } else if (online.phase === 'AWAITING_ROLL') {
-    diePanel = you.isActive ? (
-      <div className="flex flex-col items-center gap-2">
-        <p className="font-display text-xl">{t('online.table.yourTurn')}</p>
-        <button className="btn-primary text-lg" onClick={() => run(() => act('game:roll'))}>
-          {t('online.table.roll')}
-        </button>
-        <button className="btn-ghost min-h-10 px-3 text-sm" onClick={() => run(() => act('game:pass'))}>
-          {t('online.table.pass')}
-        </button>
-        {seconds !== null && <p className="text-xs font-semibold">{t('online.table.rollIn', { seconds })}</p>}
-      </div>
-    ) : (
-      <p className="text-center font-bold">{t('online.table.waitingRoll', { name: player.name, seconds: seconds ?? 0 })}</p>
-    );
-  } else if (online.phase === 'REVEALING' && pending) {
-    const category = DIE_FACES[pending.dieFace - 1]!;
+  } else if (online.phase === 'AWAITING_ROLL' || online.phase === 'REVEALING') {
+    // El dado 3D gira hasta la cara que tiro el servidor (todos ven la misma tirada).
+    const canRoll = you.isActive && online.phase === 'AWAITING_ROLL';
+    const rolled = online.phase === 'REVEALING' && pending ? { face: pending.dieFace, key: online.deadline ?? String(online.seq) } : null;
+    const hint =
+      online.phase === 'AWAITING_ROLL'
+        ? you.isActive
+          ? t('online.table.rollIn', { seconds: seconds ?? 0 })
+          : t('online.table.waitingRoll', { name: player.name, seconds: seconds ?? 0 })
+        : undefined;
     diePanel = (
-      <motion.div className="flex flex-col items-center gap-2" initial={{ rotate: -90, scale: 0.6 }} animate={{ rotate: 0, scale: 1 }}>
-        <DieFace face={pending.dieFace} size={72} />
-        <p className="text-center font-bold">
-          {t('online.table.rolled', { face: pending.dieFace, icon: categories[category].icon, label: categories[category].label })}
-        </p>
-      </motion.div>
+      <div className="flex flex-col items-center gap-2">
+        {canRoll && <p className="font-display text-xl">{t('online.table.yourTurn')}</p>}
+        <OnlineDie rolled={rolled} canRoll={canRoll} onRoll={() => void run(() => act('game:roll'))} hint={hint} />
+        {canRoll && (
+          <button className="btn-ghost min-h-10 px-3 text-sm" onClick={() => run(() => act('game:pass'))}>
+            {t('online.table.pass')}
+          </button>
+        )}
+      </div>
     );
   } else {
     diePanel = <p className="text-center font-bold">{t('online.table.turnOf', { name: player.name })}</p>;
@@ -155,7 +152,22 @@ export function OnlineTable({ view }: { view: PublicGameView }) {
     </>
   );
 
-  const frozen = online.phase === 'REVEALING' || online.phase === 'AWAITING_ANSWER';
+  // El resultado de la carta queda abierto hasta que termina la pausa (o el jugador lo cierra); al final
+  // de la partida, hasta que se cierra. Mientras tanto las fichas esperan, como en el modo local.
+  const resolution = online.lastResolution;
+  const resultOpen =
+    !!resolution?.card && (online.phase === 'SHOWING_RESULT' || finished) && resolution.at !== dismissedAt;
+  const frozen = online.phase === 'REVEALING' || online.phase === 'AWAITING_ANSWER' || resultOpen;
+
+  // La victoria aparece cuando se cerro el resultado y las fichas terminaron de moverse.
+  useEffect(() => {
+    if (!finished || resultOpen || moving) {
+      setVictoryReady(false);
+      return;
+    }
+    const timer = setTimeout(() => setVictoryReady(true), 600);
+    return () => clearTimeout(timer);
+  }, [finished, resultOpen, moving]);
   const onArrive = useCallback((_p: GamePlayer, _s: number) => {}, []);
 
   return (
@@ -180,7 +192,7 @@ export function OnlineTable({ view }: { view: PublicGameView }) {
         </section>
       </div>
 
-      <OnlineCard view={view} />
+      <OnlineCard view={view} resultOpen={resultOpen} onCloseResult={() => resolution && setDismissedAt(resolution.at)} />
 
       <Modal open={inviting} onClose={() => setInviting(false)} title={t('online.table.inviteTitle')}>
         <div className="p-6">
@@ -209,7 +221,7 @@ export function OnlineTable({ view }: { view: PublicGameView }) {
         </div>
       </Modal>
 
-      {finished && !moving && (
+      {finished && victoryReady && (
         <VictoryScreen
           game={state}
           onLeave={(to) => navigate(to === '/setup' ? '/online/new' : to)}

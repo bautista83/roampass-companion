@@ -39,7 +39,7 @@ function useRemainingMs(deadline: string | undefined, running: boolean) {
  * Carta de la partida online: el jugador activo responde; los demas la ven en solo lectura.
  * Mientras se responde viene la carta publica (sin respuesta); al resolverse, la completa (7.3).
  */
-export function OnlineCard({ view }: { view: PublicGameView }) {
+export function OnlineCard({ view, resultOpen, onCloseResult }: { view: PublicGameView; resultOpen: boolean; onCloseResult: () => void }) {
   const { t } = useTranslation();
   const { categories, miles, num } = useLabels();
   const act = useOnlineStore((s) => s.act);
@@ -47,7 +47,7 @@ export function OnlineCard({ view }: { view: PublicGameView }) {
   const phase = state.online.phase;
   const resolution = state.online.lastResolution;
   const answering = phase === 'AWAITING_ANSWER' && pending;
-  const showing = (phase === 'SHOWING_RESULT' || state.status === 'FINISHED') && resolution?.card;
+  const showing = resultOpen && resolution?.card;
   const card: PublicCard | Card | undefined = answering ? pending.card : showing ? resolution.card : undefined;
   const player = state.players.find((p) => p.id === (answering ? state.players[state.currentPlayerIndex]!.id : resolution?.playerId));
   const remainingMs = useRemainingMs(state.online.deadline, !!answering && !state.online.pausedByHost);
@@ -76,9 +76,7 @@ export function OnlineCard({ view }: { view: PublicGameView }) {
     };
   }, [wantsPhoto, state.id, cardId]);
 
-  // El modal de resultado de eventos de viajero tambien se muestra (no tienen pregunta).
   if (!card || !player || (!answering && !showing)) return null;
-  if (state.status === 'FINISHED' && phase === 'FINISHED') return null;
 
   const meta = categories[card.category];
   const canAnswer = !!answering && you.isActive && !state.online.pausedByHost;
@@ -123,6 +121,9 @@ export function OnlineCard({ view }: { view: PublicGameView }) {
           {t('online.table.transportEvent', { title: resolution.transport.card.title, miles: miles(resolution.transport.result.delta) })}
         </p>
       )}
+      <button className="btn-primary w-full text-lg sm:w-auto" onClick={onCloseResult} autoFocus>
+        {state.status === 'FINISHED' ? t('game.result.seeResults') : t('online.table.continue')}
+      </button>
     </div>
   );
 
