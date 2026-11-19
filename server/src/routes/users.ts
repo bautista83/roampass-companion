@@ -23,7 +23,12 @@ usersRouter.use(requireAuth, requireAdmin);
 
 usersRouter.get('/', async (_req, res) => {
   const users = await prisma.user.findMany({
-    select: { ...publicUserSelect, _count: { select: { hostedGames: true } } },
+    select: {
+      ...publicUserSelect,
+      _count: { select: { hostedGames: true } },
+      // Quien lo invito, si la cuenta se creo desde una invitacion por correo.
+      invitedBy: { select: { id: true, username: true } },
+    },
     orderBy: { createdAt: 'asc' },
   });
   res.json({ users: users.map(({ _count, ...u }) => ({ ...u, gamesHosted: _count.hostedGames })) });

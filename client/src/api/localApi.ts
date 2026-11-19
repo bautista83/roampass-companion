@@ -355,7 +355,10 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
     inviteToOnline: async () => {
       throw demoUnavailable();
     },
-    listSentInvites: async () => [],
+    inviteToOnlineByEmail: async () => {
+      throw demoUnavailable();
+    },
+    listSentInvites: async () => ({ users: [], emails: [] }),
     listInvites: async () => [],
     acceptInvite: async () => {
       throw demoUnavailable();
@@ -373,6 +376,22 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       throw demoUnavailable();
     },
     getStreetViewPhoto: async () => null,
+
+    // Las invitaciones por correo necesitan el servidor (envio de correos).
+    inviteFriend: async () => {
+      throw demoUnavailable();
+    },
+    listMyEmailInvites: async () => [],
+    getEmailInvite: async () => {
+      throw demoUnavailable();
+    },
+    optOutInvites: async () => {
+      throw demoUnavailable();
+    },
+    listEmailInvites: async () => [],
+    getEmailInviteStats: async () => {
+      throw demoUnavailable();
+    },
 
     async getPhotoUrl(userId) {
       const db = await load();

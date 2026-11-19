@@ -9,6 +9,8 @@ import { HttpError } from '../http';
 import { sendLinkMail } from '../mail/mailer';
 import { mailContent } from '../mail/templates';
 import { MAX_PHOTO_UPLOAD, deletePhoto, savePhoto } from '../photos';
+import { checkInviteForRegister, closeInvitesFor, completeInviteRegistration } from '../invites/service';
+import { emailSchema } from './schemas';
 import { verifyCaptcha } from './captcha';
 import { consumeEmailToken, createEmailToken, purgeUnverifiedAccounts } from './emailTokens';
 import { publicUserSelect, requireAuth, signToken } from './middleware';
@@ -22,8 +24,7 @@ const usernameSchema = z
   .regex(/^[a-zA-Z0-9_.-]+$/, 'Solo letras, números, punto, guion y guion bajo');
 const passwordSchema = z.string().min(6).max(128);
 const localeSchema = z.enum(SUPPORTED_LOCALES);
-/** Correo en minusculas (CO-01). */
-export const emailSchema = z.string().trim().toLowerCase().pipe(z.email('Correo no válido').max(254));
+export { emailSchema };
 
 export const credentialsSchema = z.object({ username: usernameSchema, password: passwordSchema });
 
@@ -34,6 +35,8 @@ const registerSchema = z.object({
   captchaToken: z.string().max(4096).optional(),
   /** Idioma de la app al registrarse (para los correos). */
   locale: localeSchema.optional(),
+  /** Token del enlace de una invitacion por correo (docs/specs/email-invitations.md). */
+  inviteToken: z.string().min(10).max(200).optional(),
 });
 
 /** Usuario o correo. Los usuarios no pueden tener "@", asi que no hay ambiguedad. */
@@ -79,8 +82,10 @@ export const authRouter = Router();
  * llega por correo (ya no hace falta que un ADMIN la apruebe).
  */
 authRouter.post('/register', registerLimiter, async (req, res) => {
-  const { username, email, password, captchaToken, locale } = registerSchema.parse(req.body);
+  const { username, email, password, captchaToken, locale, inviteToken } = registerSchema.parse(req.body);
   await verifyCaptcha(captchaToken, clientIp(req));
+  // Con enlace de invitacion: debe estar vigente y ser para este correo.
+  const invite = inviteToken ? await checkInviteForRegister(inviteToken, email) : null;
   await purgeUnverifiedAccounts(); // libera usuarios y correos de registros viejos sin confirmar
   if (await prisma.user.findUnique({ where: { username } })) {
     throw new HttpError(409, 'Ese nombre de usuario ya está en uso', 'USERNAME_TAKEN');
@@ -96,8 +101,15 @@ authRouter.post('/register', registerLimiter, async (req, res) => {
       role: 'PLAYER',
       isActive: true,
       ...(locale && { locale }),
+      // El enlace llego a ese correo: la cuenta nace confirmada y con credito para quien invito (D5, D6).
+      ...(invite && { emailVerifiedAt: new Date(), invitedById: invite.fromUserId }),
     },
   });
+  if (invite) {
+    const game = await completeInviteRegistration(invite, user.id);
+    const session = await prisma.user.findUniqueOrThrow({ where: { id: user.id }, select: publicUserSelect });
+    return res.status(201).json({ token: signToken(user.id), user: session, ...(game !== null && { gameAvailable: game }) });
+  }
   const sent = await sendVerification(user, email);
   res.status(201).json({
     pending: true,
@@ -144,6 +156,7 @@ authRouter.post('/verify-email', tokenLimiter, async (req, res) => {
       data: { emailVerifiedAt: new Date() },
     });
   }
+  await closeInvitesFor(row.email);
   res.json({ ok: true, purpose: row.purpose });
 });
 

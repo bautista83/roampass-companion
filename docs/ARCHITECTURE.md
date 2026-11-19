@@ -217,7 +217,7 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | Método | Ruta | Auth | Descripción |
 | --- | --- | --- | --- |
 | GET | `/health` | — | `{ ok: true }` |
-| POST | `/auth/register` | rate limit + captcha | Crea el usuario **sin confirmar** y envía el correo; responde `{ pending: true }` (sin token) |
+| POST | `/auth/register` | rate limit + captcha | Crea el usuario **sin confirmar** y envía el correo; responde `{ pending: true }` (sin token). Con `inviteToken` (enlace de invitación) nace confirmado y responde `{ token, user }` |
 | POST | `/auth/login` | rate limit | `{ identifier, password }` (usuario o correo) → `{ token, user }`; 403 `EMAIL_NOT_VERIFIED` / `ACCOUNT_INACTIVE` |
 | POST | `/auth/verify-email` | rate limit | Confirma el registro o el cambio de correo |
 | POST | `/auth/resend-verification`, `/auth/forgot-password` | rate limit | Envían el correo; respuesta genérica |
@@ -233,6 +233,12 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | GET | `/games/stats/me` | usuario | Jugadas, ganadas, récord |
 | GET | `/games/recent?limit=` | usuario | Últimas partidas (ADMIN ve todas) |
 | DELETE | `/games/:id` | host o ADMIN | Elimina la partida (cascada a jugadores) |
+| POST | `/email-invites` | usuario + rate limit | Invitar a un amigo por correo (respuesta siempre "enviada") |
+| GET | `/email-invites/mine` | usuario | Mis invitaciones por correo |
+| GET | `/email-invites/token?token=` | público + rate limit | Datos del enlace para la página de registro |
+| POST | `/email-invites/opt-out` | público + rate limit | No recibir más invitaciones |
+| POST | `/online/:id/email-invites` | anfitrión | Invitación a la partida por correo |
+| GET | `/admin/email-invites`, `/admin/email-invites/stats` | ADMIN | Quién invitó a quién, totales y ranking |
 
 Formato de error uniforme: `{ error: string, code?: string, issues? }`. El `code` es estable y sirve para traducir el mensaje.
 
@@ -290,6 +296,15 @@ La vista pública (`toPublicView`) **nunca incluye la respuesta** de la carta pe
 espectadores de una carta Street View tampoco les llegan las coordenadas (ven una foto fija).
 Una sola instancia del servidor: colas y timers viven en memoria.
 
+### 5.5 Invitaciones por correo
+
+Un jugador invita por correo a una partida online (desde el buscador de la sala) o a Roamle
+("Invitar a un amigo"). El enlace lleva un token de un solo uso (en la BD, su hash) y quien se
+registra desde él entra directo, con la cuenta confirmada y `User.invitedById` apuntando a quien
+invitó. **Nunca se revela si un correo tiene cuenta**: quien invita ve siempre "Invitación enviada".
+Límites por usuario, por correo de destino y por IP, y enlace de baja en cada correo. Lógica en
+`server/src/invites/` y detalle en `docs/specs/email-invitations.md`.
+
 ---
 
 ## 6. Modelo de datos (PostgreSQL vía Prisma)
@@ -302,6 +317,9 @@ erDiagram
   User { string id PK; string username UK; string email UK; datetime emailVerifiedAt; string passwordHash; Role role; bool isActive; UiTheme theme }
   User ||--o| UserPhoto : "foto"
   User ||--o{ EmailToken : "enlaces"
+  User ||--o{ EmailInvite : "invita por correo"
+  User |o--o{ User : "invitedBy"
+  EmailInvite { string id PK; EmailInviteKind kind; string email; string tokenHash UK; EmailInviteStatus status; string sessionId FK; string registeredUserId FK }
   UserPhoto { string userId PK; bytes data "WebP 256x256" }
   EmailToken { string id PK; string tokenHash UK; EmailTokenPurpose purpose; datetime expiresAt; datetime usedAt }
   GameSession { string id PK "generado en cliente"; string hostId FK; VictoryMode victoryMode; int target; GameStatus status; int currentRound; json state "snapshot del motor"; datetime finishedAt }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MAX_PLAYERS, type PublicGameView } from '@roampass/shared';
-import { api, type SentInvite } from '../../api';
+import { api, type SentInvites } from '../../api';
 import { errorText } from '../../i18n';
 import { useLabels } from '../../i18n/useLabels';
 import { getSocket, onlineAvailable } from '../../online/socket';
@@ -50,7 +50,7 @@ function OnlineLobby({ view }: { view: PublicGameView }) {
   const act = useOnlineStore((s) => s.act);
   const connected = useOnlineStore((s) => s.connected);
   const { state, you } = view;
-  const [sent, setSent] = useState<SentInvite[]>([]);
+  const [sent, setSent] = useState<SentInvites>({ users: [], emails: [] });
   const [error, setError] = useState<string | null>(null);
 
   const reloadSent = useCallback(() => {
@@ -153,13 +153,18 @@ function OnlineLobby({ view }: { view: PublicGameView }) {
           <section className="panel space-y-4 p-4 md:p-6">
             <h2 className="text-xl">{t('online.lobby.inviteTitle')}</h2>
             {state.players.length < MAX_PLAYERS && (
-              <PlayerSearch sessionId={state.id} excludeNames={[...state.players.map((p) => p.name), ...sent.map((s) => s.username)]} onInvited={reloadSent} />
+              <PlayerSearch sessionId={state.id} excludeNames={[...state.players.map((p) => p.name), ...sent.users.map((s) => s.username)]} onInvited={reloadSent} />
             )}
-            {sent.length > 0 && (
+            {sent.users.length + sent.emails.length > 0 && (
               <div>
                 <p className="label">{t('online.lobby.pending')}</p>
                 <ul className="space-y-1.5">
-                  {sent.map((inv) => (
+                  {sent.emails.map((inv) => (
+                    <li key={inv.id} className="truncate text-sm">
+                      {t('invites.search.pendingEmail', { email: inv.email })}
+                    </li>
+                  ))}
+                  {sent.users.map((inv) => (
                     <li key={inv.id} className="flex items-center justify-between gap-2 text-sm">
                       <span>⏳ @{inv.username}</span>
                       <button className="underline" onClick={() => run(async () => { await api.cancelInvite(inv.id); reloadSent(); })}>

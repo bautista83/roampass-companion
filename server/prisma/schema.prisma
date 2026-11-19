@@ -61,30 +61,36 @@ enum CardCategory {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  username     String        @unique
-  passwordHash String
-  role         Role          @default(PLAYER)
-  isActive     Boolean       @default(true)
-  theme        UiTheme       @default(COMIC)
+  id                     String        @id @default(cuid())
+  username               String        @unique
+  passwordHash           String
+  role                   Role          @default(PLAYER)
+  isActive               Boolean       @default(true)
+  theme                  UiTheme       @default(COMIC)
   /// Idioma de la interfaz y de los correos (ver shared/src/i18n.ts).
-  locale       String        @default("es")
+  locale                 String        @default("es")
   /// Correo en minusculas. null en cuentas anteriores al registro con correo o creadas por el admin.
-  email           String?   @unique
+  email                  String?       @unique
   /// null = correo sin confirmar: no puede iniciar sesion (salvo que no tenga correo).
-  emailVerifiedAt DateTime?
+  emailVerifiedAt        DateTime?
   /// Correo nuevo pedido desde Mi perfil, hasta que se confirma con el enlace.
-  pendingEmail    String?
+  pendingEmail           String?
   /// Cambia con cada foto nueva: el cliente lo usa para invalidar la cache. null = sin foto.
-  photoUpdatedAt DateTime?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  photo        UserPhoto?
-  emailTokens  EmailToken[]
-  invitesSent     GameInvite[] @relation("InviteFrom")
-  invitesReceived GameInvite[] @relation("InviteTo")
-  hostedGames  GameSession[]
-  players      Player[]
+  photoUpdatedAt         DateTime?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  photo                  UserPhoto?
+  emailTokens            EmailToken[]
+  invitesSent            GameInvite[]  @relation("InviteFrom")
+  invitesReceived        GameInvite[]  @relation("InviteTo")
+  hostedGames            GameSession[]
+  players                Player[]
+  /// Quien lo invito, si la cuenta se creo desde el enlace de una invitacion por correo.
+  invitedById            String?
+  invitedBy              User?         @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: SetNull)
+  invitedUsers           User[]        @relation("InvitedBy")
+  emailInvitesSent       EmailInvite[] @relation("EmailInviteFrom")
+  emailInvitesRegistered EmailInvite[] @relation("EmailInviteRegistered")
 }
 
 enum EmailTokenPurpose {
@@ -122,23 +128,24 @@ model UserPhoto {
 /// Partida. `state` guarda el snapshot completo del motor (@roampass/shared) para
 /// reanudarla tal cual; las columnas planas existen para consultas y estadisticas.
 model GameSession {
-  id                 String      @id // id generado por el cliente => sincronizacion idempotente
+  id                 String        @id // id generado por el cliente => sincronizacion idempotente
   hostId             String
-  host               User        @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  host               User          @relation(fields: [hostId], references: [id], onDelete: Cascade)
   victoryMode        VictoryMode
   target             Int
-  status             GameStatus  @default(PLAYING)
-  currentRound       Int         @default(1)
-  currentPlayerIndex Int         @default(0)
+  status             GameStatus    @default(PLAYING)
+  currentRound       Int           @default(1)
+  currentPlayerIndex Int           @default(0)
   state              Json
-  startedAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  startedAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
   finishedAt         DateTime?
-  kind               GameKind    @default(LOCAL)
+  kind               GameKind      @default(LOCAL)
   /// Se incrementa en cada accion aplicada a una partida online (concurrencia optimista).
-  version            Int         @default(0)
+  version            Int           @default(0)
   players            Player[]
   invites            GameInvite[]
+  emailInvites       EmailInvite[]
 
   @@index([hostId, status])
   @@index([kind, status])
@@ -159,9 +166,59 @@ model GameInvite {
   createdAt    DateTime     @default(now())
   expiresAt    DateTime
   respondedAt  DateTime?
+  /// Correo que escribio el anfitrion, si invito por correo a alguien que ya tenia cuenta: la sala
+  /// muestra el correo y no el usuario hasta que acepta (no revela que el correo esta registrado).
+  viaEmail     String?
 
   @@index([toUserId, status])
   @@index([sessionId, status])
+}
+
+enum EmailInviteKind {
+  FRIEND
+  GAME
+}
+
+enum EmailInviteStatus {
+  PENDING
+  REGISTERED
+  ALREADY_MEMBER
+  CLOSED
+  BLOCKED
+  EXPIRED
+}
+
+/// Invitacion por correo (ver docs/specs/email-invitations.md). Solo se guarda el hash del token.
+model EmailInvite {
+  id               String            @id @default(cuid())
+  kind             EmailInviteKind
+  fromUserId       String?
+  fromUser         User?             @relation("EmailInviteFrom", fields: [fromUserId], references: [id], onDelete: SetNull)
+  /// Copia del usuario que invito, para el admin si se elimina la cuenta.
+  fromUsername     String
+  /// Correo en minusculas.
+  email            String
+  /// Partida online (GAME). Si se elimina la sala queda en null y vale como invitacion de amigo.
+  sessionId        String?
+  session          GameSession?      @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  initialMiles     Int               @default(0)
+  tokenHash        String            @unique
+  status           EmailInviteStatus @default(PENDING)
+  createdAt        DateTime          @default(now())
+  expiresAt        DateTime
+  registeredUserId String?
+  registeredUser   User?             @relation("EmailInviteRegistered", fields: [registeredUserId], references: [id], onDelete: SetNull)
+  registeredAt     DateTime?
+
+  @@index([fromUserId, createdAt])
+  @@index([email, createdAt])
+  @@index([status])
+}
+
+/// Correos que pidieron no recibir invitaciones (se guarda solo el hash SHA-256 del correo).
+model EmailOptOut {
+  emailHash String   @id
+  createdAt DateTime @default(now())
 }
 
 model Player {

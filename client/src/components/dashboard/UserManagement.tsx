@@ -104,6 +104,12 @@ export function UserManagement() {
                   )}
                   <p className="text-xs text-passport-500 dark:text-passport-300">
                     {t('users.joined', { date: date(u.createdAt) })}
+                    {u.invitedBy && (
+                      <>
+                        {' · '}
+                        <span className="font-semibold">{t('invites.admin.invitedBy', { username: u.invitedBy.username })}</span>
+                      </>
+                    )}
                     {u.photoUpdatedAt && (
                       <>
                         {' · '}

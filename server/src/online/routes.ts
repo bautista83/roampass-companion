@@ -5,6 +5,7 @@ import { z } from 'zod';
 import {
   AVATARS,
   DIE_TIMEOUT_OPTIONS,
+  MAX_PLAYERS,
   PAWN_COLORS,
   POINT_TARGETS,
   ROUND_TARGETS,
@@ -14,6 +15,7 @@ import {
   leaveLobby,
   maxInitialMiles,
   playerIdOfUser,
+  seatedPlayers,
   setPresence,
   type InviteSummary,
   type OnlineGameState,
@@ -22,7 +24,9 @@ import { prisma } from '../db';
 import { env } from '../env';
 import { HttpError } from '../http';
 import { requireAuth } from '../auth/middleware';
-import { clientIp } from '../auth/rateLimit';
+import { clientIp, inviteLimiter } from '../auth/rateLimit';
+import { emailSchema } from '../auth/schemas';
+import { sendEmailInvite, sessionEmailInvites } from '../invites/service';
 import { ipKeyGenerator } from 'express-rate-limit';
 import { onlineService } from './service';
 import { createOnline, loadOnline } from './store';
@@ -30,7 +34,7 @@ import { notifyUser } from './notify';
 
 const INVITE_TTL_MS = 10 * 60 * 1000;
 
-const hostUserId = (s: OnlineGameState) => s.online.userIds[s.players.findIndex((p) => p.id === s.online.hostPlayerId)]!;
+export const hostUserId = (s: OnlineGameState) => s.online.userIds[s.players.findIndex((p) => p.id === s.online.hostPlayerId)]!;
 const presenceOfUser = (s: OnlineGameState, userId: string) => {
   const i = s.online.userIds.indexOf(userId);
   return i === -1 ? null : (s.players[i]!.presence ?? 'ACTIVE');
@@ -59,7 +63,7 @@ function participant(s: OnlineGameState, userId: string) {
 }
 
 /** Marca como vencidas las invitaciones pendientes viejas (RN-04). */
-async function expireInvites() {
+export async function expireInvites() {
   await prisma.gameInvite.updateMany({ where: { status: 'PENDING', expiresAt: { lt: new Date() } }, data: { status: 'EXPIRED' } });
 }
 
@@ -171,11 +175,14 @@ onlineRouter.post('/:id/leave', async (req, res) => {
 
 const inviteSchema = z.object({ toUserId: z.string().min(1), initialMiles: z.number().int().min(0).default(0) });
 
-/** El anfitrion invita (tambien con la partida en curso, con millas iniciales): RN-05, 5.6. */
-onlineRouter.post('/:id/invites', async (req, res) => {
-  const { toUserId, initialMiles } = inviteSchema.parse(req.body);
-  const { state } = await loadOnline(String(req.params.id));
-  if (hostUserId(state) !== req.user!.id) throw new HttpError(403, 'Solo el anfitrión puede invitar', 'NOT_HOST');
+/** El anfitrion manda una invitacion de partida (valida y avisa al invitado en tiempo real). */
+export async function createGameInvite(
+  state: OnlineGameState,
+  fromUserId: string,
+  toUserId: string,
+  initialMiles: number,
+  viaEmail?: string,
+): Promise<string> {
   if (state.status === 'FINISHED') throw new HttpError(400, 'La partida ya terminó', 'GAME_FINISHED');
   if (state.online.userIds.includes(toUserId)) throw new HttpError(409, 'Ese usuario ya está en la partida', 'ALREADY_IN_GAME');
   const target = await prisma.user.findUnique({ where: { id: toUserId }, select: { isActive: true, username: true } });
@@ -190,14 +197,49 @@ onlineRouter.post('/:id/invites', async (req, res) => {
   const invite = await prisma.gameInvite.create({
     data: {
       sessionId: state.id,
-      fromUserId: req.user!.id,
+      fromUserId,
       toUserId,
       initialMiles: state.online.phase === 'LOBBY' ? 0 : initialMiles,
       expiresAt: new Date(Date.now() + INVITE_TTL_MS),
+      viaEmail: viaEmail ?? null,
     },
   });
   notifyUser(toUserId, 'invite:received', await inviteSummary(invite.id));
-  res.status(201).json({ id: invite.id });
+  return invite.id;
+}
+
+/** Solo el anfitrion invita, y no con la partida terminada ni completa. */
+export function requireHostCanInvite(state: OnlineGameState, userId: string) {
+  if (hostUserId(state) !== userId) throw new HttpError(403, 'Solo el anfitrión puede invitar', 'NOT_HOST');
+  if (state.status === 'FINISHED') throw new HttpError(400, 'La partida ya terminó', 'GAME_FINISHED');
+  if (seatedPlayers(state).length >= MAX_PLAYERS) throw new HttpError(400, 'La partida ya tiene el máximo de jugadores', 'GAME_FULL');
+}
+
+/** El anfitrion invita (tambien con la partida en curso, con millas iniciales): RN-05, 5.6. */
+onlineRouter.post('/:id/invites', async (req, res) => {
+  const { toUserId, initialMiles } = inviteSchema.parse(req.body);
+  const { state } = await loadOnline(String(req.params.id));
+  if (hostUserId(state) !== req.user!.id) throw new HttpError(403, 'Solo el anfitrión puede invitar', 'NOT_HOST');
+  const id = await createGameInvite(state, req.user!.id, toUserId, initialMiles);
+  res.status(201).json({ id });
+});
+
+const emailInviteSchema = z.object({ email: emailSchema, initialMiles: z.number().int().min(0).default(0) });
+
+/** Invitacion a la partida por correo (docs/specs/email-invitations.md, 4.1). */
+onlineRouter.post('/:id/email-invites', inviteLimiter, async (req, res) => {
+  const { email, initialMiles } = emailInviteSchema.parse(req.body);
+  const { state } = await loadOnline(String(req.params.id));
+  requireHostCanInvite(state, req.user!.id);
+  if (state.online.phase !== 'LOBBY' && (initialMiles % 500 !== 0 || initialMiles > maxInitialMiles(state))) {
+    throw new HttpError(400, 'Millas iniciales inválidas', 'INVALID_INITIAL_MILES');
+  }
+  await sendEmailInvite({
+    from: req.user!,
+    email,
+    game: { state, initialMiles: state.online.phase === 'LOBBY' ? 0 : initialMiles },
+  });
+  res.status(201).json({ sent: true });
 });
 
 /** Invitaciones pendientes que mando el anfitrion en esta partida (para la sala de espera). */
@@ -206,11 +248,15 @@ onlineRouter.get('/:id/invites', async (req, res) => {
   participant(state, req.user!.id);
   await expireInvites();
   const invites = await prisma.gameInvite.findMany({
-    where: { sessionId: state.id, status: 'PENDING' },
+    // Las que nacieron de un correo se muestran en la lista de correos (no revelan el usuario).
+    where: { sessionId: state.id, status: 'PENDING', viaEmail: null },
     select: { id: true, initialMiles: true, expiresAt: true, toUser: { select: { username: true } } },
     orderBy: { createdAt: 'asc' },
   });
-  res.json({ invites: invites.map((i) => ({ id: i.id, username: i.toUser.username, initialMiles: i.initialMiles, expiresAt: i.expiresAt })) });
+  res.json({
+    invites: invites.map((i) => ({ id: i.id, username: i.toUser.username, initialMiles: i.initialMiles, expiresAt: i.expiresAt })),
+    emails: await sessionEmailInvites(state),
+  });
 });
 
 /** Volver a una partida que se abandono, con las millas que tenia (5.5). */

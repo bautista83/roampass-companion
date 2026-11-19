@@ -20,6 +20,8 @@ export interface User {
   pendingEmail?: string | null;
   createdAt: string;
   gamesHosted?: number;
+  /** Solo en la administracion: quien lo invito, si la cuenta se creo desde una invitacion por correo. */
+  invitedBy?: { id: string; username: string } | null;
 }
 
 /** Lo que cada usuario puede cambiar de su propio perfil. */
@@ -41,11 +43,15 @@ export interface RegisterData {
   captchaToken?: string;
   /** Idioma de la app al registrarse (para los correos). */
   locale?: Locale;
+  /** Token del enlace de una invitacion por correo: la cuenta nace confirmada. */
+  inviteToken?: string;
 }
 
 export interface AuthSession {
   token: string;
   user: User;
+  /** Registro desde una invitacion a partida: si la partida sigue disponible. */
+  gameAvailable?: boolean;
 }
 
 /** Registro con backend: la cuenta queda pendiente hasta confirmar el correo. */
@@ -110,6 +116,57 @@ export interface SentInvite {
   expiresAt: string;
 }
 
+/** Invitaciones de la sala: a usuarios y por correo (se muestra el correo, no el usuario). */
+export interface SentInvites {
+  users: SentInvite[];
+  emails: { id: string; email: string; createdAt: string }[];
+}
+
+/** Datos de una invitacion por correo, para la pagina de registro. */
+export interface EmailInviteInfo {
+  email: string;
+  fromUsername: string;
+  kind: 'FRIEND' | 'GAME';
+  gameAvailable: boolean;
+}
+
+/** "Mis invitaciones". */
+export interface MyEmailInvite {
+  id: string;
+  kind: 'FRIEND' | 'GAME';
+  email: string;
+  createdAt: string;
+  status: 'PENDING' | 'REGISTERED' | 'EXPIRED';
+  registeredUsername: string | null;
+}
+
+export type EmailInviteStatus = 'PENDING' | 'REGISTERED' | 'ALREADY_MEMBER' | 'CLOSED' | 'BLOCKED' | 'EXPIRED';
+
+/** Invitacion por correo vista por el admin. */
+export interface AdminEmailInvite {
+  id: string;
+  kind: 'FRIEND' | 'GAME';
+  email: string;
+  status: EmailInviteStatus;
+  sessionId: string | null;
+  createdAt: string;
+  expiresAt: string;
+  registeredAt: string | null;
+  fromUserId: string | null;
+  fromUsername: string;
+  registeredUser: { id: string; username: string } | null;
+}
+
+export interface EmailInviteStats {
+  sent: number;
+  registered: number;
+  pending: number;
+  /** 0 a 1, sobre las invitaciones que podian terminar en una cuenta nueva. */
+  conversion: number;
+  byStatus: Record<EmailInviteStatus, number>;
+  ranking: { userId: string | null; username: string; sent: number; registered: number }[];
+}
+
 export interface UserUpdate {
   username?: string;
   password?: string;
@@ -167,7 +224,9 @@ export interface RoamPassApi {
   cancelOnlineGame(sessionId: string): Promise<void>;
   leaveOnlineLobby(sessionId: string): Promise<void>;
   inviteToOnline(sessionId: string, toUserId: string, initialMiles?: number): Promise<void>;
-  listSentInvites(sessionId: string): Promise<SentInvite[]>;
+  /** Invitacion a la partida por correo (si no tiene cuenta, la invita a registrarse). */
+  inviteToOnlineByEmail(sessionId: string, email: string, initialMiles?: number): Promise<void>;
+  listSentInvites(sessionId: string): Promise<SentInvites>;
   listInvites(): Promise<InviteSummary[]>;
   acceptInvite(inviteId: string, pawn: { color: PawnColor; avatar: string }): Promise<{ sessionId: string }>;
   declineInvite(inviteId: string): Promise<void>;
@@ -176,6 +235,17 @@ export interface RoamPassApi {
   hideOnline(sessionId: string): Promise<void>;
   /** Foto fija de Street View para quien no tiene el turno (blob:), o null. */
   getStreetViewPhoto(sessionId: string): Promise<string | null>;
+
+  // ── Invitaciones por correo (solo con backend) ──
+  inviteFriend(email: string): Promise<void>;
+  listMyEmailInvites(): Promise<MyEmailInvite[]>;
+  /** Publico: datos del enlace para la pagina de registro. */
+  getEmailInvite(token: string): Promise<EmailInviteInfo>;
+  /** Publico: no recibir mas invitaciones. */
+  optOutInvites(token: string): Promise<void>;
+  /** ADMIN */
+  listEmailInvites(filter?: { status?: EmailInviteStatus; fromUserId?: string }): Promise<AdminEmailInvite[]>;
+  getEmailInviteStats(): Promise<EmailInviteStats>;
 }
 
 /** Error de la API. El mensaje ya viene traducido por su codigo (errors.<CODE>) si el diccionario lo tiene. */

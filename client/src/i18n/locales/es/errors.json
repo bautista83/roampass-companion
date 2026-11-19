@@ -51,5 +51,10 @@
   "ALREADY_INVITED": "Ya invitaste a ese usuario.",
   "INVITE_EXPIRED": "La invitación ya no es válida.",
   "ONLINE_READ_ONLY": "Las partidas online no se pueden modificar desde aquí.",
-  "VERSION_CONFLICT": "La partida cambió mientras tanto. Vuelve a intentar."
+  "VERSION_CONFLICT": "La partida cambió mientras tanto. Vuelve a intentar.",
+  "INVITE_LIMIT": "Llegaste al límite de invitaciones por hoy. Prueba mañana.",
+  "INVALID_INVITE": "La invitación no es válida o ya venció.",
+  "INVITE_EMAIL_MISMATCH": "Esta invitación es para otro correo.",
+  "CANNOT_INVITE_SELF": "No puedes invitarte a ti mismo.",
+  "MAIL_FAILED": "No pudimos enviar el correo. Prueba de nuevo en un momento."
 }
