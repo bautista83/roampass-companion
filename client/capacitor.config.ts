@@ -21,6 +21,17 @@ const config: CapacitorConfig = {
   android: {
     allowMixedContent: devApi,
   },
+  experimental: {
+    ios: {
+      spm: {
+        // Pedido por @capacitor-firebase/messaging para evitar un choque de nombres de paquetes en
+        // Swift Package Manager (requiere Capacitor CLI 8.4+).
+        packageOptions: {
+          '@capacitor-firebase/messaging': { symlink: true },
+        },
+      },
+    },
+  },
   plugins: {
     // Pantalla de borde a borde: el webview respeta viewport-fit=cover (index.html) y la interfaz
     // deja libres el notch y las barras con env(safe-area-inset-*) (ver index.css).

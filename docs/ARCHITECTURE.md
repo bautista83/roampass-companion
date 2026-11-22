@@ -191,8 +191,8 @@ La app está lista para varios idiomas; hoy solo existe el **español latino neu
 
 ### 4.5 App para celulares (Capacitor)
 
-El mismo build de Vite se empaqueta como app de Android (`client/android`, `com.playroamle.app`;
-iOS más adelante). Diseño en [`docs/specs/mobile-app.md`](specs/mobile-app.md); compilar y publicar
+El mismo build de Vite se empaqueta como app de Android (`client/android`) y de iPhone
+(`client/ios`, Swift Package Manager), con el identificador `com.playroamle.app`. Diseño en [`docs/specs/mobile-app.md`](specs/mobile-app.md); compilar y publicar
 en [`deploy/MOBILE.md`](../deploy/MOBILE.md).
 
 - **Origen propio** `https://app.playroamle.com` (Android) / `capacitor://app.playroamle.com` (iOS):
@@ -201,15 +201,18 @@ en [`deploy/MOBILE.md`](../deploy/MOBILE.md).
   `isNative() === false` en la web:
   - `index.ts` (`useNativeShell`): pantalla de inicio, botón Atrás, enlaces de `playroamle.com`
     (App Links), enlaces externos al navegador del sistema y color de la barra de estado.
-  - `push.ts` + `PushPrompt.tsx`: permiso, registro del token (`POST /api/devices`), tocar una
+  - `push.ts` + `PushPrompt.tsx` (`@capacitor-firebase/messaging`, token de Firebase en las dos
+    plataformas): permiso, registro del token (`POST /api/devices`), tocar una
     notificación → navegar. El socket avisa `client:visibility` para no mandar push a quien está
     mirando la app.
   - `UpdateRequired.tsx`: versión mínima (`GET /api/app/config`).
   - `haptics.ts`, `keepAwake.ts`.
 - **Plugin propio de Android** `AppSettingsPlugin.java`: estado real de las notificaciones y abrir
-  sus ajustes.
-- **Archivos que no van a git:** `.env.mobile`, `google-services.json`, `keystore.properties` y la
-  clave de subida.
+  sus ajustes. `MainActivity.java` crea el canal de notificaciones. En iOS, `AppDelegate.swift`
+  pasa los eventos de APNs al plugin de Firebase.
+- **Build de iOS sin Mac:** `codemagic.yaml` (Codemagic → TestFlight).
+- **Archivos que no van a git:** `.env.mobile`, `google-services.json`, `GoogleService-Info.plist`,
+  `keystore.properties` y las claves de firma.
 
 ---
 

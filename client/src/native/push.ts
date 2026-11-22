@@ -1,12 +1,14 @@
-// Notificaciones push en la app (docs/specs/mobile-app.md, E4). En la web y en el modo demo no hacen nada.
+// Notificaciones push en la app (docs/specs/mobile-app.md, E4 y E7). En la web y en el modo demo no
+// hacen nada. Plugin @capacitor-firebase/messaging: da el token de Firebase (FCM) en Android y en iOS
+// (en iOS, Firebase lo arma a partir del de APNs), que es el que usa el servidor.
 
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerPlugin } from '@capacitor/core';
 import { App } from '@capacitor/app';
-import { PushNotifications } from '@capacitor/push-notifications';
+import { AppLauncher } from '@capacitor/app-launcher';
+import { FirebaseMessaging } from '@capacitor-firebase/messaging';
 import { create } from 'zustand';
-import i18n from 'i18next';
 import { api } from '../api';
 import { isNative, nativePlatform } from './index';
 
@@ -40,7 +42,7 @@ const storage = {
 
 export async function getPushPermission(): Promise<PushPermission> {
   if (!pushAvailable()) return 'denied';
-  const { receive } = await PushNotifications.checkPermissions();
+  const { receive } = await FirebaseMessaging.checkPermissions();
   if (receive === 'granted') return (await notificationsEnabled()) ? 'granted' : 'denied';
   return receive === 'denied' ? 'denied' : 'prompt';
 }
@@ -51,11 +53,23 @@ export async function enablePush(): Promise<PushPermission> {
   storage.set(ASKED_KEY, '1');
   let permission = await getPushPermission();
   if (permission === 'prompt') {
-    const { receive } = await PushNotifications.requestPermissions();
+    const { receive } = await FirebaseMessaging.requestPermissions();
     permission = receive === 'granted' ? 'granted' : 'denied';
   }
-  if (permission === 'granted') await PushNotifications.register();
+  if (permission === 'granted') await registerDevice();
   return permission;
+}
+
+/** Pide el token de Firebase y lo registra en el servidor (si hay sesion; lo valida la API). */
+async function registerDevice() {
+  const { token } = await FirebaseMessaging.getToken();
+  await sendToken(token);
+}
+
+async function sendToken(token: string) {
+  const { version } = await App.getInfo();
+  await api.registerDevice({ token, platform: nativePlatform() === 'ios' ? 'IOS' : 'ANDROID', appVersion: version });
+  storage.set(TOKEN_KEY, token);
 }
 
 /**
@@ -76,7 +90,9 @@ const AppSettings = registerPlugin<{
   areNotificationsEnabled(): Promise<{ enabled: boolean }>;
   openNotificationSettings(): Promise<void>;
 }>('AppSettings');
-export const openNotificationSettings = () => AppSettings.openNotificationSettings();
+/** Android: la pantalla de notificaciones de la app. iOS: los ajustes de Roamle (incluyen Notificaciones). */
+export const openNotificationSettings = () =>
+  nativePlatform() === 'ios' ? AppLauncher.openUrl({ url: 'app-settings:' }).then(() => {}) : AppSettings.openNotificationSettings();
 /** Apagadas a mano en los ajustes (en iOS el permiso ya lo refleja). */
 const notificationsEnabled = () =>
   nativePlatform() === 'android' ? AppSettings.areNotificationsEnabled().then((r) => r.enabled, () => true) : Promise.resolve(true);
@@ -128,29 +144,14 @@ export function useNativePush(authToken: string | null) {
   useEffect(() => {
     if (!pushAvailable()) return;
 
-    // Canal de Android (8+): el servidor manda todo por "roamle".
-    if (nativePlatform() === 'android') {
-      void PushNotifications.createChannel({
-        id: 'roamle',
-        name: i18n.t('profile.notifications.channelName'),
-        description: i18n.t('profile.notifications.channelDescription'),
-        importance: 4,
-        visibility: 1,
-        vibration: true,
-      }).catch(() => {});
-    }
-
+    // El canal de Android "roamle" lo crea MainActivity.java (con vibracion, que el plugin no permite).
     const handles = [
-      PushNotifications.addListener('registration', ({ value }) => {
-        if (!authRef.current) return;
-        void (async () => {
-          const { version } = await App.getInfo();
-          await api.registerDevice({ token: value, platform: nativePlatform() === 'ios' ? 'IOS' : 'ANDROID', appVersion: version });
-          storage.set(TOKEN_KEY, value);
-        })().catch(() => {});
+      // Firebase puede renovar el token: se vuelve a registrar.
+      FirebaseMessaging.addListener('tokenReceived', ({ token }) => {
+        if (authRef.current) void sendToken(token).catch(() => {});
       }),
-      PushNotifications.addListener('pushNotificationActionPerformed', ({ notification }) => {
-        const link = safeLink(notification.data?.link);
+      FirebaseMessaging.addListener('notificationActionPerformed', ({ notification }) => {
+        const link = safeLink((notification.data as { link?: unknown } | undefined)?.link);
         if (link) navigateRef.current(link);
       }),
     ];
@@ -164,7 +165,7 @@ export function useNativePush(authToken: string | null) {
     if (!pushAvailable() || !authToken) return;
     const sync = () =>
       void getPushPermission()
-        .then((p) => (p === 'granted' ? PushNotifications.register() : undefined))
+        .then((p) => (p === 'granted' ? registerDevice() : undefined))
         .catch(() => {});
     sync();
     const resume = App.addListener('resume', sync);

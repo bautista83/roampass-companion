@@ -1,0 +1,58 @@
+# Build de la app de iPhone en la nube (Codemagic), para quien no tiene una Mac.
+# Guia completa: deploy/MOBILE.md, seccion "iOS". Nada de esto guarda secretos en el repo:
+# las claves y los archivos privados se cargan en la interfaz de Codemagic.
+#
+# En Codemagic (una vez):
+#   - Teams → Integrations → Developer Portal: conectar una API key de App Store Connect con el
+#     nombre "Roamle ASC" (rol App Manager).
+#   - App → Environment variables, grupo "roamle_mobile" (marcadas como secretas):
+#       ENV_MOBILE                 .env.mobile en base64
+#       GOOGLE_SERVICE_INFO_PLIST  GoogleService-Info.plist (Firebase, app iOS) en base64
+#       APP_STORE_APPLE_ID         ID numerico de la app en App Store Connect (Informacion de la app)
+
+workflows:
+  ios-testflight:
+    name: iOS → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Roamle ASC
+    environment:
+      groups:
+        - roamle_mobile
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.playroamle.app
+      node: 22
+      xcode: latest
+    triggering:
+      # Solo a mano (Start new build) o con un tag ios-v1.0.0, ios-v1.0.1...
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'ios-v*'
+    scripts:
+      - name: Dependencias
+        script: npm ci
+      - name: Archivos privados
+        script: |
+          echo "$ENV_MOBILE" | base64 --decode > .env.mobile
+          echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > client/ios/App/App/GoogleService-Info.plist
+      - name: Interfaz y proyecto iOS (vite build + cap sync)
+        script: npm run mobile:sync -w client
+      - name: Firma
+        script: xcode-project use-profiles
+      - name: Numero de build (el ultimo de TestFlight + 1)
+        script: |
+          cd client/ios/App
+          LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" || echo 0)
+          agvtool new-version -all $((LATEST + 1))
+      - name: Compilar el .ipa
+        script: xcode-project build-ipa --project client/ios/App/App.xcodeproj --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
