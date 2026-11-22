@@ -153,6 +153,7 @@ components/  (presentación)  →  store/ (estado + casos de uso)  →  api/ (pu
 | | `api/httpApi.ts` | `fetch` + `Authorization: Bearer` |
 | | `api/localApi.ts` | Modo demo: misma interfaz sobre `localStorage`, hash SHA-256 con sal; **no seguro** |
 | UI | `components/{auth,dashboard,setup,game,rules,tour,profile,layout,ui}` | Ver tabla de componentes en el README |
+| Nativo | `native/` | Solo en la app de celulares (Capacitor); en la web no hace nada. Ver 4.5 |
 
 ### 4.2 Carga del mazo
 
@@ -187,6 +188,28 @@ La app está lista para varios idiomas; hoy solo existe el **español latino neu
 - **Leaflet + OpenStreetMap** — mapa para marcar la respuesta en cartas LUGAR.
 - **Google Maps Embed API** — Street View 360° (opcional, con API key `VITE_`).
 - **Wikimedia Commons** — fotos de lugares, con crédito/licencia en `credit`.
+
+### 4.5 App para celulares (Capacitor)
+
+El mismo build de Vite se empaqueta como app de Android (`client/android`, `com.playroamle.app`;
+iOS más adelante). Diseño en [`docs/specs/mobile-app.md`](specs/mobile-app.md); compilar y publicar
+en [`deploy/MOBILE.md`](../deploy/MOBILE.md).
+
+- **Origen propio** `https://app.playroamle.com` (Android) / `capacitor://app.playroamle.com` (iOS):
+  la app llama a la API de producción por CORS (`CORS_ORIGIN`) y Turnstile debe aceptar ese host.
+- **`client/src/native/`** es el único lugar que importa plugins nativos; todo se apaga con
+  `isNative() === false` en la web:
+  - `index.ts` (`useNativeShell`): pantalla de inicio, botón Atrás, enlaces de `playroamle.com`
+    (App Links), enlaces externos al navegador del sistema y color de la barra de estado.
+  - `push.ts` + `PushPrompt.tsx`: permiso, registro del token (`POST /api/devices`), tocar una
+    notificación → navegar. El socket avisa `client:visibility` para no mandar push a quien está
+    mirando la app.
+  - `UpdateRequired.tsx`: versión mínima (`GET /api/app/config`).
+  - `haptics.ts`, `keepAwake.ts`.
+- **Plugin propio de Android** `AppSettingsPlugin.java`: estado real de las notificaciones y abrir
+  sus ajustes.
+- **Archivos que no van a git:** `.env.mobile`, `google-services.json`, `keystore.properties` y la
+  clave de subida.
 
 ---
 
@@ -371,6 +394,10 @@ roampass-api ──(red docker dev-net)──► postgres:5432 (PostgreSQL compa
 - `docker-compose.prod.yml`: `api` + `web`. La imagen de la API corre `prisma migrate deploy` al
   arrancar. La SPA se compila con `VITE_API_URL=/api` (mismo origen, sin CORS en producción).
 - Guía paso a paso: [`deploy/DEPLOY.md`](../deploy/DEPLOY.md).
+- **App de celulares:** no se despliega en la VM; se publica en Google Play
+  ([`deploy/MOBILE.md`](../deploy/MOBILE.md)). La SPA sirve `/.well-known/assetlinks.json` para los
+  App Links. Como puede haber versiones viejas instaladas, la API se mantiene compatible hacia atrás
+  (`MIN_APP_VERSION` fuerza la actualización cuando no se puede).
 
 ### Modos de ejecución
 
@@ -403,6 +430,7 @@ roampass-api ──(red docker dev-net)──► postgres:5432 (PostgreSQL compa
 | 7 | Registro con confirmación por correo (antes: aprobación de ADMIN) | App expuesta en Internet sin depender del admin | Necesita SMTP (Brevo) y un dominio con SPF/DKIM |
 | 8 | Un solo `.env` en la raíz | Configuración simple | Disciplina con el prefijo `VITE_` |
 | 9 | `tsx` en producción, sin build del servidor | Simplicidad | Imagen más pesada (incluye devDependencies) |
+| 10 | App de celulares con Capacitor (no Flutter/React Native) | Reusar el 100% del client y una sola base de código | Plugins nativos aislados en `client/src/native/`; las mejoras de interfaz llegan a la app solo con una versión nueva en la tienda |
 
 ---
 

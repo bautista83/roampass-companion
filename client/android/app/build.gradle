@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+// Firma de las versiones para Google Play (deploy/MOBILE.md). La clave de subida y sus contraseñas
+// van en client/android/keystore.properties, que NO se sube a git. Sin ese archivo, el build de
+// release sale sin firmar (y el de depuración funciona igual que siempre).
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
 android {
     namespace = "com.playroamle.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,6 +16,8 @@ android {
         applicationId "com.playroamle.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        // Subir AMBOS en cada versión nueva para las tiendas: versionCode +1 (Google Play no acepta
+        // repetidos) y versionName, que es la que compara MIN_APP_VERSION del servidor.
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -16,8 +27,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile rootProject.file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

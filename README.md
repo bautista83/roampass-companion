@@ -20,6 +20,8 @@ shared/   @roampass/shared  Motor de juego puro en TS (sin dependencias)
   scripts/check-streetview.mjs  Valida y ajusta las coordenadas de Street View
   test/                     Vitest (53 tests)
 client/   @roampass/client  React 19 + Vite + Tailwind v4 + Framer Motion + Zustand + react-leaflet
+  android/                  App de Android (Capacitor 8): el mismo client empaquetado
+  src/native/               Único lugar que usa plugins nativos (push, enlaces, vibración…)
 server/   @roampass/server  Express 5 + Prisma 6 + PostgreSQL + JWT
 ```
 
@@ -172,6 +174,21 @@ La interfaz está en **español latino neutro** y lista para sumar idiomas: los 
 `client/src/i18n/locales/es/` (interfaz), `shared/src/locales/es.ts` (reglas y etiquetas) y
 `server/src/mail/templates.ts` (correos). Los pasos para agregar un idioma están en
 `docs/ARCHITECTURE.md` (sección 4.3).
+
+### App para celulares (Android)
+
+La misma interfaz, empaquetada con **Capacitor** como app nativa (`com.playroamle.app`): usa la API
+de producción y suma notificaciones push (Firebase), enlaces que abren la app, vibración, pantalla
+encendida durante la partida y el botón Atrás de Android. En la web nada de eso cambia.
+
+```bash
+npm run mobile:sync -w client     # build con .env.mobile + copia a client/android
+npm run mobile:android -w client  # lo mismo y abre Android Studio
+npm run mobile:assets -w client   # regenera íconos, pantalla de inicio e imágenes de Google Play
+```
+
+Configuración, firma y publicación en Google Play: [`deploy/MOBILE.md`](deploy/MOBILE.md).
+Diseño y decisiones: [`docs/specs/mobile-app.md`](docs/specs/mobile-app.md).
 
 ### Scripts útiles
 
