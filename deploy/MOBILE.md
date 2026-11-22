@@ -1,12 +1,14 @@
-# App para celulares: compilar, firmar y publicar en Google Play
+# App para celulares: compilar, firmar y publicar (Google Play y App Store)
 
-Guía de la app de Android de Roamle (`com.playroamle.app`). El diseño está en
+Guía de la app de Roamle para Android e iPhone (`com.playroamle.app`). Las secciones 1 a 8 son de
+Android; la 9 es la de iPhone. El diseño está en
 [`docs/specs/mobile-app.md`](../docs/specs/mobile-app.md). La app es el mismo client de React
 dentro de Capacitor: **usa la misma API que la web** (`https://playroamle.com/api`), así que el
 servidor se sigue desplegando como siempre ([`DEPLOY.md`](DEPLOY.md)).
 
 > **Nunca se suben a git:** `.env.mobile`, `client/android/app/google-services.json`,
-> `client/android/keystore.properties` ni la clave `.jks`. Tampoco se pegan en chats ni en issues.
+> `client/ios/App/App/GoogleService-Info.plist`, `client/android/keystore.properties`, la clave
+> `.jks` ni la clave `.p8` de Apple. Tampoco se pegan en chats ni en issues.
 
 ## Resumen
 
@@ -18,6 +20,7 @@ servidor se sigue desplegando como siempre ([`DEPLOY.md`](DEPLOY.md)).
 | Cuenta de Google Play y ficha de la app | Play Console | Una vez |
 | Compilar, firmar y subir una versión | Tu PC → Play Console | Cada versión |
 | Huella de Play en `assetlinks.json` | Repo → servidor | Una vez (después de la primera subida) |
+| iPhone: Apple Developer, Firebase iOS, Codemagic y App Store Connect | Sección 9 | Una vez, y un build por versión |
 
 ## 1. Servidor listo para la app (una vez)
 
@@ -88,6 +91,9 @@ los celulares, y tú firmas cada versión con una **clave de subida** propia.
 
    > No definir `CAP_DEV_API` al compilar una versión para la tienda: es solo para probar contra
    > un servidor local por http.
+   >
+   > En Windows aparece `Unable to write to ...CapApp-SPM/Package.swift` (EPERM, symlink): es la
+   > parte de iOS, que solo se puede preparar en macOS. No afecta a Android.
 
 3. Generar el paquete firmado (`.aab`):
 
@@ -208,3 +214,107 @@ cd client\android; .\gradlew.bat installDebug
 
 El servidor local tiene que tener `https://app.playroamle.com` en `CORS_ORIGIN`. Al terminar,
 volver a compilar sin esas variables para no dejar instalada una versión que apunta a tu PC.
+
+## 9. iPhone (App Store)
+
+Compilar para iPhone necesita **macOS con Xcode**. Sin una Mac se usa **Codemagic** (build en la
+nube, con minutos gratis por mes): el repo ya trae `codemagic.yaml`. Lo de abajo sirve para los dos
+caminos, salvo donde dice "Codemagic" o "Mac".
+
+### 9.1 Cuentas y Firebase (una vez)
+
+1. **Apple Developer Program** (USD 99 por año) en <https://developer.apple.com/programs/>.
+   Anotar el **Team ID** (10 caracteres, en *Membership details*). Es un dato público.
+2. **Identificador de la app:** *Certificates, Identifiers & Profiles → Identifiers → +* →
+   App ID `com.playroamle.app`, con las capacidades **Push Notifications** y **Associated Domains**.
+3. **Clave de APNs** (para que Firebase pueda mandar push al iPhone): *Keys → +* → marcar
+   *Apple Push Notifications service (APNs)* → descargar el `.p8` (**se descarga una sola vez**;
+   guardarlo con las otras claves) y anotar el **Key ID**.
+4. **Firebase** (mismo proyecto Roamle): *Agregar app → iOS*, bundle ID `com.playroamle.app` →
+   descargar **`GoogleService-Info.plist`**. Después, *Configuración del proyecto → Cloud
+   Messaging → Configuración de la app de Apple* → subir el `.p8` con el Key ID y el Team ID.
+   El servidor no cambia: la misma `FIREBASE_SERVICE_ACCOUNT` manda a Android y a iPhone.
+5. **App Store Connect** (<https://appstoreconnect.apple.com>) → *Apps → +* → iOS, nombre
+   *Roamle*, idioma principal *Español (México)* o el que prefieras, bundle ID
+   `com.playroamle.app`, SKU `roamle`. Anotar el **Apple ID** numérico de la app
+   (*Información de la app*).
+
+### 9.2 Universal Links (una vez)
+
+En `client/public/.well-known/apple-app-site-association` reemplazar `TEAM_ID` por el Team ID
+(queda `ABCDE12345.com.playroamle.app`) y desplegar la web. Comprobar que
+`https://playroamle.com/.well-known/apple-app-site-association` devuelva ese JSON. Apple lo lee a
+través de su CDN y puede tardar unas horas en tomar cambios.
+
+### 9.3 Compilar con Codemagic (sin Mac)
+
+1. Crear la cuenta en <https://codemagic.io> con GitHub y agregar el repositorio.
+2. *Teams → Integrations → Developer Portal → Connect*: una **API key de App Store Connect**
+   (App Store Connect → *Usuarios y acceso → Integraciones → Claves de API de App Store Connect*,
+   rol *App Manager*). Ponerle de nombre **`Roamle ASC`** (es el que usa `codemagic.yaml`).
+3. En la app de Codemagic → *Environment variables*, grupo **`roamle_mobile`**, marcadas como
+   *Secure*:
+   - `ENV_MOBILE`: el `.env.mobile` en base64.
+   - `GOOGLE_SERVICE_INFO_PLIST`: el `GoogleService-Info.plist` en base64.
+   - `APP_STORE_APPLE_ID`: el Apple ID numérico de la app.
+
+   Para pasar un archivo a base64 (queda en el portapapeles):
+
+   ```powershell
+   [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:utalrchivo")) | Set-Clipboard
+   ```
+
+4. *Start new build* → workflow **iOS → TestFlight** (o empujar un tag `ios-v1.0.0`). Codemagic
+   crea los certificados y perfiles de firma con la API key, numera el build (último de TestFlight
+   + 1), compila el `.ipa` y lo sube a **TestFlight**.
+
+### 9.4 Compilar con una Mac (alternativa)
+
+```bash
+npm ci
+cp /ruta/GoogleService-Info.plist client/ios/App/App/
+npm run mobile:sync -w client      # usa .env.mobile
+cd client && npx cap open ios       # abre Xcode
+```
+
+En Xcode: *Signing & Capabilities* → elegir el Team (firma automática) → *Product → Archive* →
+*Distribute App → App Store Connect*. Para probar en un iPhone por cable, elegirlo arriba y ▶.
+
+### 9.5 Versiones
+
+- `MARKETING_VERSION` (versión visible, `1.0.0`) en el target *App* de Xcode
+  (`client/ios/App/App.xcodeproj`). Conviene que sea la misma que `versionName` de Android: es la que
+  compara `MIN_APP_VERSION`.
+- El número de build lo pone Codemagic solo. Con Mac, subirlo a mano en cada envío.
+- Cuando la app esté publicada, poner `IOS_STORE_URL` en el `.env` de la VM (el enlace de App Store)
+  para que "Actualiza Roamle" lleve a la tienda correcta.
+
+### 9.6 TestFlight y App Store
+
+1. **TestFlight:** el build aparece en App Store Connect unos minutos después de subirlo. Agregar
+   testers internos (hasta 100 del equipo, sin revisión) o un grupo externo (con una revisión
+   corta de Apple y un enlace público).
+2. **Qué probar en el iPhone** (no se pudo probar sin uno):
+   - **Registro con captcha (riesgo R1):** en el iPhone la app corre en
+     `capacitor://app.playroamle.com`; si Turnstile no lo acepta, el registro falla. Si pasa,
+     avisar: la alternativa es hacer la verificación en una vista del navegador del sistema.
+   - Notificaciones: permiso, que llegue una invitación con la app cerrada y que al tocarla se abra
+     la app.
+   - Un enlace de un correo (por ejemplo "recuperar contraseña") abre la app.
+   - Notch / Dynamic Island, teclado en el login, vibración y pantalla encendida en una partida.
+3. **Ficha de App Store** (*Distribución*):
+   - Capturas de **iPhone de 6,9"** (1320×2868, por ejemplo desde un iPhone Pro Max o el
+     simulador). La app es solo para iPhone (en iPad se abre en modo iPhone), así que no piden
+     capturas de iPad.
+   - Descripción, palabras clave, URL de soporte (`https://playroamle.com`) y la política de
+     privacidad (`https://playroamle.com/privacy`).
+   - **Privacidad de la app:** los mismos datos que la tabla de "Seguridad de los datos" de
+     Google (sección 5): correo, ID de usuario, fotos (opcional), contenido del juego e identificador
+     del dispositivo para notificaciones; todo **vinculado a la identidad** y **sin rastreo**.
+   - **Información para la revisión:** usuario y contraseña de una cuenta de prueba, y una nota:
+     *"Roamle es la app que acompaña a un juego de mesa físico: muestra las cartas, lleva el
+     puntaje y permite partidas online con amigos, con notificaciones, enlaces universales y
+     vibración."* (riesgo R2: Apple rechaza las apps que parecen solo una web).
+   - Eliminación de la cuenta: ya está en la app (*Mi perfil → Eliminar mi cuenta*), como exige
+     Apple.
+4. *Agregar para revisión* → enviar. La revisión suele tardar de 1 a 3 días.

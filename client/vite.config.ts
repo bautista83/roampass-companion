@@ -9,4 +9,10 @@ export default defineConfig({
   // prefijo VITE_, asi que los secretos del servidor del mismo archivo nunca llegan al bundle.
   envDir: fileURLToPath(new URL('..', import.meta.url)),
   server: { port: 5173 },
+  resolve: {
+    alias: {
+      // Push solo en la app nativa: el SDK web de Firebase no se instala (src/native/firebaseWebStub.ts).
+      'firebase/messaging': fileURLToPath(new URL('./src/native/firebaseWebStub.ts', import.meta.url)),
+    },
+  },
 });

@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAM_ID.com.playroamle.app"],
+        "components": [
+          { "/": "/invite", "comment": "Registro con una invitacion por correo" },
+          { "/": "/invite/opt-out" },
+          { "/": "/verify-email" },
+          { "/": "/reset-password" },
+          { "/": "/online/*", "comment": "Sala de una partida online" }
+        ]
+      }
+    ]
+  }
+}

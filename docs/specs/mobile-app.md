@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **En desarrollo** — E1 a E6 hechas (ver 12); falta la publicación en Google Play (pasos del dueño) y E7 (iOS) |
+| Estado | **En desarrollo** — E1 a E7 hechas en código (ver 12); faltan las publicaciones en Google Play y App Store (pasos del dueño) y probar iOS en un iPhone |
 | Fecha | 2026-11-19 |
 | Afecta | `client`, `server`, `shared`, `deploy` |
 | Relacionado | [online-multiplayer.md](online-multiplayer.md) · [email-invitations.md](email-invitations.md) · [user-photo-and-email.md](user-photo-and-email.md) |
@@ -190,7 +190,7 @@ model User {
 
 ### 7.4 Plugins
 
-`@capacitor/push-notifications`, `@capacitor/app`, `@capacitor/haptics`, `@capacitor/status-bar`, `@capacitor/splash-screen`, `@capacitor/browser` (enlaces externos) y `@capacitor-community/keep-awake`.
+`@capacitor-firebase/messaging` (push; en E7 reemplazó a `@capacitor/push-notifications`, ver 12), `@capacitor/app`, `@capacitor/app-launcher` (ajustes en iOS), `@capacitor/haptics`, `@capacitor/splash-screen`, `@capacitor/browser` (enlaces externos) y `@capacitor-community/keep-awake`. La barra de estado usa `SystemBars` del núcleo.
 
 ## 8. Aspectos técnicos
 
@@ -297,7 +297,7 @@ Pruebas: 25 pruebas de punta a punta contra una base temporal, con el transporte
 
 ### E4 — Push en la app
 
-- Plugin `@capacitor/push-notifications`. `google-services.json` (Firebase, app `com.playroamle.app`) va en `client/android/app/` y **no se sube a git** (`client/android/.gitignore`); sin ese archivo la app compila igual, sin push.
+- Plugin `@capacitor/push-notifications` (en E7 se cambió por `@capacitor-firebase/messaging`). `google-services.json` (Firebase, app `com.playroamle.app`) va en `client/android/app/` y **no se sube a git** (`client/android/.gitignore`); sin ese archivo la app compila igual, sin push.
 - `client/src/native/push.ts`:
   - `pushAvailable()`: solo en la app y con servidor (en la web y en el modo demo no hay push, CA-14).
   - `useNativePush` (en `App.tsx`): crea el canal de Android `roamle` ("Partidas"), registra el dispositivo con `POST /api/devices` al iniciar sesión y cada vez que se vuelve a abrir la app (si el permiso está dado), y al tocar una notificación navega a su `link` (solo rutas internas, D10).
@@ -333,3 +333,22 @@ Pruebas en el Samsung A30 (modo demo): enlace de `/reset-password` con la app ce
 - README (sección "App para celulares") y ARCHITECTURE (4.5, despliegue y ADR 10).
 
 Pendiente del dueño: cuenta de Play Console, ficha, prueba cerrada y, después de la primera subida, la huella de *Play App Signing* en `assetlinks.json`.
+
+### E7 — iOS
+
+- **Proyecto `client/ios`** (Capacitor 8 con Swift Package Manager, sin CocoaPods). Se creó en Windows: `CapApp-SPM/Package.swift` lo vuelve a escribir `cap sync` en macOS (en Windows falla al crear los symlinks que pide el plugin de Firebase, sin consecuencias).
+  - Solo iPhone (`TARGETED_DEVICE_FAMILY = 1`; en iPad corre en modo iPhone), iOS 15+, `MARKETING_VERSION` 1.0.0 (igual que Android, la compara `MIN_APP_VERSION`), `VERSIONING_SYSTEM` para numerar builds y un *scheme* compartido `App` para compilar desde la línea de comandos.
+  - Íconos y pantalla de inicio de Roamle (`npm run mobile:assets`), ícono sin transparencia.
+  - `Info.plist`: idioma `es`, `UIBackgroundModes: remote-notification`, `ITSAppUsesNonExemptEncryption = false`.
+  - `App.entitlements`: `aps-environment` y `associated-domains` (`applinks:playroamle.com` y `www`).
+  - `GoogleService-Info.plist` referenciado como recurso del target (fuera de git: `client/ios/.gitignore`). **Sin ese archivo el build de iOS falla**: es obligatorio.
+- **Push con `@capacitor-firebase/messaging` en las dos plataformas** (reemplazó a `@capacitor/push-notifications`): en iOS `@capacitor/push-notifications` entrega el token de APNs, que el servidor (Firebase Admin) no puede usar; este plugin entrega el token de Firebase en Android y en iOS. `AppDelegate.swift` le pasa el token de APNs y las notificaciones.
+  - Su parte web importa el SDK web de Firebase, que no se instala: `vite.config.ts` lo reemplaza por `src/native/firebaseWebStub.ts`.
+  - El canal de Android `roamle` ahora lo crea `MainActivity.java` (el plugin no permite activar la vibración del canal). Textos en `strings.xml`.
+  - "Abrir ajustes del teléfono" en iOS abre los ajustes de Roamle con `@capacitor/app-launcher` (`app-settings:`).
+  - Se volvió a probar en el Samsung contra la API local: registro con token real, push con la app en segundo plano, canal "Partidas" con vibración y borrado del token al cerrar sesión.
+- **Universal Links:** `client/public/.well-known/apple-app-site-association` con las mismas rutas que Android. Lleva `TEAM_ID` como marcador: hay que poner el Team ID de Apple. `spa.conf` ya lo sirve como JSON.
+- **Build en la nube:** `codemagic.yaml` (workflow "iOS → TestFlight"): `npm ci`, archivos privados desde variables secretas (`ENV_MOBILE`, `GOOGLE_SERVICE_INFO_PLIST`), `mobile:sync`, firma automática con la API key de App Store Connect, número de build = último de TestFlight + 1, `.ipa` y envío a TestFlight.
+- Guía: `deploy/MOBILE.md`, sección 9 (cuentas, APNs en Firebase, Codemagic o Mac, TestFlight, ficha y revisión).
+
+**No probado** (no hay Mac ni iPhone): que compile, el push en iOS, los Universal Links y **Turnstile dentro de la app de iOS (R1)**; todo queda para el primer build de TestFlight (lista en `deploy/MOBILE.md`, 9.6). Tampoco se ejecutó `codemagic.yaml`.

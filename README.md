@@ -175,9 +175,10 @@ La interfaz está en **español latino neutro** y lista para sumar idiomas: los 
 `server/src/mail/templates.ts` (correos). Los pasos para agregar un idioma están en
 `docs/ARCHITECTURE.md` (sección 4.3).
 
-### App para celulares (Android)
+### App para celulares (Android e iPhone)
 
-La misma interfaz, empaquetada con **Capacitor** como app nativa (`com.playroamle.app`): usa la API
+La misma interfaz, empaquetada con **Capacitor** como app nativa (`com.playroamle.app`, en
+`client/android` y `client/ios`): usa la API
 de producción y suma notificaciones push (Firebase), enlaces que abren la app, vibración, pantalla
 encendida durante la partida y el botón Atrás de Android. En la web nada de eso cambia.
 
@@ -187,7 +188,8 @@ npm run mobile:android -w client  # lo mismo y abre Android Studio
 npm run mobile:assets -w client   # regenera íconos, pantalla de inicio e imágenes de Google Play
 ```
 
-Configuración, firma y publicación en Google Play: [`deploy/MOBILE.md`](deploy/MOBILE.md).
+Configuración, firma y publicación en Google Play y App Store (iPhone, con una Mac o con
+Codemagic, `codemagic.yaml`): [`deploy/MOBILE.md`](deploy/MOBILE.md).
 Diseño y decisiones: [`docs/specs/mobile-app.md`](docs/specs/mobile-app.md).
 
 ### Scripts útiles

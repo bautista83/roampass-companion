@@ -4,4 +4,7 @@
     <string name="title_activity_main">Roamle</string>
     <string name="package_name">com.playroamle.app</string>
     <string name="custom_url_scheme">com.playroamle.app</string>
+    <!-- Canal de las notificaciones push (MainActivity.createPushChannel) -->
+    <string name="push_channel_name">Partidas</string>
+    <string name="push_channel_description">Invitaciones, inicio de partidas y tu turno</string>
 </resources>
