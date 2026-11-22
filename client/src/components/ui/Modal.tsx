@@ -39,7 +39,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[1000] grid place-items-center bg-ink/55 p-[2.5vw] md:p-6"
+          className="fixed inset-0 z-[1000] grid place-items-center bg-ink/55 p-[2.5vw] pt-[max(2.5vw,var(--sat))] pb-[max(2.5vw,var(--sab))] md:p-6 md:pt-[max(1.5rem,var(--sat))] md:pb-[max(1.5rem,var(--sab))]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -49,7 +49,7 @@ export function Modal({ open, onClose, title, children, size = 'md', flip = fals
           <motion.div
             role="dialog"
             aria-modal="true"
-            className={`rp-modal flex h-[95dvh] w-[95vw] flex-col overflow-hidden rounded-3xl border-3 border-ink bg-paper shadow-hard-lg md:h-auto md:max-h-[90dvh] dark:border-black dark:bg-[#1f231f] dark:shadow-[8px_8px_0_0_#000] ${
+            className={`rp-modal flex h-[calc(95dvh-var(--sat)-var(--sab))] w-[95vw] flex-col overflow-hidden rounded-3xl border-3 border-ink bg-paper shadow-hard-lg md:h-auto md:max-h-[90dvh] dark:border-black dark:bg-[#1f231f] dark:shadow-[8px_8px_0_0_#000] ${
               size === 'xl' ? 'md:max-w-6xl' : 'md:max-w-2xl'
             }`}
             initial={flip ? { rotateY: 90, scale: 0.9 } : { y: 40, opacity: 0 }}
