@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **En desarrollo** — E1 a E5 hechas (ver 12) |
+| Estado | **En desarrollo** — E1 a E6 hechas (ver 12); falta la publicación en Google Play (pasos del dueño) y E7 (iOS) |
 | Fecha | 2026-11-19 |
 | Afecta | `client`, `server`, `shared`, `deploy` |
 | Relacionado | [online-multiplayer.md](online-multiplayer.md) · [email-invitations.md](email-invitations.md) · [user-photo-and-email.md](user-photo-and-email.md) |
@@ -323,3 +323,13 @@ Pruebas en un Samsung A30 (Android 11) contra la API local con `PUSH_LOG`: regis
 - **Pantalla encendida** (`native/keepAwake.ts`, `@capacitor-community/keep-awake`): mientras se juega una partida local (`GameTable`) u online (`OnlineTable`); se libera al terminar o al salir.
 
 Pruebas en el Samsung A30 (modo demo): enlace de `/reset-password` con la app cerrada, `/invite/opt-out` con la app abierta, un enlace de otra ruta (`/rules`) no lo toma la app, Atrás vuelve a la pantalla anterior; `KEEP_SCREEN_ON` durante la partida y quitado al salir (`dumpsys window`); vibración al resolver una carta (`dumpsys vibrator`). No probado: la verificación automática del dominio (necesita `assetlinks.json` publicado en playroamle.com) y la vibración en una partida online.
+
+### E6 — Guía de publicación
+
+- **`deploy/MOBILE.md`:** servidor listo para la app (CORS, Firebase, Turnstile), archivos locales (`.env.mobile`, `google-services.json`), clave de subida, compilar y firmar el `.aab`, Play Console (contenido de la app, seguridad de los datos, ficha, prueba cerrada de 12 testers × 14 días), huella de Play en `assetlinks.json`, versiones nuevas y prueba contra un servidor local.
+- **Firma:** `client/android/app/build.gradle` lee la clave de `client/android/keystore.properties` (plantilla `keystore.properties.example`). Ese archivo, `*.jks` y `*.keystore` están en `client/android/.gitignore`. Sin él, `bundleRelease` sale sin firmar y la depuración funciona igual. Se probó con una clave descartable: `bundleRelease` generó un `.aab` firmado (5,7 MB).
+- **Versiones:** `versionCode` (+1 en cada subida) y `versionName` (la que compara `MIN_APP_VERSION`) en `build.gradle`.
+- **Imágenes de Google Play:** `npm run mobile:assets` también genera `client/assets/store/play-icon-512.png` y `play-feature-graphic.png` (1024×500, logo y tablero, sin textos).
+- README (sección "App para celulares") y ARCHITECTURE (4.5, despliegue y ADR 10).
+
+Pendiente del dueño: cuenta de Play Console, ficha, prueba cerrada y, después de la primera subida, la huella de *Play App Signing* en `assetlinks.json`.

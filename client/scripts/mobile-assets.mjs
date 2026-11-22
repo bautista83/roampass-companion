@@ -22,4 +22,21 @@ await canvas(1024, BG).png().toFile(out('icon-background.png'));
 // estilo del perfil (Comic u 80s), asi que siempre se usa el fondo claro de la marca.
 await canvas(2732, BG).composite([{ input: await logo(640), gravity: 'center' }]).png().toFile(out('splash.png'));
 
-console.log('Imagenes base en client/assets/');
+// Google Play (deploy/MOBILE.md): icono de la ficha (512x512) y grafico de funciones (1024x500,
+// el logo junto al tablero, sin textos para no depender de tipografias).
+await mkdir(out('store'), { recursive: true });
+await canvas(512, BG).composite([{ input: await logo(400), gravity: 'center' }]).png().toFile(out('store/play-icon-512.png'));
+const board = await sharp(await readFile(new URL('../public/board/board.svg', import.meta.url)), { density: 300 })
+  .resize(560, 420, { fit: 'inside' })
+  .png()
+  .toBuffer();
+const { width: bw = 560, height: bh = 420 } = await sharp(board).metadata();
+await sharp({ create: { width: 1024, height: 500, channels: 4, background: BG } })
+  .composite([
+    { input: await logo(340), left: 70, top: 80 },
+    { input: board, left: 1024 - bw - 60, top: Math.round((500 - bh) / 2) },
+  ])
+  .png()
+  .toFile(out('store/play-feature-graphic.png'));
+
+console.log('Imagenes base en client/assets/ (y las de Google Play en client/assets/store/)');
