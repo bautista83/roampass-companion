@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **En desarrollo** — E1 y E2 hechas (ver 12) |
+| Estado | **En desarrollo** — E1, E2 y E3 hechas (ver 12) |
 | Fecha | 2026-11-19 |
 | Afecta | `client`, `server`, `shared`, `deploy` |
 | Relacionado | [online-multiplayer.md](online-multiplayer.md) · [email-invitations.md](email-invitations.md) · [user-photo-and-email.md](user-photo-and-email.md) |
@@ -165,7 +165,7 @@ model User {
 | Método | Ruta | Descripción |
 | --- | --- | --- |
 | `POST` | `/api/devices` | Registra o actualiza el token del dispositivo actual (`{ token, platform, appVersion }`). Aplica MA-02 y el máximo de D9 (se borra el más viejo). |
-| `DELETE` | `/api/devices/:token` | Lo llama la app al cerrar sesión (MA-03). |
+| `DELETE` | `/api/devices` | Lo llama la app al cerrar sesión (MA-03), con `{ token }` en el cuerpo (no en la URL). |
 | `PATCH` | `/api/auth/me` | Acepta `pushMuted: PushType[]`. |
 | `DELETE` | `/api/auth/me` | Eliminar mi cuenta (4.6). Pide `password`. |
 | `GET` | `/api/app/config` | Público: `{ minAppVersion, storeUrls }` (D16). |
@@ -280,4 +280,18 @@ Pruebas: APK de debug instalado por USB en un Samsung Galaxy A30 (Android 11, We
 - **Versión mínima** (D16): `GET /api/app/config` (`MIN_APP_VERSION`, `ANDROID_STORE_URL`, `IOS_STORE_URL`). En la app, `useRequiredUpdate` compara la versión instalada (`versionName`, ahora `1.0.0`) y muestra **"Actualiza Roamle"** con el botón a la tienda. En la web y en el modo demo no hace nada; sin conexión no bloquea.
 
 Pruebas: 14 pruebas de la API contra una base temporal (config pública, único admin, sin sesión, contraseña incorrecta o faltante, sala online, borrado, invitación anonimizada, token viejo, estadísticas, admin con otro admin). En el navegador: enlace y página de privacidad, error de contraseña, borrado y aviso en el login. En el Samsung contra la API local (por `adb reverse`): con `MIN_APP_VERSION=1.2.0` aparece "Actualiza Roamle"; con `1.0.0`, login normal (confirma también el CORS desde el origen de la app).
+
+### E3 — Push en el servidor
+
+- Modelo `DeviceToken` (token único, plataforma, versión de la app, `lastSeenAt`) y `User.pushMuted` (migración `20261122120000_push_devices`). Tipos y constantes compartidos en `shared/src/push.ts` (`PUSH_TYPES`, `YOUR_TURN_MIN_DIE_SECONDS = 60`, `MAX_DEVICES_PER_USER = 10`).
+- `POST /api/devices` (registra o reasigna el token, MA-02; máximo 10 por usuario borrando los de `lastSeenAt` más viejo) y `DELETE /api/devices` con `{ token }` (solo los propios). `PATCH /api/auth/me` acepta `pushMuted`, y `/me` lo devuelve.
+- `server/src/push/`:
+  - `transport.ts`: Firebase Cloud Messaging con `FIREBASE_SERVICE_ACCOUNT` (JSON de la cuenta de servicio en base64). Manda `notification` + `data { link, type }`, prioridad alta, TTL por tipo, etiqueta para reemplazar avisos del mismo tema y canal Android `roamle` (lo crea la app en E4). Los tokens que Firebase rechaza se borran (MA-04). Sin credenciales, el push queda apagado; con `PUSH_LOG=true` (desarrollo) se imprimen en la consola.
+  - `service.ts`: `sendPush`/`pushLater` aplica MA-06 (nunca lanza), MA-07 (inactivos), `pushMuted` y D7.
+  - `messages.ts`: textos por idioma, como los correos.
+  - `gameEvents.ts`: compara el estado anterior con el nuevo de cada acción de la partida (el servicio online ahora pasa los dos): `GAME_STARTED` al salir del lobby (a todos menos el anfitrión, sin un "es tu turno" extra) y `YOUR_TURN` al empezar el turno de otro jugador, solo con dado de 60 s o más (P3).
+- `GAME_INVITE` en `createGameInvite` (también cubre las invitaciones por correo a quien ya tiene cuenta), `INVITE_ACCEPTED` al aceptar y `INVITE_REGISTERED` al registrarse con el enlace.
+- **D7 en la práctica:** el socket informa si la app está a la vista con el evento nuevo `client:visibility { visible }`. Sin ese evento cuenta como visible (clientes viejos y la web). La app lo manda en E4 al pasar a segundo plano; hasta entonces, un celular con la app abierta en segundo plano y el socket vivo no recibe push.
+
+Pruebas: 25 pruebas de punta a punta contra una base temporal, con el transporte de consola y sockets reales: validación y registro de dispositivos, reasignación, máximo de 10, borrado al cerrar sesión, preferencias, `GAME_INVITE` a todos los celulares, limpieza de tokens inválidos, D7 (visible y segundo plano), `INVITE_ACCEPTED`, `GAME_STARTED`, `YOUR_TURN` (y silenciado / anfitrión a la vista), `INVITE_REGISTERED` e inactivo. No probado: el envío real por Firebase (necesita el proyecto de Firebase, E4).
 

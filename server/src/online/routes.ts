@@ -31,6 +31,7 @@ import { ipKeyGenerator } from 'express-rate-limit';
 import { onlineService } from './service';
 import { createOnline, loadOnline } from './store';
 import { notifyUser } from './notify';
+import { pushLater } from '../push/service';
 
 const INVITE_TTL_MS = 10 * 60 * 1000;
 
@@ -204,7 +205,14 @@ export async function createGameInvite(
       viaEmail: viaEmail ?? null,
     },
   });
-  notifyUser(toUserId, 'invite:received', await inviteSummary(invite.id));
+  const summary = await inviteSummary(invite.id);
+  notifyUser(toUserId, 'invite:received', summary);
+  pushLater(toUserId, 'GAME_INVITE', {
+    params: { from: summary.from },
+    link: '/',
+    tag: `invite-${invite.id}`,
+    ttlSeconds: INVITE_TTL_MS / 1000,
+  });
   return invite.id;
 }
 
@@ -341,6 +349,12 @@ invitesRouter.post('/:id/accept', async (req, res) => {
   await onlineService.act(inv.sessionId, (s) => addPlayer(s, req.user!.id, { name: req.user!.username, color, avatar }, inv.initialMiles));
   await prisma.gameInvite.update({ where: { id: inv.id }, data: { status: 'ACCEPTED', respondedAt: new Date() } });
   notifyUser(inv.fromUserId, 'invite:updated', { id: inv.id, sessionId: inv.sessionId, status: 'ACCEPTED', username: req.user!.username });
+  pushLater(inv.fromUserId, 'INVITE_ACCEPTED', {
+    params: { username: req.user!.username },
+    link: `/online/${inv.sessionId}`,
+    tag: `accepted-${inv.id}`,
+    ttlSeconds: 10 * 60,
+  });
   res.json({ sessionId: inv.sessionId });
 });
 

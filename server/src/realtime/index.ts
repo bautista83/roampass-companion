@@ -25,7 +25,7 @@ import { env } from '../env';
 import { HttpError } from '../http';
 import { publicUserSelect, type PublicUser } from '../auth/middleware';
 import { onlineDeck } from '../online/deck';
-import { setUserEmitter } from '../online/notify';
+import { setLookingChecker, setUserEmitter } from '../online/notify';
 import { cancelPendingInvites } from '../online/routes';
 import { onlineService } from '../online/service';
 import { loadOnline } from '../online/store';
@@ -34,6 +34,8 @@ interface SocketData {
   user: PublicUser;
   /** Partidas que tiene abiertas esta conexion. */
   games: Set<string>;
+  /** La app esta en primer plano (client:visibility). Sin ese evento, se asume que si. */
+  visible: boolean;
 }
 type RoamleSocket = Socket<ClientToServerEvents, ServerToClientEvents, Record<string, never>, SocketData>;
 
@@ -83,6 +85,13 @@ export function attachRealtime(httpServer: HttpServer) {
     // El tipo de cada evento ya lo controla `notifyUser`; aca solo se reenvia.
     (io.to(userRoom(userId)).emit as (ev: string, ...a: unknown[]) => boolean)(event, ...args);
   });
+  setLookingChecker((userId) => {
+    for (const id of io.sockets.adapter.rooms.get(userRoom(userId)) ?? []) {
+      const s = io.sockets.sockets.get(id) as RoamleSocket | undefined;
+      if (s?.data.visible) return true;
+    }
+    return false;
+  });
 
   // Autenticacion en el handshake con el mismo JWT de la API.
   io.use(async (socket, next) => {
@@ -94,6 +103,7 @@ export function attachRealtime(httpServer: HttpServer) {
       if (!user || !user.isActive) throw new Error('cuenta inactiva');
       socket.data.user = user;
       socket.data.games = new Set();
+      socket.data.visible = true;
       next();
     } catch {
       next(new Error('SESSION_INVALID'));
@@ -103,6 +113,10 @@ export function attachRealtime(httpServer: HttpServer) {
   io.on('connection', (socket: RoamleSocket) => {
     const userId = socket.data.user.id;
     void socket.join(userRoom(userId));
+
+    socket.on('client:visibility', (payload) => {
+      socket.data.visible = payload?.visible !== false;
+    });
 
     /** Ejecuta una accion de juego y responde por el ack. */
     const action =

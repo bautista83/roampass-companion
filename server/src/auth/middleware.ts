@@ -18,6 +18,7 @@ export type PublicUser = Pick<
   | 'emailVerifiedAt'
   | 'pendingEmail'
   | 'createdAt'
+  | 'pushMuted'
 >;
 
 export const publicUserSelect = {
@@ -32,6 +33,7 @@ export const publicUserSelect = {
   emailVerifiedAt: true,
   pendingEmail: true,
   createdAt: true,
+  pushMuted: true,
 } as const;
 
 declare module 'express-serve-static-core' {

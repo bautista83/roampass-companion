@@ -91,6 +91,29 @@ model User {
   invitedUsers           User[]        @relation("InvitedBy")
   emailInvitesSent       EmailInvite[] @relation("EmailInviteFrom")
   emailInvitesRegistered EmailInvite[] @relation("EmailInviteRegistered")
+  /// Celulares con la app (notificaciones push, docs/specs/mobile-app.md).
+  devices                DeviceToken[]
+  /// Tipos de push apagados por el usuario (PushType); por defecto, todos encendidos.
+  pushMuted              String[]      @default([])
+}
+
+enum DevicePlatform {
+  ANDROID
+  IOS
+}
+
+/// Token de Firebase Cloud Messaging de un celular. Un token pertenece a un solo usuario (MA-02).
+model DeviceToken {
+  id         String         @id @default(cuid())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String         @unique
+  platform   DevicePlatform
+  appVersion String
+  createdAt  DateTime       @default(now())
+  lastSeenAt DateTime       @default(now())
+
+  @@index([userId])
 }
 
 enum EmailTokenPurpose {

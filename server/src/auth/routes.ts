@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import type { User } from '@prisma/client';
-import { SUPPORTED_LOCALES } from '@roampass/shared';
+import { PUSH_TYPES, SUPPORTED_LOCALES } from '@roampass/shared';
 import { prisma } from '../db';
 import { env } from '../env';
 import { HttpError } from '../http';
@@ -211,6 +211,8 @@ const profileSchema = z
     currentPassword: z.string().max(128).optional(),
     newPassword: passwordSchema.optional(),
     email: emailSchema.optional(),
+    /** Tipos de notificacion push apagados (docs/specs/mobile-app.md, 4.4). */
+    pushMuted: z.array(z.enum(PUSH_TYPES)).max(PUSH_TYPES.length).optional(),
   })
   .refine((d) => !(d.newPassword || d.email) || d.currentPassword, {
     message: 'Ingresa tu contraseña actual',
@@ -218,7 +220,7 @@ const profileSchema = z
   });
 
 authRouter.patch('/me', requireAuth, async (req, res) => {
-  const { theme, locale, currentPassword, newPassword, email } = profileSchema.parse(req.body);
+  const { theme, locale, currentPassword, newPassword, email, pushMuted } = profileSchema.parse(req.body);
   const found = await prisma.user.findUniqueOrThrow({ where: { id: req.user!.id } });
   const changingEmail = email !== undefined && email !== found.email;
   if ((newPassword || changingEmail) && !(await bcrypt.compare(currentPassword!, found.passwordHash))) {
@@ -233,6 +235,7 @@ authRouter.patch('/me', requireAuth, async (req, res) => {
     data: {
       ...(theme && { theme }),
       ...(locale && { locale }),
+      ...(pushMuted && { pushMuted: [...new Set(pushMuted)] }),
       ...(newPassword && { passwordHash: await bcrypt.hash(newPassword, 10) }),
       // El correo nuevo queda pendiente hasta abrir el enlace; mientras, vale el anterior.
       ...(changingEmail && { pendingEmail: email }),
