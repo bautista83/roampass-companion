@@ -343,6 +343,9 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
     },
 
     getAppConfig: async () => null,
+    // El modo demo no tiene push (no hay servidor que lo mande).
+    registerDevice: async () => {},
+    unregisterDevice: async () => {},
 
     async deleteUserPhoto(userId) {
       const db = await load();

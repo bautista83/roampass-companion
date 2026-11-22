@@ -9,6 +9,7 @@
         "items": [
           "Tu cuenta: nombre de usuario, correo electrónico y contraseña (guardamos solo una versión cifrada, nunca la contraseña en sí).",
           "Tu perfil: la foto del pasaporte si decides subirla, el estilo del juego y el idioma.",
+          "Tu celular, si usas la app y activas las notificaciones: un identificador para mandarte los avisos, la versión de la app y qué avisos apagaste. Se borra al cerrar sesión.",
           "Tus partidas: jugadores, puntajes y resultados, para mostrarte tus estadísticas y el historial.",
           "Las invitaciones: si invitas a alguien por correo, guardamos ese correo y quién lo invitó. Si alguien te invita a ti, guardamos tu correo para mandarte la invitación.",
           "Datos técnicos: la dirección IP y la hora de cada pedido, que se usan para frenar abusos (por ejemplo, muchos intentos de inicio de sesión) y pueden quedar por poco tiempo en los registros técnicos del servidor."
@@ -35,6 +36,7 @@
         "items": [
           "Brevo: envía los correos del juego.",
           "Cloudflare: protege el sitio y verifica que quien se registra no sea un robot (Turnstile).",
+          "Google Firebase: en la app para celulares, entrega las notificaciones. Recibe un identificador del celular y el texto del aviso (por ejemplo, el nombre de quien te invita).",
           "Google: muestra mapas e imágenes de Street View en algunas cartas, y las tipografías del sitio."
         ]
       },

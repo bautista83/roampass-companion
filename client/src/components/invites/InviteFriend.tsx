@@ -4,6 +4,7 @@ import { api, type MyEmailInvite } from '../../api';
 import { errorText } from '../../i18n';
 import { useLabels } from '../../i18n/useLabels';
 import { Modal } from '../ui/Modal';
+import { maybeAskForPush } from '../../native/push';
 
 /** Boton "Invitar a un amigo" del panel con su modal (docs/specs/email-invitations.md, 4.2 y 4.3). */
 export function InviteFriendButton() {
@@ -14,7 +15,14 @@ export function InviteFriendButton() {
       <button className="btn-ghost" data-tour="invite-friend" onClick={() => setOpen(true)}>
         {t('invites.friend.button')}
       </button>
-      <Modal open={open} onClose={() => setOpen(false)} title={t('invites.friend.title')}>
+      <Modal
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          maybeAskForPush(); // D8: despues de invitar, para avisarle cuando se registre
+        }}
+        title={t('invites.friend.title')}
+      >
         {open && <InviteFriend />}
       </Modal>
     </>

@@ -8,6 +8,7 @@ import { PhotoSection } from './PhotoSection';
 import { EmailSection } from './EmailSection';
 import { LanguageSection } from './LanguageSection';
 import { DeleteAccountSection } from './DeleteAccountSection';
+import { NotificationsSection } from './NotificationsSection';
 
 const STYLES: { theme: UiTheme; icon: string; preview: string; bg: string; text: string; ink: string }[] = [
   {
@@ -149,6 +150,8 @@ export function Profile() {
           <EmailSection user={user} />
 
           <LanguageSection />
+
+          <NotificationsSection user={user} />
 
           <form className="panel space-y-4 p-4 md:p-6" onSubmit={changePassword} aria-labelledby="clave">
             <h2 id="clave" className="text-xl">

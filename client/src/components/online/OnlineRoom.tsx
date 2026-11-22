@@ -7,6 +7,7 @@ import { errorText } from '../../i18n';
 import { useLabels } from '../../i18n/useLabels';
 import { getSocket, onlineAvailable } from '../../online/socket';
 import { useOnlineStore } from '../../store/onlineStore';
+import { maybeAskForPush } from '../../native/push';
 import { PawnToken } from '../ui/PawnToken';
 import { OnlineTable } from './OnlineTable';
 import { PlayerSearch } from './shared';
@@ -25,6 +26,7 @@ export function OnlineRoom() {
   useEffect(() => {
     if (!onlineAvailable) return;
     join(id);
+    maybeAskForPush(); // D8: primera vez en una sala online
     return () => leave();
   }, [id, join, leave]);
 
