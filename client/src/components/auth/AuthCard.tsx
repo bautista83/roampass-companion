@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Brand } from '../layout/Brand';
 
 /** Tarjeta centrada de las pantallas sin sesion (login, confirmar correo, recuperar contraseña). */
 export function AuthCard({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   return (
-    <div className="grid min-h-dvh place-items-center px-4 py-8">
+    <div className="grid min-h-dvh place-content-center justify-items-center gap-4 px-4 py-8">
       <motion.div
         initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -18,6 +21,9 @@ export function AuthCard({ children }: { children: ReactNode }) {
           {children}
         </div>
       </motion.div>
+      <Link to="/privacy" className="text-sm font-semibold text-passport-500 underline dark:text-passport-300">
+        {t('auth.privacyLink')}
+      </Link>
     </div>
   );
 }

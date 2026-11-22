@@ -38,4 +38,10 @@ export const env = {
    * Si la clave del cliente esta restringida por dominio, usar otra en GOOGLE_MAPS_API_KEY.
    */
   googleMapsKey: optional('GOOGLE_MAPS_API_KEY') ?? optional('VITE_GOOGLE_MAPS_API_KEY'),
+  /** App para celulares (docs/specs/mobile-app.md, D16): version minima y enlaces a las tiendas. */
+  app: {
+    minVersion: optional('MIN_APP_VERSION') ?? '0.0.0',
+    androidStoreUrl: optional('ANDROID_STORE_URL') ?? 'https://play.google.com/store/apps/details?id=com.playroamle.app',
+    iosStoreUrl: optional('IOS_STORE_URL') ?? null,
+  },
 };

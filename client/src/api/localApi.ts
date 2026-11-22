@@ -329,6 +329,21 @@ export function createLocalApi(getToken: () => string | null): RoamPassApi {
       return strip(user);
     },
 
+    async deleteMyAccount(password) {
+      const db = await load();
+      const user = await currentUser(db);
+      if ((await hash(password, user.salt)) !== user.passwordHash) {
+        throw new ApiError('La contraseña no es correcta', 400, 'WRONG_PASSWORD');
+      }
+      if (user.role === 'ADMIN' && db.users.filter((u) => u.role === 'ADMIN' && u.isActive).length <= 1) {
+        throw new ApiError('Eres el único administrador', 409, 'LAST_ADMIN');
+      }
+      db.users = db.users.filter((u) => u.id !== user.id);
+      save(db);
+    },
+
+    getAppConfig: async () => null,
+
     async deleteUserPhoto(userId) {
       const db = await load();
       await requireAdmin(db);

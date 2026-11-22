@@ -59,5 +59,19 @@
     "names": {
       "es": "Español"
     }
+  },
+  "deleteAccount": {
+    "title": "Eliminar mi cuenta",
+    "intro": "Se borran tu cuenta, tu foto, tus datos y las partidas que creaste. En las partidas de otros jugadores queda solo tu nombre. No se puede deshacer.",
+    "privacyLink": "Ver la política de privacidad",
+    "button": "Eliminar mi cuenta",
+    "confirmTitle": "Eliminar mi cuenta",
+    "confirmBody": "Vas a eliminar para siempre la cuenta <b>@{{name}}</b>. Para confirmar, escribe tu nombre de usuario y tu contraseña.",
+    "typeUsername": "Tu nombre de usuario",
+    "password": "Contraseña",
+    "submit": "Eliminar para siempre",
+    "deleting": "Eliminando…",
+    "inOnlineGame": "Estás en una partida online. Sal de esa partida (o termínala) y vuelve a intentarlo.",
+    "wrongPassword": "La contraseña no es correcta."
   }
 }

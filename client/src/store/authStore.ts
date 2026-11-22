@@ -15,6 +15,8 @@ interface AuthState {
   updateProfile: (data: ProfileUpdate) => Promise<void>;
   /** Reemplaza el usuario guardado (p. ej. tras subir la foto). */
   setUser: (user: User) => void;
+  /** Elimina la cuenta (con la contraseña) y cierra la sesion. */
+  deleteAccount: (password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -44,6 +46,10 @@ export const useAuthStore = create<AuthState>()(
       },
       setUser(user) {
         set({ user });
+      },
+      async deleteAccount(password) {
+        await api.deleteMyAccount(password);
+        set({ token: null, user: null });
       },
       logout() {
         set({ token: null, user: null });

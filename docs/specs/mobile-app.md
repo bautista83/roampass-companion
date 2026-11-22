@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **En desarrollo** — E1 hecha en la rama `Feature.MobileApp` (ver 12) |
+| Estado | **En desarrollo** — E1 y E2 hechas (ver 12) |
 | Fecha | 2026-11-19 |
 | Afecta | `client`, `server`, `shared`, `deploy` |
 | Relacionado | [online-multiplayer.md](online-multiplayer.md) · [email-invitations.md](email-invitations.md) · [user-photo-and-email.md](user-photo-and-email.md) |
@@ -271,4 +271,13 @@ model User {
 - Servidor: sin cambios de código. Hay que sumar los orígenes de la app a `CORS_ORIGIN` (ejemplo en `deploy/production.env.example`) y `app.playroamle.com` a los hostnames de Turnstile.
 
 Pruebas: APK de debug instalado por USB en un Samsung Galaxy A30 (Android 11, WebView 157 después de actualizarlo), en modo demo: splash, login, panel, guía, "Cómo jugar", crear partida; Atrás cierra la guía, vuelve al panel y minimiza la app. La web se revisó en el navegador sin cambios visibles. No probado todavía: contra producción, un teléfono con notch y Android 15+ (borde a borde).
+
+### E2 — Requisitos de las tiendas
+
+- `DELETE /api/auth/me` con `{ password }` (y el límite de intentos del login). Rechaza con `WRONG_PASSWORD`, `ALREADY_IN_ONLINE_GAME` (sala o partida online sin abandonar) y `LAST_ADMIN` (único admin activo). Borra el usuario igual que el admin (cascada); las invitaciones por correo que recibió quedan con el correo `(cuenta eliminada)` para no perder las estadísticas de quien invitó.
+- Perfil → **Eliminar mi cuenta** (`DeleteAccountSection`): modal que pide escribir el usuario y la contraseña; al terminar vuelve al login con el aviso "Tu cuenta fue eliminada". En el modo demo también funciona (borra la cuenta local).
+- Página pública **`/privacy`** (`components/legal/PrivacyPage.tsx`, textos en `legal.json`): qué datos se guardan, para qué, terceros (Brevo, Cloudflare, Google), retención y cómo eliminar la cuenta. Enlace desde todas las pantallas sin sesión (`AuthCard`) y desde Eliminar mi cuenta. El correo de contacto sale de `VITE_CONTACT_EMAIL` (si está vacío, no se muestra). Cuando se sumen las notificaciones (E3–E4) hay que agregar Firebase a la lista de terceros.
+- **Versión mínima** (D16): `GET /api/app/config` (`MIN_APP_VERSION`, `ANDROID_STORE_URL`, `IOS_STORE_URL`). En la app, `useRequiredUpdate` compara la versión instalada (`versionName`, ahora `1.0.0`) y muestra **"Actualiza Roamle"** con el botón a la tienda. En la web y en el modo demo no hace nada; sin conexión no bloquea.
+
+Pruebas: 14 pruebas de la API contra una base temporal (config pública, único admin, sin sesión, contraseña incorrecta o faltante, sala online, borrado, invitación anonimizada, token viejo, estadísticas, admin con otro admin). En el navegador: enlace y página de privacidad, error de contraseña, borrado y aviso en el login. En el Samsung contra la API local (por `adb reverse`): con `MIN_APP_VERSION=1.2.0` aparece "Actualiza Roamle"; con `1.0.0`, login normal (confirma también el CORS desde el origen de la app).
 

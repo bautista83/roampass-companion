@@ -217,6 +217,7 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | Método | Ruta | Auth | Descripción |
 | --- | --- | --- | --- |
 | GET | `/health` | — | `{ ok: true }` |
+| GET | `/app/config` | — | App de celulares: `{ minAppVersion, storeUrls }` (`MIN_APP_VERSION`) |
 | POST | `/auth/register` | rate limit + captcha | Crea el usuario **sin confirmar** y envía el correo; responde `{ pending: true }` (sin token). Con `inviteToken` (enlace de invitación) nace confirmado y responde `{ token, user }` |
 | POST | `/auth/login` | rate limit | `{ identifier, password }` (usuario o correo) → `{ token, user }`; 403 `EMAIL_NOT_VERIFIED` / `ACCOUNT_INACTIVE` |
 | POST | `/auth/verify-email` | rate limit | Confirma el registro o el cambio de correo |
@@ -224,6 +225,7 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | POST | `/auth/reset-password` | rate limit | Contraseña nueva con el enlace |
 | GET / PATCH | `/auth/me` | usuario | Perfil; cambia tema, contraseña y correo (exigen la actual) |
 | PUT / DELETE | `/auth/me/photo` | usuario | Sube (imagen `image/*`) o quita la foto del pasaporte |
+| DELETE | `/auth/me` | usuario + rate limit | Eliminar mi cuenta con `{ password }`; 409 si está en una partida online o es el único admin |
 | GET / DELETE | `/users/:id/photo` | usuario / ADMIN | Ver la foto (con sesión) / quitarla (moderación) |
 | GET / POST | `/users` | ADMIN | Listar (con `gamesHosted`) / crear |
 | PATCH / DELETE | `/users/:id` | ADMIN | Activar, rol, renombrar, contraseña / eliminar |
