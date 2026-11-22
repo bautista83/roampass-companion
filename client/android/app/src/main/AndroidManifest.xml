@@ -18,6 +18,21 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- App Links (docs/specs/mobile-app.md, D11): los enlaces de playroamle.com se abren en
+                 la app. Android lo verifica con https://playroamle.com/.well-known/assetlinks.json. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="playroamle.com" />
+                <data android:host="www.playroamle.com" />
+                <data android:pathPrefix="/invite" />
+                <data android:pathPrefix="/verify-email" />
+                <data android:pathPrefix="/reset-password" />
+                <data android:pathPrefix="/online/" />
+            </intent-filter>
         </activity>
 
         <provider

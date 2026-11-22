@@ -13,18 +13,40 @@ export const isNative = () => Capacitor.isNativePlatform();
 
 export const nativePlatform = () => Capacitor.getPlatform() as 'web' | 'android' | 'ios';
 
+/** Sitio cuyos enlaces abre la app (App Links / Universal Links, D11). */
+const LINK_HOSTS = ['playroamle.com', 'www.playroamle.com'];
+/** Pantallas que se abren desde un enlace (los de los correos y el de una sala online). */
+const LINK_PATHS = [/^\/invite(\/opt-out)?$/, /^\/verify-email$/, /^\/reset-password$/, /^\/online\/[\w-]+$/];
+
+/** Ruta interna de un enlace de playroamle.com ("/invite?token=..."), o null si la app no la abre. */
+export function deepLinkPath(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.protocol !== 'https:' || !LINK_HOSTS.includes(u.hostname)) return null;
+    return LINK_PATHS.some((re) => re.test(u.pathname)) ? u.pathname + u.search : null;
+  } catch {
+    return null;
+  }
+}
+
+/** La URL con la que se abrio la app se atiende una sola vez (getLaunchUrl la sigue devolviendo). */
+let launchUrlHandled = false;
+
 /** Pantallas "raiz": ahi el boton Atras de Android minimiza la app en lugar de volver. */
 const ROOT_PATHS = ['/', '/login'];
 
 /**
  * Comportamiento de app nativa. Se monta una vez dentro del router:
- * pantalla de inicio, boton Atras, enlaces externos y color de la barra de estado.
+ * pantalla de inicio, boton Atras, enlaces de playroamle.com, enlaces externos y color de la barra de estado.
  */
 export function useNativeShell() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const path = useRef(pathname);
   path.current = pathname;
+  // navigate cambia con cada pantalla: se usa por ref para que el efecto corra una sola vez.
+  const nav = useRef(navigate);
+  nav.current = navigate;
 
   useEffect(() => {
     if (!isNative()) return;
@@ -39,11 +61,23 @@ export function useNativeShell() {
       if (ROOT_PATHS.includes(path.current)) {
         void App.minimizeApp();
       } else if ((window.history.state as { idx?: number } | null)?.idx) {
-        navigate(-1);
+        nav.current(-1);
       } else {
-        navigate('/', { replace: true }); // se entro directo a esta pantalla (p. ej. desde un enlace)
+        nav.current('/', { replace: true }); // se entro directo a esta pantalla (p. ej. desde un enlace)
       }
     });
+
+    // Enlaces de playroamle.com (un correo, un mensaje): se abre esa pantalla dentro de la app.
+    // Con la app cerrada, el enlace llega como URL de inicio; con la app abierta, como evento.
+    const openLink = (url: string | undefined) => {
+      const target = url ? deepLinkPath(url) : null;
+      if (target) nav.current(target);
+    };
+    if (!launchUrlHandled) {
+      launchUrlHandled = true;
+      void App.getLaunchUrl().then((r) => openLink(r?.url));
+    }
+    const urlOpen = App.addListener('appUrlOpen', ({ url }) => openLink(url));
 
     // Los enlaces a otros sitios se abren en el navegador del sistema, no dentro de la app.
     const onClick = (e: MouseEvent) => {
@@ -67,8 +101,9 @@ export function useNativeShell() {
 
     return () => {
       void back.then((h) => h.remove());
+      void urlOpen.then((h) => h.remove());
       document.removeEventListener('click', onClick, true);
       themeObserver.disconnect();
     };
-  }, [navigate]);
+  }, []);
 }

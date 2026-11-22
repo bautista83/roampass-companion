@@ -20,6 +20,7 @@ import { CardImage } from '../ui/CardImage';
 import { CardTimer } from '../ui/CardTimer';
 import { DifficultyBadge } from '../ui/DifficultyBadge';
 import { Modal } from '../ui/Modal';
+import { useResultHaptic } from '../../native/haptics';
 
 const OnlineLocationMap = lazy(() => import('./OnlineLocationMap'));
 
@@ -75,6 +76,10 @@ export function OnlineCard({ view, resultOpen, onCloseResult }: { view: PublicGa
       setSpectatorPhoto(null);
     };
   }, [wantsPhoto, state.id, cardId]);
+
+  // Vibra solo en el celular de quien respondio la carta.
+  const shownResult = showing ? resolution?.result : undefined;
+  useResultHaptic(shownResult && resolution?.playerId === you.playerId ? shownResult.delta > 0 : null);
 
   if (!card || !player || (!answering && !showing)) return null;
 

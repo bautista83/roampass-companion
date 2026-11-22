@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.playroamle.app",
+      "sha256_cert_fingerprints": [
+        "BD:26:D5:7E:40:16:ED:46:A9:0A:9E:51:15:69:51:60:E7:A4:B5:75:BD:4F:E2:81:A8:21:9A:DE:88:59:41:3D"
+      ]
+    }
+  }
+]

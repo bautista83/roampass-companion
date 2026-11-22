@@ -14,6 +14,7 @@ import { VictoryScreen } from './VictoryScreen';
 import { BoardView } from './BoardView';
 import { Die } from './Die';
 import { RulesGuide } from '../rules/RulesGuide';
+import { useKeepAwake } from '../../native/keepAwake';
 
 // Leaflet pesa ~150 kB: se descarga recien al robar la primera carta de LUGAR.
 const LocationCardModal = lazy(() => import('./LocationCardModal').then((m) => ({ default: m.LocationCardModal })));
@@ -53,6 +54,7 @@ export function GameTable() {
   const [moving, setMoving] = useState(false);
   const [toast, setToast] = useState<{ text: string; key: number } | null>(null);
   const usedCardIds = game?.usedCardIds;
+  useKeepAwake(game?.status !== 'FINISHED');
   const remaining = useMemo(() => remainingByCategory(deck, usedCardIds ?? []), [deck, usedCardIds]);
 
   const showToast = useCallback((text: string) => setToast({ text, key: Date.now() }), []);
