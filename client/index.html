@@ -20,6 +20,29 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Navegadores (o WebView de Android) demasiado viejos para la interfaz (Tailwind 4 y JS moderno
+      // necesitan Chrome 111 / Safari 16.4 o posterior): en lugar de una pantalla en blanco, un aviso.
+      // Va en el HTML (sin i18n) porque tiene que funcionar justamente donde el bundle no corre.
+      (function () {
+        var ok = typeof [].at === 'function' && window.CSS && CSS.supports && CSS.supports('color', 'color-mix(in srgb, red, blue)');
+        if (ok) return;
+        var android = /Android/i.test(navigator.userAgent);
+        var store = 'https://play.google.com/store/apps/details?id=com.google.android.webview';
+        document.body.style.margin = '0';
+        document.body.style.background = '#eaf2e6';
+        document.body.innerHTML =
+          '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;font-family:sans-serif;background:#eaf2e6;color:#111">' +
+          '<div style="max-width:420px;text-align:center;background:#fff;border:3px solid #111;border-radius:24px;padding:24px;box-shadow:5px 5px 0 #111">' +
+          '<img src="/logo.svg" alt="" width="72" height="72" style="margin:0 auto 12px;display:block">' +
+          '<h1 style="font-size:22px;margin:0 0 8px">Hay que actualizar el navegador</h1>' +
+          (android
+            ? '<p style="margin:0 0 16px;line-height:1.4">Roamle necesita una versión más nueva de <b>Android System WebView</b>. Actualízala desde Google Play y vuelve a abrir la app.</p>' +
+              '<a href="' + store + '" style="display:inline-block;background:#111;color:#fff;padding:12px 20px;border-radius:16px;font-weight:bold;text-decoration:none">Actualizar en Google Play</a>'
+            : '<p style="margin:0;line-height:1.4">Roamle necesita un navegador más nuevo. Actualiza Chrome, Safari, Edge o Firefox y vuelve a entrar.</p>') +
+          '</div></div>';
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -13,6 +13,7 @@ import { OnlineSetup } from './components/online/OnlineSetup';
 import { GameTable } from './components/game/GameTable';
 import { Profile } from './components/profile/Profile';
 import { RulesPage } from './components/rules/RulesPage';
+import { useNativeShell } from './native';
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -27,6 +28,7 @@ export function App() {
   // Idioma del perfil (o del navegador si no hay sesion).
   const locale = useAuthStore((s) => s.user?.locale);
   useEffect(() => setLocale(locale), [locale]);
+  useNativeShell();
 
   return (
     <Routes>

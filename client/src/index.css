@@ -48,8 +48,29 @@
   html {
     -webkit-tap-highlight-color: transparent;
   }
+  /*
+   * Zonas seguras (notch, barra de estado, barra de gestos): en la app (Capacitor, borde a borde) y
+   * en Safari del iPhone. En el resto de los navegadores valen 0.
+   */
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+  }
   body {
     @apply min-h-dvh bg-paper font-sans text-ink antialiased dark:bg-passport-950 dark:text-passport-50;
+    padding: var(--sat) var(--sar) var(--sab) var(--sal);
+  }
+  /* Franja opaca bajo la barra de estado: el contenido que se desplaza no pasa por debajo de la hora. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 1200;
+    height: var(--sat);
+    background-color: inherit;
+    pointer-events: none;
   }
   h1,
   h2 {

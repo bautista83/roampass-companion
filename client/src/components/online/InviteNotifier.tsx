@@ -83,7 +83,7 @@ export function InviteNotifier() {
 
   return (
     <>
-      <div className="pointer-events-none fixed right-3 bottom-3 z-[950] flex w-[min(92vw,22rem)] flex-col gap-2" aria-live="polite">
+      <div className="pointer-events-none fixed right-3 bottom-[calc(0.75rem+var(--sab))] z-[950] flex w-[min(92vw,22rem)] flex-col gap-2" aria-live="polite">
         <AnimatePresence>
           {invites.map((inv) => (
             <motion.div

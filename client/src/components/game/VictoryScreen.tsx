@@ -62,7 +62,7 @@ export function VictoryScreen({
       aria-modal="true"
       aria-label={t('game.victory.aria')}
     >
-      <div className="mx-auto flex min-h-full max-w-4xl flex-col items-center gap-6 px-4 py-8 text-white">
+      <div className="mx-auto flex min-h-full max-w-4xl flex-col items-center gap-6 px-4 pt-[calc(2rem+var(--sat))] pb-[calc(2rem+var(--sab))] text-white">
         <motion.div initial={{ scale: 0.5, rotate: -15, opacity: 0 }} animate={{ scale: 1, rotate: -4, opacity: 1 }} transition={{ type: 'spring', stiffness: 180, damping: 12 }} className="stamp border-brass text-center text-5xl text-brass md:text-7xl">
           {t('game.victory.title')}
         </motion.div>

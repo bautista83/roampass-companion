@@ -135,7 +135,7 @@ export function GameTable() {
         // Movil: turno → tablero → dado → cartas → marcador. Tablet: columna de control | tablero.
         <div className="flex flex-col gap-4 md:grid md:grid-cols-[minmax(0,30fr)_minmax(0,70fr)] md:items-start md:gap-5">
           <div className="contents md:flex md:flex-col md:gap-4">
-            <TurnBanner game={game} player={player} className="sticky top-0 z-40 order-1 md:static md:order-none" />
+            <TurnBanner game={game} player={player} className="sticky top-[var(--sat)] z-40 order-1 md:static md:order-none" />
             <div className="order-3 md:order-none">{diePanel}</div>
             <aside className="order-5 md:order-none">
               <Scoreboard game={game} />
@@ -162,7 +162,7 @@ export function GameTable() {
       ) : (
         // Movil: 1 columna (turno sticky → dado → mazo 2x3 → marcador). Tablet: 35% control | 65% mazo.
         <div className="flex flex-col gap-4 md:grid md:grid-cols-[minmax(0,35fr)_minmax(0,65fr)] md:grid-rows-[auto_auto_auto_1fr] md:items-start md:gap-6">
-          <TurnBanner game={game} player={player} className="sticky top-0 z-20 md:static md:col-start-1 md:row-start-1" />
+          <TurnBanner game={game} player={player} className="sticky top-[var(--sat)] z-20 md:static md:col-start-1 md:row-start-1" />
           <div className="md:col-start-1 md:row-start-2">{diePanel}</div>
           <section className="md:col-start-2 md:row-span-4 md:row-start-1" aria-label={t('game.table.deckAria')}>
             <CardGrid disabled={locked} remaining={remaining} onDraw={draw} />
@@ -180,7 +180,7 @@ export function GameTable() {
           <motion.div
             key={toast.key}
             role="status"
-            className="sticker fixed top-20 left-1/2 z-[900] max-w-[92vw] -translate-x-1/2 bg-sun px-4 py-2 text-center text-sm font-extrabold text-ink md:text-base"
+            className="sticker fixed top-[calc(5rem+var(--sat))] left-1/2 z-[900] max-w-[92vw] -translate-x-1/2 bg-sun px-4 py-2 text-center text-sm font-extrabold text-ink md:text-base"
             initial={{ y: -30, opacity: 0, scale: 0.9 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: -20, opacity: 0 }}

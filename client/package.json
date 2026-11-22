@@ -7,9 +7,18 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "mobile:assets": "node scripts/mobile-assets.mjs && capacitor-assets generate --android --ios --iconBackgroundColor #eaf2e6 --splashBackgroundColor #eaf2e6",
+    "mobile:sync": "tsc --noEmit && vite build --mode mobile && cap sync",
+    "mobile:android": "npm run mobile:sync && cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2",
+    "@capacitor/splash-screen": "^8.0.2",
     "@roampass/shared": "*",
     "framer-motion": "^12.23.0",
     "i18next": "^25.10.10",
@@ -23,6 +32,8 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.2",
     "@tailwindcss/vite": "^4.1.0",
     "@types/leaflet": "^1.9.20",
     "@types/react": "^19.1.0",
