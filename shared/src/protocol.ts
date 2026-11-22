@@ -45,6 +45,11 @@ export interface ServerToClientEvents {
 type Action<P = SessionRef, R = object> = (payload: P, ack: (res: Ack<R>) => void) => void;
 
 export interface ClientToServerEvents {
+  /**
+   * La app paso a primer plano o a segundo plano. Con la app visible no se mandan push (D7): el
+   * aviso ya se ve en pantalla. Las conexiones que nunca lo mandan cuentan como visibles.
+   */
+  'client:visibility': (payload: { visible: boolean }) => void;
   /** Abrir la mesa (participantes). Responde con el estado completo. */
   'game:join': Action<SessionRef, GameStatePayload>;
   'game:leave': (payload: SessionRef) => void;

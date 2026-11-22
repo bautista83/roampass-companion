@@ -10,6 +10,7 @@ import { gamesRouter } from './routes/games';
 import { invitesRouter, onlineRouter, userSearchRouter } from './online/routes';
 import { adminInvitesRouter, emailInvitesRouter } from './invites/routes';
 import { appConfigRouter } from './routes/appConfig';
+import { devicesRouter } from './routes/devices';
 
 export function createApp() {
   const app = express();
@@ -24,6 +25,7 @@ export function createApp() {
   });
   app.use('/api/app', appConfigRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api/devices', devicesRouter);
   // Fotos y busqueda antes que usersRouter: solo requieren sesion, no ser ADMIN.
   app.use('/api/users', photosRouter);
   app.use('/api/users', userSearchRouter);

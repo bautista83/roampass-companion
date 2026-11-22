@@ -4,11 +4,13 @@ import { env } from './env';
 import { purgeUnverifiedAccounts } from './auth/emailTokens';
 import { expireEmailInvites } from './invites/service';
 import { attachRealtime } from './realtime';
+import { registerGamePushes } from './push/gameEvents';
 import { loadOnlineDeck } from './online/deck';
 import { onlineService } from './online/service';
 
 const server = createServer(createApp());
 attachRealtime(server);
+registerGamePushes();
 
 server.listen(env.port, () => {
   console.log(`🧭 Roamle API escuchando en http://localhost:${env.port}/api`);

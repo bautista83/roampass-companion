@@ -38,6 +38,12 @@ export const env = {
    * Si la clave del cliente esta restringida por dominio, usar otra en GOOGLE_MAPS_API_KEY.
    */
   googleMapsKey: optional('GOOGLE_MAPS_API_KEY') ?? optional('VITE_GOOGLE_MAPS_API_KEY'),
+  /**
+   * Notificaciones push (docs/specs/mobile-app.md): JSON de la cuenta de servicio de Firebase en
+   * base64. Sin ella, el push queda apagado. PUSH_LOG=true (desarrollo) los imprime en la consola.
+   */
+  firebaseServiceAccount: optional('FIREBASE_SERVICE_ACCOUNT'),
+  pushLog: process.env.PUSH_LOG === 'true',
   /** App para celulares (docs/specs/mobile-app.md, D16): version minima y enlaces a las tiendas. */
   app: {
     minVersion: optional('MIN_APP_VERSION') ?? '0.0.0',

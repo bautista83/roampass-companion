@@ -223,8 +223,9 @@ jsonwebtoken, express-rate-limit. Se ejecuta con `tsx` (sin paso de build).
 | POST | `/auth/verify-email` | rate limit | Confirma el registro o el cambio de correo |
 | POST | `/auth/resend-verification`, `/auth/forgot-password` | rate limit | Envían el correo; respuesta genérica |
 | POST | `/auth/reset-password` | rate limit | Contraseña nueva con el enlace |
-| GET / PATCH | `/auth/me` | usuario | Perfil; cambia tema, contraseña y correo (exigen la actual) |
+| GET / PATCH | `/auth/me` | usuario | Perfil; cambia tema, contraseña y correo (exigen la actual) y los push silenciados (`pushMuted`) |
 | PUT / DELETE | `/auth/me/photo` | usuario | Sube (imagen `image/*`) o quita la foto del pasaporte |
+| POST / DELETE | `/devices` | usuario | Registra o borra el token push del celular (`{ token, platform, appVersion }` / `{ token }`) |
 | DELETE | `/auth/me` | usuario + rate limit | Eliminar mi cuenta con `{ password }`; 409 si está en una partida online o es el único admin |
 | GET / DELETE | `/users/:id/photo` | usuario / ADMIN | Ver la foto (con sesión) / quitarla (moderación) |
 | GET / POST | `/users` | ADMIN | Listar (con `gamesHosted`) / crear |

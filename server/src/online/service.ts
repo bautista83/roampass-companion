@@ -3,7 +3,8 @@ import { prisma } from '../db';
 import { onlineDeck } from './deck';
 import { loadOnline, saveOnline } from './store';
 
-type Listener = (state: OnlineGameState) => void;
+/** Recibe el estado nuevo y el anterior (para detectar transiciones: empezo, cambio el turno). */
+type Listener = (state: OnlineGameState, previous?: OnlineGameState) => void;
 
 /**
  * Orquesta las partidas online: cada accion se encola por partida (se procesa una a la vez), se
@@ -33,7 +34,7 @@ class OnlineService {
       if (next === state) return state; // sin cambios (p. ej. un timer que llego tarde)
       await saveOnline(next, version);
       this.schedule(next);
-      for (const listener of this.listeners) listener(next);
+      for (const listener of this.listeners) listener(next, state);
       return next;
     });
     this.queues.set(sessionId, run);

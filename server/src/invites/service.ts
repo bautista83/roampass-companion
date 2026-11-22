@@ -11,6 +11,7 @@ import { sendLinkMail } from '../mail/mailer';
 import { inviteMailContent } from '../mail/templates';
 import { createGameInvite, hostUserId } from '../online/routes';
 import { loadOnline } from '../online/store';
+import { pushLater } from '../push/service';
 
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
@@ -167,6 +168,15 @@ export async function completeInviteRegistration(invite: EmailInvite, userId: st
   });
   if (count === 0) throw invalid();
   await closeInvitesFor(invite.email);
+  if (invite.fromUserId) {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { username: true } });
+    pushLater(invite.fromUserId, 'INVITE_REGISTERED', {
+      params: { username: user?.username ?? '' },
+      link: '/',
+      tag: `registered-${invite.id}`,
+      ttlSeconds: 7 * 24 * 60 * 60,
+    });
+  }
   if (invite.kind !== 'GAME') return null;
   if (!invite.sessionId) return false;
   try {
