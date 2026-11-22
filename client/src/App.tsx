@@ -16,6 +16,8 @@ import { RulesPage } from './components/rules/RulesPage';
 import { useNativeShell } from './native';
 import { UpdateRequired, useRequiredUpdate } from './native/UpdateRequired';
 import { PrivacyPage } from './components/legal/PrivacyPage';
+import { useNativePush } from './native/push';
+import { PushPrompt } from './native/PushPrompt';
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -30,29 +32,34 @@ export function App() {
   // Idioma del perfil (o del navegador si no hay sesion).
   const locale = useAuthStore((s) => s.user?.locale);
   useEffect(() => setLocale(locale), [locale]);
+  const token = useAuthStore((s) => s.token);
   useNativeShell();
+  useNativePush(token);
   const storeUrl = useRequiredUpdate();
   if (storeUrl) return <UpdateRequired storeUrl={storeUrl} />;
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      {/* Enlaces de los correos: funcionan con o sin sesion iniciada. */}
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/invite" element={<InviteRegister />} />
-      <Route path="/invite/opt-out" element={<InviteOptOut />} />
-      {/* Publica: la piden las tiendas de apps con una URL. */}
-      <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
-      <Route path="/setup" element={<RequireAuth><GameSetup /></RequireAuth>} />
-      <Route path="/play" element={<RequireAuth><GameTable /></RequireAuth>} />
-      <Route path="/online/new" element={<RequireAuth><OnlineSetup /></RequireAuth>} />
-      <Route path="/online/:id" element={<RequireAuth><OnlineRoom /></RequireAuth>} />
-      <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-      <Route path="/rules" element={<RequireAuth><RulesPage /></RequireAuth>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        {/* Enlaces de los correos: funcionan con o sin sesion iniciada. */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/invite" element={<InviteRegister />} />
+        <Route path="/invite/opt-out" element={<InviteOptOut />} />
+        {/* Publica: la piden las tiendas de apps con una URL. */}
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+        <Route path="/setup" element={<RequireAuth><GameSetup /></RequireAuth>} />
+        <Route path="/play" element={<RequireAuth><GameTable /></RequireAuth>} />
+        <Route path="/online/new" element={<RequireAuth><OnlineSetup /></RequireAuth>} />
+        <Route path="/online/:id" element={<RequireAuth><OnlineRoom /></RequireAuth>} />
+        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+        <Route path="/rules" element={<RequireAuth><RulesPage /></RequireAuth>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      {token && <PushPrompt />}
+    </>
   );
 }

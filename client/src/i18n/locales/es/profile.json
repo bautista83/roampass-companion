@@ -60,6 +60,28 @@
       "es": "Español"
     }
   },
+  "notifications": {
+    "title": "Notificaciones",
+    "intro": "Te avisamos en el celular aunque tengas la app cerrada. Mientras la estás mirando no te llegan.",
+    "enable": "Activar notificaciones",
+    "blocked": "Las notificaciones de Roamle están apagadas en los ajustes del teléfono.",
+    "openSettings": "Abrir ajustes del teléfono",
+    "channelName": "Partidas",
+    "channelDescription": "Invitaciones, inicio de partidas y tu turno",
+    "prompt": {
+      "title": "🔔 ¿Te avisamos cuando te inviten a jugar?",
+      "body": "Te mandamos una notificación cuando alguien te invite a una partida o cuando empiece. Puedes cambiarlo cuando quieras en tu perfil.",
+      "enable": "Activar notificaciones",
+      "later": "Ahora no"
+    },
+    "types": {
+      "GAME_INVITE": { "title": "Invitaciones a partidas", "desc": "Cuando alguien te invita a su sala." },
+      "GAME_STARTED": { "title": "Empezó la partida", "desc": "Cuando el anfitrión empieza una partida en la que estás." },
+      "YOUR_TURN": { "title": "Es tu turno", "desc": "En partidas con 60 segundos o más para tirar el dado." },
+      "INVITE_ACCEPTED": { "title": "Se unieron a tu sala", "desc": "Cuando alguien acepta tu invitación a una partida." },
+      "INVITE_REGISTERED": { "title": "Tu amigo se registró", "desc": "Cuando alguien crea su cuenta con tu invitación por correo." }
+    }
+  },
   "deleteAccount": {
     "title": "Eliminar mi cuenta",
     "intro": "Se borran tu cuenta, tu foto, tus datos y las partidas que creaste. En las partidas de otros jugadores queda solo tu nombre. No se puede deshacer.",

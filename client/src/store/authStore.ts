@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { api, type ProfileUpdate, type RegisterData, type User } from '../api';
+import { clearPushDevice, forgetPushDevice } from '../native/push';
 
 interface AuthState {
   token: string | null;
@@ -49,9 +50,11 @@ export const useAuthStore = create<AuthState>()(
       },
       async deleteAccount(password) {
         await api.deleteMyAccount(password);
+        clearPushDevice();
         set({ token: null, user: null });
       },
       logout() {
+        forgetPushDevice(); // MA-03: antes de borrar la sesion local
         set({ token: null, user: null });
       },
     }),

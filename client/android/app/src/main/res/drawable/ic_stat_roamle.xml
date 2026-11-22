@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono chico de las notificaciones: el avion del logo, en blanco (Android lo tine). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <group android:translateX="-0.5" android:translateY="3.5">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M2,10 L12,9 L16,1 L19,1 L18,9 L25,9 Q28,10.5 25,12 L18,12 L19,20 L16,20 L12,13 L2,12 Z" />
+    </group>
+</vector>

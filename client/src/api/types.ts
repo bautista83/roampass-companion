@@ -1,4 +1,4 @@
-import type { BoardMode, Card, GameState, InviteSummary, Locale, OnlinePhase, PawnColor, Role, UiTheme, VictoryMode } from '@roampass/shared';
+import type { BoardMode, Card, DevicePlatform, GameState, InviteSummary, Locale, OnlinePhase, PawnColor, PushType, Role, UiTheme, VictoryMode } from '@roampass/shared';
 import { translateError } from '../i18n';
 
 export interface User {
@@ -20,6 +20,8 @@ export interface User {
   pendingEmail?: string | null;
   createdAt: string;
   gamesHosted?: number;
+  /** Tipos de notificacion push apagados en el Perfil (todos encendidos por defecto). */
+  pushMuted?: PushType[];
   /** Solo en la administracion: quien lo invito, si la cuenta se creo desde una invitacion por correo. */
   invitedBy?: { id: string; username: string } | null;
 }
@@ -39,6 +41,8 @@ export interface ProfileUpdate {
   newPassword?: string;
   /** Correo nuevo: queda pendiente hasta abrir el enlace que le llega. */
   email?: string;
+  /** Notificaciones push apagadas. */
+  pushMuted?: PushType[];
 }
 
 export interface RegisterData {
@@ -222,6 +226,10 @@ export interface RoamPassApi {
   deleteMyAccount(password: string): Promise<void>;
   /** Version minima de la app de celulares; null en el modo demo. */
   getAppConfig(): Promise<AppConfig | null>;
+  /** Push: registra el token de este celular (o lo pasa a la cuenta actual). */
+  registerDevice(device: { token: string; platform: DevicePlatform; appVersion: string }): Promise<void>;
+  /** Push: borra el token de este celular al cerrar sesion. */
+  unregisterDevice(token: string): Promise<void>;
   /** Moderacion (ADMIN): quita la foto de otro usuario. */
   deleteUserPhoto(userId: string): Promise<User>;
   /** URL lista para <img> (blob: o data:), o null si no tiene foto. */

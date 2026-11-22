@@ -81,6 +81,8 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     deleteMyPhoto: async () => (await request<{ user: User }>('/auth/me/photo', { method: 'DELETE' })).user,
     deleteMyAccount: (password) => request<void>('/auth/me', json('DELETE', { password })),
     getAppConfig: () => request<AppConfig>('/app/config'),
+    registerDevice: (device) => request<void>('/devices', json('POST', device)),
+    unregisterDevice: (token) => request<void>('/devices', json('DELETE', { token })),
     deleteUserPhoto: async (userId) =>
       (await request<{ user: User }>(`/users/${encodeURIComponent(userId)}/photo`, { method: 'DELETE' })).user,
     searchUsers: async (q) => (await request<{ users: { id: string; username: string }[] }>(`/users/search?q=${encodeURIComponent(q)}`)).users,

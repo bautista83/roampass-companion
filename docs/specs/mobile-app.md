@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **En desarrollo** — E1, E2 y E3 hechas (ver 12) |
+| Estado | **En desarrollo** — E1 a E4 hechas (ver 12) |
 | Fecha | 2026-11-19 |
 | Afecta | `client`, `server`, `shared`, `deploy` |
 | Relacionado | [online-multiplayer.md](online-multiplayer.md) · [email-invitations.md](email-invitations.md) · [user-photo-and-email.md](user-photo-and-email.md) |
@@ -276,7 +276,7 @@ Pruebas: APK de debug instalado por USB en un Samsung Galaxy A30 (Android 11, We
 
 - `DELETE /api/auth/me` con `{ password }` (y el límite de intentos del login). Rechaza con `WRONG_PASSWORD`, `ALREADY_IN_ONLINE_GAME` (sala o partida online sin abandonar) y `LAST_ADMIN` (único admin activo). Borra el usuario igual que el admin (cascada); las invitaciones por correo que recibió quedan con el correo `(cuenta eliminada)` para no perder las estadísticas de quien invitó.
 - Perfil → **Eliminar mi cuenta** (`DeleteAccountSection`): modal que pide escribir el usuario y la contraseña; al terminar vuelve al login con el aviso "Tu cuenta fue eliminada". En el modo demo también funciona (borra la cuenta local).
-- Página pública **`/privacy`** (`components/legal/PrivacyPage.tsx`, textos en `legal.json`): qué datos se guardan, para qué, terceros (Brevo, Cloudflare, Google), retención y cómo eliminar la cuenta. Enlace desde todas las pantallas sin sesión (`AuthCard`) y desde Eliminar mi cuenta. El correo de contacto sale de `VITE_CONTACT_EMAIL` (si está vacío, no se muestra). Cuando se sumen las notificaciones (E3–E4) hay que agregar Firebase a la lista de terceros.
+- Página pública **`/privacy`** (`components/legal/PrivacyPage.tsx`, textos en `legal.json`): qué datos se guardan, para qué, terceros (Brevo, Cloudflare, Google), retención y cómo eliminar la cuenta. Enlace desde todas las pantallas sin sesión (`AuthCard`) y desde Eliminar mi cuenta. El correo de contacto sale de `VITE_CONTACT_EMAIL` (si está vacío, no se muestra). En E4 se sumó Firebase a la lista de terceros.
 - **Versión mínima** (D16): `GET /api/app/config` (`MIN_APP_VERSION`, `ANDROID_STORE_URL`, `IOS_STORE_URL`). En la app, `useRequiredUpdate` compara la versión instalada (`versionName`, ahora `1.0.0`) y muestra **"Actualiza Roamle"** con el botón a la tienda. En la web y en el modo demo no hace nada; sin conexión no bloquea.
 
 Pruebas: 14 pruebas de la API contra una base temporal (config pública, único admin, sin sesión, contraseña incorrecta o faltante, sala online, borrado, invitación anonimizada, token viejo, estadísticas, admin con otro admin). En el navegador: enlace y página de privacidad, error de contraseña, borrado y aviso en el login. En el Samsung contra la API local (por `adb reverse`): con `MIN_APP_VERSION=1.2.0` aparece "Actualiza Roamle"; con `1.0.0`, login normal (confirma también el CORS desde el origen de la app).
@@ -291,7 +291,23 @@ Pruebas: 14 pruebas de la API contra una base temporal (config pública, único 
   - `messages.ts`: textos por idioma, como los correos.
   - `gameEvents.ts`: compara el estado anterior con el nuevo de cada acción de la partida (el servicio online ahora pasa los dos): `GAME_STARTED` al salir del lobby (a todos menos el anfitrión, sin un "es tu turno" extra) y `YOUR_TURN` al empezar el turno de otro jugador, solo con dado de 60 s o más (P3).
 - `GAME_INVITE` en `createGameInvite` (también cubre las invitaciones por correo a quien ya tiene cuenta), `INVITE_ACCEPTED` al aceptar y `INVITE_REGISTERED` al registrarse con el enlace.
-- **D7 en la práctica:** el socket informa si la app está a la vista con el evento nuevo `client:visibility { visible }`. Sin ese evento cuenta como visible (clientes viejos y la web). La app lo manda en E4 al pasar a segundo plano; hasta entonces, un celular con la app abierta en segundo plano y el socket vivo no recibe push.
+- **D7 en la práctica:** el socket informa si la app está a la vista con el evento nuevo `client:visibility { visible }`. Sin ese evento cuenta como visible (clientes viejos y la web). La app lo manda desde E4 al pasar a segundo plano y al volver.
 
 Pruebas: 25 pruebas de punta a punta contra una base temporal, con el transporte de consola y sockets reales: validación y registro de dispositivos, reasignación, máximo de 10, borrado al cerrar sesión, preferencias, `GAME_INVITE` a todos los celulares, limpieza de tokens inválidos, D7 (visible y segundo plano), `INVITE_ACCEPTED`, `GAME_STARTED`, `YOUR_TURN` (y silenciado / anfitrión a la vista), `INVITE_REGISTERED` e inactivo. No probado: el envío real por Firebase (necesita el proyecto de Firebase, E4).
 
+### E4 — Push en la app
+
+- Plugin `@capacitor/push-notifications`. `google-services.json` (Firebase, app `com.playroamle.app`) va en `client/android/app/` y **no se sube a git** (`client/android/.gitignore`); sin ese archivo la app compila igual, sin push.
+- `client/src/native/push.ts`:
+  - `pushAvailable()`: solo en la app y con servidor (en la web y en el modo demo no hay push, CA-14).
+  - `useNativePush` (en `App.tsx`): crea el canal de Android `roamle` ("Partidas"), registra el dispositivo con `POST /api/devices` al iniciar sesión y cada vez que se vuelve a abrir la app (si el permiso está dado), y al tocar una notificación navega a su `link` (solo rutas internas, D10).
+  - `maybeAskForPush()`: pantalla previa de 4.2 (`native/PushPrompt.tsx`) al entrar a una sala online o al cerrar "Invitar a un amigo". Se muestra una sola vez (`roampass-push-asked`) y solo si el sistema todavía no preguntó.
+  - Cerrar sesión borra el token en el servidor **antes** de borrar la sesión local (MA-03); eliminar la cuenta solo lo olvida (el servidor ya borró los dispositivos).
+- D7: `online/socket.ts` manda `client:visibility` al pasar a segundo plano, al volver y al (re)conectar. La web no lo manda.
+- Perfil → **Notificaciones** (`NotificationsSection.tsx`, solo en la app): con permiso, un interruptor por tipo (`pushMuted`); sin preguntar, "Activar notificaciones"; bloqueadas, aviso y "Abrir ajustes del teléfono". Se actualiza al volver de los ajustes.
+- Plugin propio de Android `AppSettingsPlugin.java` (registrado en `MainActivity`): `areNotificationsEnabled` (antes de Android 13 el permiso figura como dado aunque se apaguen a mano) y `openNotificationSettings`.
+- Android: permiso `POST_NOTIFICATIONS` (13+), icono chico `ic_stat_roamle` (el avión del logo), color y canal por defecto en el manifest.
+- **En Android 12 o anterior** el sistema no pide permiso: la app registra el dispositivo apenas se inicia sesión y la pantalla previa no aparece (se pueden apagar desde el Perfil).
+- Política de privacidad: Firebase entre los terceros y el identificador del celular entre los datos guardados.
+
+Pruebas en un Samsung A30 (Android 11) contra la API local con `PUSH_LOG`: registro con un token real de Firebase, `GAME_INVITE` con la app en segundo plano y sin push con la app a la vista (D7), interruptores del Perfil (`pushMuted`), bloqueo desde los ajustes del teléfono y vuelta, "Abrir ajustes del teléfono" y borrado del token al cerrar sesión (MA-03). La pantalla previa se revisó en el navegador. No probado: la entrega real de Firebase y el toque en la notificación (necesitan `FIREBASE_SERVICE_ACCOUNT` en el servidor) y el permiso de Android 13+.
