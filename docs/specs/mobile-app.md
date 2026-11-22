@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Estado | **En desarrollo** — E1 a E4 hechas (ver 12) |
+| Estado | **En desarrollo** — E1 a E5 hechas (ver 12) |
 | Fecha | 2026-11-19 |
 | Afecta | `client`, `server`, `shared`, `deploy` |
 | Relacionado | [online-multiplayer.md](online-multiplayer.md) · [email-invitations.md](email-invitations.md) · [user-photo-and-email.md](user-photo-and-email.md) |
@@ -311,3 +311,15 @@ Pruebas: 25 pruebas de punta a punta contra una base temporal, con el transporte
 - Política de privacidad: Firebase entre los terceros y el identificador del celular entre los datos guardados.
 
 Pruebas en un Samsung A30 (Android 11) contra la API local con `PUSH_LOG`: registro con un token real de Firebase, `GAME_INVITE` con la app en segundo plano y sin push con la app a la vista (D7), interruptores del Perfil (`pushMuted`), bloqueo desde los ajustes del teléfono y vuelta, "Abrir ajustes del teléfono" y borrado del token al cerrar sesión (MA-03). La pantalla previa se revisó en el navegador. No probado: la entrega real de Firebase y el toque en la notificación (necesitan `FIREBASE_SERVICE_ACCOUNT` en el servidor) y el permiso de Android 13+.
+
+### E5 — Enlaces, vibración y pantalla encendida
+
+- **App Links (D11):** `intent-filter` con `autoVerify` en `AndroidManifest.xml` para `https://playroamle.com` y `www.playroamle.com`, rutas `/invite` (incluye `/invite/opt-out`), `/verify-email`, `/reset-password` y `/online/`. En la app, `useNativeShell` atiende la URL de inicio (`App.getLaunchUrl`, una sola vez) y `appUrlOpen` con la app abierta; `deepLinkPath()` solo acepta esas rutas de playroamle.com por https.
+  - `client/public/.well-known/assetlinks.json` lleva por ahora la huella SHA-256 de la **clave de depuración** de esta PC, para probar. **En E6 hay que agregar la huella de *Play App Signing*** (Play Console → Integridad de la app) y, si se firma con una clave propia de subida, también esa.
+  - `deploy/nginx/spa.conf` sirve `/.well-known/` como JSON y con 404 si falta el archivo (nunca `index.html`).
+  - Android verifica el dominio al instalar la app; hasta que `assetlinks.json` esté publicado, el enlace muestra "Abrir con" (app o navegador). Los enlaces de invitación a partida de los correos van a `/` (el panel) y siguen abriendo la web.
+  - Arreglo: `useNativeShell` usaba `navigate` como dependencia y el efecto se volvía a montar en cada pantalla; ahora corre una sola vez (`navigate` por ref).
+- **Vibración** (`native/haptics.ts`, `@capacitor/haptics`): al aparecer el resultado de una carta, corta si suma millas y doble si no (`CardResult` en la partida local; en la online, solo en el celular de quien respondió).
+- **Pantalla encendida** (`native/keepAwake.ts`, `@capacitor-community/keep-awake`): mientras se juega una partida local (`GameTable`) u online (`OnlineTable`); se libera al terminar o al salir.
+
+Pruebas en el Samsung A30 (modo demo): enlace de `/reset-password` con la app cerrada, `/invite/opt-out` con la app abierta, un enlace de otra ruta (`/rules`) no lo toma la app, Atrás vuelve a la pantalla anterior; `KEEP_SCREEN_ON` durante la partida y quitado al salir (`dumpsys window`); vibración al resolver una carta (`dumpsys vibrator`). No probado: la verificación automática del dominio (necesita `assetlinks.json` publicado en playroamle.com) y la vibración en una partida online.

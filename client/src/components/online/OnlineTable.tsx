@@ -14,6 +14,7 @@ import { VictoryScreen } from '../game/VictoryScreen';
 import { Modal } from '../ui/Modal';
 import { OnlineCard } from './OnlineCard';
 import { PlayerSearch, useSecondsLeft } from './shared';
+import { useKeepAwake } from '../../native/keepAwake';
 
 type Confirm = 'abandon' | 'end' | null;
 
@@ -38,6 +39,7 @@ export function OnlineTable({ view }: { view: PublicGameView }) {
   /** Resultado que este jugador ya cerro (la ficha avanza recien al cerrarlo). */
   const [dismissedAt, setDismissedAt] = useState<string | null>(null);
   const [victoryReady, setVictoryReady] = useState(false);
+  useKeepAwake(!finished);
 
   const run = useCallback(async (fn: () => Promise<void>) => {
     setError(null);

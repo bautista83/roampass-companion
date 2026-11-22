@@ -4,12 +4,14 @@ import type { ScoreResult } from '@roampass/shared';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLabels } from '../../i18n/useLabels';
 import { useGameStore } from '../../store/gameStore';
+import { useResultHaptic } from '../../native/haptics';
 
 /** Sello de aduana con el resultado de la carta + boton para pasar el turno. */
 export function CardResult({ result, playerName, children }: { result: ScoreResult; playerName: string; children?: ReactNode }) {
   const dismiss = useGameStore((s) => s.dismissCard);
   const finished = useGameStore((s) => s.game?.status === 'FINISHED');
   const positive = result.delta > 0;
+  useResultHaptic(positive);
   const { t } = useTranslation();
   const { miles } = useLabels();
   const label = result.timedOut
