@@ -14,6 +14,8 @@ import { GameTable } from './components/game/GameTable';
 import { Profile } from './components/profile/Profile';
 import { RulesPage } from './components/rules/RulesPage';
 import { useNativeShell } from './native';
+import { UpdateRequired, useRequiredUpdate } from './native/UpdateRequired';
+import { PrivacyPage } from './components/legal/PrivacyPage';
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -29,6 +31,8 @@ export function App() {
   const locale = useAuthStore((s) => s.user?.locale);
   useEffect(() => setLocale(locale), [locale]);
   useNativeShell();
+  const storeUrl = useRequiredUpdate();
+  if (storeUrl) return <UpdateRequired storeUrl={storeUrl} />;
 
   return (
     <Routes>
@@ -39,6 +43,8 @@ export function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/invite" element={<InviteRegister />} />
       <Route path="/invite/opt-out" element={<InviteOptOut />} />
+      {/* Publica: la piden las tiendas de apps con una URL. */}
+      <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
       <Route path="/setup" element={<RequireAuth><GameSetup /></RequireAuth>} />
       <Route path="/play" element={<RequireAuth><GameTable /></RequireAuth>} />

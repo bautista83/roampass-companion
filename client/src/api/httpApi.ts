@@ -1,6 +1,7 @@
 import type { Card, GameState, InviteSummary } from '@roampass/shared';
 import {
   ApiError,
+  type AppConfig,
   type AuthSession,
   type PlayerStatsSummary,
   type RecentGame,
@@ -78,6 +79,8 @@ export function createHttpApi(baseUrl: string, getToken: () => string | null): R
     uploadPhoto: async (image) =>
       (await request<{ user: User }>('/auth/me/photo', { method: 'PUT', body: image, headers: { 'Content-Type': image.type || 'image/jpeg' } })).user,
     deleteMyPhoto: async () => (await request<{ user: User }>('/auth/me/photo', { method: 'DELETE' })).user,
+    deleteMyAccount: (password) => request<void>('/auth/me', json('DELETE', { password })),
+    getAppConfig: () => request<AppConfig>('/app/config'),
     deleteUserPhoto: async (userId) =>
       (await request<{ user: User }>(`/users/${encodeURIComponent(userId)}/photo`, { method: 'DELETE' })).user,
     searchUsers: async (q) => (await request<{ users: { id: string; username: string }[] }>(`/users/search?q=${encodeURIComponent(q)}`)).users,

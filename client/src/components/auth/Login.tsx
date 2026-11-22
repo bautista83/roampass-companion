@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { currentLocale } from '../../i18n';
 import { api, ApiError } from '../../api';
@@ -15,6 +15,7 @@ export function Login() {
   const login = useAuthStore((s) => s.login);
   const register = useAuthStore((s) => s.register);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>('login');
   const [identifier, setIdentifier] = useState('');
   const [username, setUsername] = useState('');
@@ -23,11 +24,13 @@ export function Login() {
   const [captcha, setCaptcha] = useState<string | null>(null);
   const [captchaKey, setCaptchaKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const location = useLocation();
+  const [notice, setNotice] = useState<string | null>(() =>
+    (location.state as { accountDeleted?: boolean } | null)?.accountDeleted ? t('auth.accountDeleted') : null,
+  );
   /** Inicio de sesion rechazado por correo sin confirmar: se ofrece reenviarlo. */
   const [unverified, setUnverified] = useState(false);
   const [busy, setBusy] = useState(false);
-  const { t } = useTranslation();
   const fail = (err: unknown) => errorMessage(err, t('common.unexpectedError'));
 
   if (token) return <Navigate to="/" replace />;

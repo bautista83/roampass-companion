@@ -22,5 +22,10 @@
   "milesSuffix": " mi",
   "seconds": "{{count}} s",
   "rounds_one": "{{count}} ronda",
-  "rounds_other": "{{count}} rondas"
+  "rounds_other": "{{count}} rondas",
+  "updateRequired": {
+    "title": "Actualiza Roamle",
+    "body": "Hay una versión nueva de la app y esta ya no funciona con el servidor. Actualízala para seguir jugando.",
+    "button": "Actualizar"
+  }
 }

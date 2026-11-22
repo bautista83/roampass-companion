@@ -24,6 +24,12 @@ export interface User {
   invitedBy?: { id: string; username: string } | null;
 }
 
+/** Datos publicos para la app de celulares (version minima y tiendas). */
+export interface AppConfig {
+  minAppVersion: string;
+  storeUrls: { android: string; ios: string | null };
+}
+
 /** Lo que cada usuario puede cambiar de su propio perfil. */
 export interface ProfileUpdate {
   theme?: UiTheme;
@@ -212,6 +218,10 @@ export interface RoamPassApi {
   /** Foto del pasaporte: se manda ya achicada (ver lib/photo.ts); el servidor la normaliza. */
   uploadPhoto(image: Blob): Promise<User>;
   deleteMyPhoto(): Promise<User>;
+  /** Eliminar mi cuenta (pide la contraseña). */
+  deleteMyAccount(password: string): Promise<void>;
+  /** Version minima de la app de celulares; null en el modo demo. */
+  getAppConfig(): Promise<AppConfig | null>;
   /** Moderacion (ADMIN): quita la foto de otro usuario. */
   deleteUserPhoto(userId: string): Promise<User>;
   /** URL lista para <img> (blob: o data:), o null si no tiene foto. */

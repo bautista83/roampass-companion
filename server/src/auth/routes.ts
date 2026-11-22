@@ -10,6 +10,7 @@ import { sendLinkMail } from '../mail/mailer';
 import { mailContent } from '../mail/templates';
 import { MAX_PHOTO_UPLOAD, deletePhoto, savePhoto } from '../photos';
 import { checkInviteForRegister, closeInvitesFor, completeInviteRegistration } from '../invites/service';
+import { activeOnlineSessionOf } from '../online/routes';
 import { emailSchema } from './schemas';
 import { verifyCaptcha } from './captcha';
 import { consumeEmailToken, createEmailToken, purgeUnverifiedAccounts } from './emailTokens';
@@ -25,6 +26,9 @@ const usernameSchema = z
 const passwordSchema = z.string().min(6).max(128);
 const localeSchema = z.enum(SUPPORTED_LOCALES);
 export { emailSchema };
+
+/** Correo que queda en las invitaciones de una cuenta eliminada. */
+export const DELETED_EMAIL = '(cuenta eliminada)';
 
 export const credentialsSchema = z.object({ username: usernameSchema, password: passwordSchema });
 
@@ -252,4 +256,30 @@ authRouter.put('/me/photo', requireAuth, express.raw({ type: 'image/*', limit: M
 
 authRouter.delete('/me/photo', requireAuth, async (req, res) => {
   res.json({ user: await deletePhoto(req.user!.id) });
+});
+
+/**
+ * Eliminar mi cuenta (docs/specs/mobile-app.md, 4.6; lo exigen las tiendas). Pide la contrasena.
+ * Igual que cuando el admin elimina un usuario: se borran sus datos y las partidas que creo; en las
+ * de otros queda su nombre sin vinculo. Antes tiene que salir de la partida online en curso.
+ */
+authRouter.delete('/me', requireAuth, loginLimiter, async (req, res) => {
+  const { password } = z.object({ password: z.string().min(1).max(128) }).parse(req.body);
+  const found = await prisma.user.findUniqueOrThrow({ where: { id: req.user!.id } });
+  if (!(await bcrypt.compare(password, found.passwordHash))) {
+    throw new HttpError(400, 'La contraseña no es correcta', 'WRONG_PASSWORD');
+  }
+  if (await activeOnlineSessionOf(found.id)) {
+    throw new HttpError(409, 'Primero sal de la partida online en curso.', 'ALREADY_IN_ONLINE_GAME');
+  }
+  if (found.role === 'ADMIN' && (await prisma.user.count({ where: { role: 'ADMIN', isActive: true } })) <= 1) {
+    throw new HttpError(409, 'Eres el único administrador: nombra otro antes de eliminar tu cuenta.', 'LAST_ADMIN');
+  }
+  const emails = [found.email, found.pendingEmail].filter((e): e is string => !!e);
+  await prisma.$transaction([
+    // Las invitaciones que recibio quedan para las estadisticas de quien invito, sin su correo.
+    prisma.emailInvite.updateMany({ where: { email: { in: emails } }, data: { email: DELETED_EMAIL } }),
+    prisma.user.delete({ where: { id: found.id } }),
+  ]);
+  res.status(204).end();
 });

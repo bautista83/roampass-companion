@@ -56,5 +56,6 @@
   "INVALID_INVITE": "La invitación no es válida o ya venció.",
   "INVITE_EMAIL_MISMATCH": "Esta invitación es para otro correo.",
   "CANNOT_INVITE_SELF": "No puedes invitarte a ti mismo.",
-  "MAIL_FAILED": "No pudimos enviar el correo. Prueba de nuevo en un momento."
+  "MAIL_FAILED": "No pudimos enviar el correo. Prueba de nuevo en un momento.",
+  "LAST_ADMIN": "Eres el único administrador: nombra otro administrador antes de eliminar tu cuenta."
 }

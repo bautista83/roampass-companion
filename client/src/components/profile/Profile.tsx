@@ -7,6 +7,7 @@ import { PassportCard } from '../dashboard/PassportCard';
 import { PhotoSection } from './PhotoSection';
 import { EmailSection } from './EmailSection';
 import { LanguageSection } from './LanguageSection';
+import { DeleteAccountSection } from './DeleteAccountSection';
 
 const STYLES: { theme: UiTheme; icon: string; preview: string; bg: string; text: string; ink: string }[] = [
   {
@@ -208,6 +209,8 @@ export function Profile() {
               {busy ? t('common.actions.saving') : t('profile.password.submit')}
             </button>
           </form>
+
+          <DeleteAccountSection user={user} />
         </div>
       </div>
     </div>

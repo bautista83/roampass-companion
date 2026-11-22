@@ -1,0 +1,67 @@
+{
+  "privacy": {
+    "title": "Política de privacidad",
+    "updated": "Última actualización: 22 de noviembre de 2026",
+    "intro": "Roamle es un juego de preguntas para dar la vuelta al mundo, en la web (playroamle.com) y en la app para celulares. Aquí te contamos qué datos guardamos, para qué y cómo puedes borrarlos.",
+    "sections": [
+      {
+        "title": "Qué datos guardamos",
+        "items": [
+          "Tu cuenta: nombre de usuario, correo electrónico y contraseña (guardamos solo una versión cifrada, nunca la contraseña en sí).",
+          "Tu perfil: la foto del pasaporte si decides subirla, el estilo del juego y el idioma.",
+          "Tus partidas: jugadores, puntajes y resultados, para mostrarte tus estadísticas y el historial.",
+          "Las invitaciones: si invitas a alguien por correo, guardamos ese correo y quién lo invitó. Si alguien te invita a ti, guardamos tu correo para mandarte la invitación.",
+          "Datos técnicos: la dirección IP y la hora de cada pedido, que se usan para frenar abusos (por ejemplo, muchos intentos de inicio de sesión) y pueden quedar por poco tiempo en los registros técnicos del servidor."
+        ]
+      },
+      {
+        "title": "Para qué los usamos",
+        "items": [
+          "Para que puedas iniciar sesión, jugar y ver tus partidas.",
+          "Para mandarte los correos del juego: confirmar tu correo, recuperar la contraseña y las invitaciones.",
+          "Para que el administrador de Roamle pueda cuidar el servicio (por ejemplo, desactivar una cuenta que haga abuso)."
+        ]
+      },
+      {
+        "title": "Lo que no hacemos",
+        "items": [
+          "No vendemos ni alquilamos tus datos.",
+          "No mostramos publicidad ni usamos tus datos para publicidad.",
+          "No compartimos tus datos con otros jugadores, salvo tu nombre de usuario y tu foto dentro de las partidas en las que participas."
+        ]
+      },
+      {
+        "title": "Servicios de terceros",
+        "items": [
+          "Brevo: envía los correos del juego.",
+          "Cloudflare: protege el sitio y verifica que quien se registra no sea un robot (Turnstile).",
+          "Google: muestra mapas e imágenes de Street View en algunas cartas, y las tipografías del sitio."
+        ]
+      },
+      {
+        "title": "Cuánto tiempo los guardamos",
+        "items": [
+          "Mientras tengas tu cuenta.",
+          "Las cuentas que no confirman su correo se borran solas a los 7 días.",
+          "Cuando eliminas tu cuenta se borran tus datos en el momento."
+        ]
+      },
+      {
+        "title": "Cómo eliminar tu cuenta",
+        "items": [
+          "Desde la app o la web: entra a Mi perfil → Eliminar mi cuenta, y confirma con tu nombre de usuario y tu contraseña.",
+          "Se borran tu cuenta, tu foto y las partidas que creaste. En las partidas de otros jugadores queda solo tu nombre, sin relación con tu cuenta. Las invitaciones que recibiste quedan sin tu correo."
+        ]
+      },
+      {
+        "title": "Menores de edad",
+        "items": [
+          "Si eres menor de edad, usa Roamle con el permiso de un adulto responsable."
+        ]
+      }
+    ],
+    "contact": "¿Dudas o pedidos sobre tus datos? Escríbenos a <a>{{email}}</a>.",
+    "back": "← Volver",
+    "link": "Política de privacidad"
+  }
+}
